@@ -44,7 +44,7 @@ fun GameListScreen(
     val games by viewModel.items.collectAsState()
     var newGameName by remember { mutableStateOf("") }
     val submitNewGame = {
-        viewModel.addItem(newGameName)
+        viewModel.addGame(newGameName)
         newGameName = ""
     }
 
@@ -90,7 +90,7 @@ fun GameListScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Button(onClick = { viewModel.removeItem(game) }) {
+                    Button(onClick = { viewModel.removeGame(game) }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "삭제"

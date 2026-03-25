@@ -8,23 +8,39 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 
 @Composable
-fun GameDetailScreen(gameName: String?, navController: NavHostController? = null) {
+fun GameDetailScreen(
+    gameName: String?,
+    navController: NavHostController? = null,
+    viewModel: GameListViewModel = viewModel()
+) {
+    var newGameName by remember { mutableStateOf(gameName ?: "") }
+
+    fun submitUpdate() {
+        gameName?.let { viewModel.updateGame(old = it, new = newGameName) }
+        navController?.popBackStack()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -36,28 +52,34 @@ fun GameDetailScreen(gameName: String?, navController: NavHostController? = null
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(4.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("상세 화면", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(12.dp))
+            Column(modifier = Modifier.padding(24.dp)) {
                 Text(
-                    gameName ?: "알 수 없는 게임",
-                    style = MaterialTheme.typography.headlineSmall
+                    text = "게임 이름 수정",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                TextField(
+                    value = newGameName,
+                    onValueChange = { newGameName = it },
+                    label = { Text("게임 이름") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardActions = KeyboardActions(
+                        onDone = { submitUpdate() }
+                    )
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { navController?.popBackStack() }) {
-            Row {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "뒤로 가기"
-                )
-                Text("뒤로 가기")
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(onClick = {
+                navController?.popBackStack()  // 수정 없이 복귀
+            }) {
+                Text("취소")
+            }
+            Button(onClick = { submitUpdate() }) {
+                Text("저장")
             }
         }
     }

@@ -1,7 +1,9 @@
 package com.kurt.bgmate
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,8 +17,13 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
     ) {
         composable(Screen.GameList.route) { GameListScreen(navController = navController) }
         composable(Screen.GameDetail.route) { backStackEntry ->
+            val gameListBackStackEntry = remember(navController) {
+                navController.getBackStackEntry(Screen.GameList.route)
+            }
+            val viewModel: GameListViewModel = viewModel(gameListBackStackEntry)
+
             val gameName = backStackEntry.arguments?.getString("gameName")
-            GameDetailScreen(gameName = gameName, navController = navController)
+            GameDetailScreen(gameName = gameName, navController = navController, viewModel)
         }
     }
 }
