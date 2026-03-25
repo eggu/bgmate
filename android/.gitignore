@@ -13,3 +13,38 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Android Studio / IntelliJ
+/.idea/*
+!/.idea/.gitignore
+!/.idea/codeStyles/
+!/.idea/codeStyles/*
+!/.idea/runConfigurations/
+!/.idea/runConfigurations/*
+
+# Module / build outputs
+**/build/
+out/
+
+# Kotlin / Java
+*.class
+
+# NDK / CMake
+.cxx/
+.externalNativeBuild/
+
+# Signing keys and sensitive files
+*.jks
+*.keystore
+keystore.properties
+
+# Google / Firebase local config backups
+google-services.json.bak
+google-services.json.local
+
+# Crashlytics / Fabric
+fabric.properties
+crashlytics.properties
+
+# Mac / OS files
+Thumbs.db
