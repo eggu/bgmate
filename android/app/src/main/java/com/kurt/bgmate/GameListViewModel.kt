@@ -1,5 +1,6 @@
 package com.kurt.bgmate
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,20 @@ class GameListViewModel @Inject constructor(private val repository: GameReposito
 //            initialValue = emptyList()
 //        )
 
+    init {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                _games.value = repository.fetchGames()
+            } catch (e: Exception) {
+                _error.value = e.message
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
 
     fun addGame(name: String) {
         val trimmedText = name.trim()
@@ -45,17 +60,8 @@ class GameListViewModel @Inject constructor(private val repository: GameReposito
         _games.value = repository.getGames()
     }
 
-    fun onClickLoad() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _error.value = null
-            try {
-                _games.value = repository.fetchGames()
-            } catch (e: Exception) {
-                _error.value = e.message
-            } finally {
-                _isLoading.value = false
-            }
-        }
+    fun search(query: String) {
+        Log.d("debounce", "검색어: $query")
     }
+
 }
