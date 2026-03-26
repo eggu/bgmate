@@ -25,14 +25,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 
 @Composable
 fun GameDetailScreen(
     gameName: String?,
     navController: NavHostController? = null,
-    viewModel: GameListViewModel = viewModel()
+    viewModel: GameListViewModel = hiltViewModel()
 ) {
     var newGameName by remember { mutableStateOf(gameName ?: "") }
 
@@ -88,5 +88,6 @@ fun GameDetailScreen(
 @Preview
 @Composable
 fun PreviewGameDetailScreen() {
-    GameDetailScreen("카탄")
+    val previewViewModel = GameListViewModel(repository = GameRepository())
+    GameDetailScreen("카탄", viewModel = previewViewModel)
 }

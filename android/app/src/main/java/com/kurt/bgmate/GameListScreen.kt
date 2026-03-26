@@ -33,13 +33,13 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 
 @Composable
 fun GameListScreen(
     navController: NavController? = null,
-    viewModel: GameListViewModel = viewModel()
+    viewModel: GameListViewModel = hiltViewModel()
 ) {
     val games by viewModel.games.collectAsState()
     var newGameName by remember { mutableStateOf("") }
@@ -106,5 +106,6 @@ fun GameListScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewGameListScreen() {
-    GameListScreen()
+    val previewViewModel = GameListViewModel(repository = GameRepository())
+    GameListScreen(navController = null, viewModel = previewViewModel)
 }

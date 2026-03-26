@@ -1,12 +1,14 @@
 package com.kurt.bgmate
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class GameListViewModel : ViewModel() {
-    private val repository = GameRepository()
+@HiltViewModel
+class GameListViewModel @Inject constructor(private val repository: GameRepository) : ViewModel() {
 
     private val _games = MutableStateFlow<List<String>>(emptyList())
     val games: StateFlow<List<String>> = _games.asStateFlow()

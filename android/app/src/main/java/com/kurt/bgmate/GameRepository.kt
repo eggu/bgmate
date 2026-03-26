@@ -1,6 +1,8 @@
 package com.kurt.bgmate
 
-class GameRepository {
+import javax.inject.Inject
+
+class GameRepository @Inject constructor() {
     private val games = mutableListOf<String>()
 
     fun getGames(): List<String> = games.toList()
