@@ -96,20 +96,20 @@ fun GameListScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                navController?.navigate("detail/${game}") {
+                                navController?.navigate("detail/${game.name}") {
                                     launchSingleTop = true
                                 }
                             }
                             .padding(vertical = 12.dp, horizontal = 4.dp)
                     ) {
                         Text(
-                            text = game, modifier = Modifier
+                            text = game.name, modifier = Modifier
                                 .weight(1f)
                                 .padding(vertical = 8.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        Button(onClick = { viewModel.removeGame(game) }) {
+                        Button(onClick = { viewModel.removeGame(game.name) }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = "삭제"
