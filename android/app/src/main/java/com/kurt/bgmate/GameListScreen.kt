@@ -20,10 +20,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +57,7 @@ fun GameListScreen(
         newGameName = ""
     }
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val error by viewModel.error.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.padding(16.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -87,8 +88,17 @@ fun GameListScreen(
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { viewModel.onClickLoad() }, enabled = !isLoading) {
-            Text("불러오기")
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Button(onClick = { viewModel.onClickLoad() }, enabled = !isLoading) {
+                Text("불러오기")
+            }
+            if (error != null) {
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = error!!,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
 
         Box(modifier = Modifier.fillMaxSize()) {

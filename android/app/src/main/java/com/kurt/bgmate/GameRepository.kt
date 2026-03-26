@@ -38,6 +38,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
     override suspend fun fetchGames(): List<String> {
         delay(1000)
+        if (Math.random() > 0.5) throw Exception("Failed to fetch games")
         return listOf("카탄", "아줄", "윙스팬")
     }
 
