@@ -1,11 +1,7 @@
 package com.kurt.bgmate.data.repository
 
-import android.util.Log
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.repository.GameRepository
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GameRepositoryImpl @Inject constructor() : GameRepository {
@@ -29,7 +25,6 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
     }
 
     override suspend fun fetchGames(): List<BoardGame> {
-        delay(1000)
         if (Math.random() > 0.5) throw Exception("Failed to fetch games")
         return listOf(BoardGame(1, "카탄",), BoardGame(2, "아줄",), BoardGame(3, "윙스팬",))
     }
