@@ -27,18 +27,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.preview.PreviewDummy
 
 @Composable
 fun GameDetailScreen(
-    gameName: String?,
+    id: Int?,
     navController: NavHostController? = null,
     viewModel: GameListViewModel = hiltViewModel()
 ) {
-    var newGameName by remember { mutableStateOf(gameName ?: "") }
+    val game by remember { mutableStateOf(viewModel.getGameById(id)) }
+    var newGameName by remember { mutableStateOf(game?.name ?: "알 수 없는") }
 
     fun submitUpdate() {
-        gameName?.let { viewModel.updateGame(old = it, new = newGameName) }
+        id?.let { viewModel.updateGame(BoardGame(id, newGameName)) }
         navController?.popBackStack()
     }
 
@@ -90,7 +92,7 @@ fun GameDetailScreen(
 @Composable
 fun PreviewGameDetailScreen() {
     GameDetailScreen(
-        gameName = "카탄",
+        1,
         viewModel = PreviewDummy.createGameListViewModel(),
     )
 }

@@ -41,24 +41,26 @@ class GameListViewModel @Inject constructor(
     fun addGame(name: String) {
         val trimmedText = name.trim()
         if (trimmedText.isBlank()) return
-        repository.addGame(trimmedText)
+        repository.addGame(BoardGame((Math.random() * 10000).toInt(), name))
         _games.value = repository.getGames()
     }
 
-    fun removeGame(name: String) {
-        repository.removeGame(name)
+    fun removeGame(game: BoardGame) {
+        repository.removeGame(game)
         _games.value = repository.getGames()
     }
 
-    fun updateGame(old: String, new: String) {
-        val trimmed = new.trim()
-        if (trimmed.isBlank()) return
-        repository.updateGame(old, trimmed)
+    fun updateGame(updatedGame: BoardGame) {
+        repository.updateGame(updatedGame)
         _games.value = repository.getGames()
     }
 
     fun search(query: String) {
         Log.d("debounce", "검색어: $query")
+    }
+
+    fun getGameById(id: Int?): BoardGame? {
+        return _games.value.find { it.id == id }
     }
 }
 

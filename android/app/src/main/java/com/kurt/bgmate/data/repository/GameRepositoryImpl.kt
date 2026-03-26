@@ -13,34 +13,34 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
     override fun getGames(): List<BoardGame> = games.toList()
 
-    override fun addGame(name: String) {
-        games.add(BoardGame(name))
+    override fun addGame(game: BoardGame) {
+        games.add(game)
     }
 
-    override fun removeGame(name: String) {
-        games.removeIf { it.name == name }
+    override fun removeGame(game: BoardGame) {
+        games.remove(game)
     }
 
-    override fun updateGame(old: String, new: String) {
-        val index = games.indexOfFirst { it.name == old }
+    override fun updateGame(game: BoardGame) {
+        val index = games.indexOfFirst { it.id == game.id }
         if (index != -1) {
-            games[index] = BoardGame(new)
+            games[index] = game
         }
     }
 
     override suspend fun fetchGames(): List<BoardGame> {
         delay(1000)
         if (Math.random() > 0.5) throw Exception("Failed to fetch games")
-        return listOf(BoardGame("카탄"), BoardGame("아줄"), BoardGame("윙스팬"))
+        return listOf(BoardGame(1, "카탄",), BoardGame(2, "아줄",), BoardGame(3, "윙스팬",))
     }
 
-    override fun observeGames(): Flow<List<BoardGame>> = flow {
-        var count = 1
-        while (true) {
-            Log.d("Flow", "emit: count=$count")
-            emit(List(count++) { BoardGame("Game $it") })
-            delay(3000)
-        }
-    }
+//    override fun observeGames(): Flow<List<BoardGame>> = flow {
+//        var count = 1
+//        while (true) {
+//            Log.d("Flow", "emit: count=$count")
+//            emit(List(count++) { BoardGame("Game $it",) })
+//            delay(3000)
+//        }
+//    }
 }
 
