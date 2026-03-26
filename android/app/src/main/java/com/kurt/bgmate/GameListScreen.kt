@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.kurt.bgmate.preview.PreviewDummy
 
 @Composable
 fun GameListScreen(
@@ -106,6 +107,8 @@ fun GameListScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewGameListScreen() {
-    val previewViewModel = GameListViewModel(repository = GameRepository())
-    GameListScreen(navController = null, viewModel = previewViewModel)
+    GameListScreen(
+        navController = null,
+        viewModel = PreviewDummy.createGameListViewModel(),
+    )
 }
