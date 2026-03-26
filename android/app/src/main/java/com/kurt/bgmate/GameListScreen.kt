@@ -41,7 +41,7 @@ fun GameListScreen(
     navController: NavController? = null,
     viewModel: GameListViewModel = viewModel()
 ) {
-    val games by viewModel.items.collectAsState()
+    val games by viewModel.games.collectAsState()
     var newGameName by remember { mutableStateOf("") }
     val submitNewGame = {
         viewModel.addGame(newGameName)

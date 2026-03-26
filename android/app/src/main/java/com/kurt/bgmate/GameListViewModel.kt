@@ -6,25 +6,27 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class GameListViewModel : ViewModel() {
+    private val repository = GameRepository()
 
-    private val _items = MutableStateFlow(listOf("윙스팬", "카탄", "백로성", "스플렌더", "버건디의 성", "사이드"))
-    val items: StateFlow<List<String>> = _items.asStateFlow()
+    private val _games = MutableStateFlow<List<String>>(emptyList())
+    val games: StateFlow<List<String>> = _games.asStateFlow()
 
     fun addGame(name: String) {
         val trimmedText = name.trim()
         if (trimmedText.isBlank()) return
-        _items.value += trimmedText
+        repository.addGame(trimmedText)
+        _games.value = repository.getGames()
     }
 
     fun removeGame(name: String) {
-        _items.value -= name
+        repository.removeGame(name)
+        _games.value = repository.getGames()
     }
 
     fun updateGame(old: String, new: String) {
         val trimmed = new.trim()
         if (trimmed.isBlank()) return
-        _items.value = _items.value.map {
-            if (it == old) trimmed else it
-        }
+        repository.updateGame(old, trimmed)
+        _games.value = repository.getGames()
     }
 }
