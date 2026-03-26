@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kurt.bgmate.preview.PreviewDummy
 
@@ -49,13 +50,13 @@ fun GameListScreen(
     navController: NavController? = null,
     viewModel: GameListViewModel = hiltViewModel()
 ) {
-    val games by viewModel.games.collectAsState()
+    val games by viewModel.games.collectAsStateWithLifecycle()
     var newGameName by remember { mutableStateOf("") }
     val submitNewGame = {
         viewModel.addGame(newGameName)
         newGameName = ""
     }
-    val isLoading by viewModel.isLoading.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.padding(16.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
