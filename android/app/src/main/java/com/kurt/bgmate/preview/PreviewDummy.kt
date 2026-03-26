@@ -1,7 +1,7 @@
 package com.kurt.bgmate.preview
 
-import com.kurt.bgmate.GameListViewModel
-import com.kurt.bgmate.GameRepositoryImpl
+import com.kurt.bgmate.presentation.GameListViewModel
+import com.kurt.bgmate.data.repository.GameRepositoryImpl
 
 /**
  * Android Studio Preview에서 Hilt가 제대로 주입되지 않는 경우를 대비한 공통 더미 헬퍼입니다.

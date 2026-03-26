@@ -1,26 +1,17 @@
-package com.kurt.bgmate
+package com.kurt.bgmate.data.repository
 
 import android.util.Log
+import com.kurt.bgmate.domain.repository.GameRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-interface GameRepository {
-    fun getGames(): List<String>
-    fun addGame(name: String)
-    fun removeGame(name: String)
-    fun updateGame(old: String, new: String)
-
-    suspend fun fetchGames(): List<String>
-
-    fun observeGames(): Flow<List<String>>
-}
-
 class GameRepositoryImpl @Inject constructor() : GameRepository {
     private val games = mutableListOf<String>()
 
     override fun getGames(): List<String> = games.toList()
+
     override fun addGame(name: String) {
         games.add(name)
     }
@@ -45,9 +36,10 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
     override fun observeGames(): Flow<List<String>> = flow {
         var count = 1
         while (true) {
-            Log.d("Flow", "emit: count=$count") // ← 백그라운드에서 멈추는지 확인
+            Log.d("Flow", "emit: count=$count")
             emit(List(count++) { "Game $it" })
             delay(3000)
         }
     }
 }
+

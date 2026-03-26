@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.kurt.bgmate.presentation.AppNavHost
 import com.kurt.bgmate.ui.theme.BGMateTheme
 import dagger.hilt.android.AndroidEntryPoint
 

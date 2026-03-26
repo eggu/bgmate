@@ -1,4 +1,4 @@
-package com.kurt.bgmate
+package com.kurt.bgmate.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -79,16 +79,15 @@ fun GameListScreen(
             )
         }
         Spacer(modifier = Modifier.width(8.dp))
-//            Button(onClick = submitNewGame) {
-//                Text("추가")
-//            }
-//        Spacer(modifier = Modifier.height(16.dp))
-//
-//        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-//            Button(onClick = { viewModel.onClickLoad() }, enabled = !isLoading) {
-//                Text("불러오기")
-//            }
-//        }
+        //        Button(onClick = submitNewGame) {
+        //            Text("추가")
+        //        }
+        //        Spacer(modifier = Modifier.height(16.dp))
+        //        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        //            Button(onClick = { viewModel.onClickLoad() }, enabled = !isLoading) {
+        //                Text("불러오기")
+        //            }
+        //        }
 
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn {
@@ -101,8 +100,8 @@ fun GameListScreen(
                                     launchSingleTop = true
                                 }
                             }
-                            .padding(vertical = 12.dp, horizontal = 4.dp)) {
-
+                            .padding(vertical = 12.dp, horizontal = 4.dp)
+                    ) {
                         Text(
                             text = game, modifier = Modifier
                                 .weight(1f)
@@ -132,8 +131,8 @@ fun GameListScreen(
                                     event.changes.forEach { it.consume() } // 터치/클릭 이벤트 소비
                                 }
                             }
-                        }) {
-
+                        }
+                ) {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -141,7 +140,6 @@ fun GameListScreen(
             }
         }
     }
-
 }
 
 @Preview(showBackground = true)
@@ -152,3 +150,4 @@ fun PreviewGameListScreen() {
         viewModel = PreviewDummy.createGameListViewModel(),
     )
 }
+

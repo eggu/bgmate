@@ -1,4 +1,4 @@
-package com.kurt.bgmate
+package com.kurt.bgmate.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -94,3 +94,4 @@ fun PreviewGameDetailScreen() {
         viewModel = PreviewDummy.createGameListViewModel(),
     )
 }
+

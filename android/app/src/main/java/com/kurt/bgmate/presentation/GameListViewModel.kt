@@ -1,8 +1,9 @@
-package com.kurt.bgmate
+package com.kurt.bgmate.presentation
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kurt.bgmate.domain.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +12,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class GameListViewModel @Inject constructor(private val repository: GameRepository) : ViewModel() {
+class GameListViewModel @Inject constructor(
+    private val repository: GameRepository
+) : ViewModel() {
 
     private val _games = MutableStateFlow<List<String>>(emptyList())
     val games: StateFlow<List<String>> = _games.asStateFlow()
@@ -19,12 +22,6 @@ class GameListViewModel @Inject constructor(private val repository: GameReposito
     val isLoading = _isLoading.asStateFlow()
     private val _error = MutableStateFlow<String?>(null)
     val error = _error.asStateFlow()
-//    val games = repository.observeGames()
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(5000),
-//            initialValue = emptyList()
-//        )
 
     init {
         viewModelScope.launch {
@@ -39,7 +36,6 @@ class GameListViewModel @Inject constructor(private val repository: GameReposito
             }
         }
     }
-
 
     fun addGame(name: String) {
         val trimmedText = name.trim()
@@ -63,5 +59,5 @@ class GameListViewModel @Inject constructor(private val repository: GameReposito
     fun search(query: String) {
         Log.d("debounce", "검색어: $query")
     }
-
 }
+

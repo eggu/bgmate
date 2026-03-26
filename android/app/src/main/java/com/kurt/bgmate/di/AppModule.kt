@@ -1,5 +1,7 @@
-package com.kurt.bgmate
+package com.kurt.bgmate.di
 
+import com.kurt.bgmate.data.repository.GameRepositoryImpl
+import com.kurt.bgmate.domain.repository.GameRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,3 +15,4 @@ object AppModule {
     @Singleton
     fun provideGameRepository(): GameRepository = GameRepositoryImpl()
 }
+
