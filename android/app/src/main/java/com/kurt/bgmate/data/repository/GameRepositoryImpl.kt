@@ -1,35 +1,40 @@
 package com.kurt.bgmate.data.repository
 
+import com.kurt.bgmate.data.local.BoardGameDao
+import com.kurt.bgmate.data.local.BoardGameEntity
+import com.kurt.bgmate.data.local.toDomain
 import com.kurt.bgmate.data.remote.BggRemoteDataSource
 import com.kurt.bgmate.data.remote.BggXmlParser
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.repository.GameRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class GameRepositoryImpl @Inject constructor(private val bggRemoteDataSource: BggRemoteDataSource) :
+class GameRepositoryImpl @Inject constructor(
+    private val dao: BoardGameDao,
+    private val bggRemoteDataSource: BggRemoteDataSource
+) :
     GameRepository {
     private val games = mutableListOf<BoardGame>()
 
     override fun getGames(): List<BoardGame> = games.toList()
 
-    override fun addGame(game: BoardGame) {
-        games.add(game)
+    override suspend fun addGame(name: String) {
+        // 임시 ID 생성 — BGG 승인 후 실제 bggId로 교체 예정
+        val tempId = "local_${System.currentTimeMillis()}"
+        dao.insertGame(BoardGameEntity(id = tempId, name = name))
     }
 
-    override fun removeGame(game: BoardGame) {
-        games.remove(game)
+    override suspend fun removeGame(name: String) {
+       val entity =  dao.observeGames().first().first() { it.name == name }
+        dao.delete(entity)
     }
 
-    override fun updateGame(game: BoardGame) {
-        val index = games.indexOfFirst { it.id == game.id }
-        if (index != -1) {
-            games[index] = game
-        }
-    }
-
-    override suspend fun fetchGames(): List<BoardGame> {
-        games.addAll(listOf(BoardGame("1", "카탄"), BoardGame("2", "아줄"), BoardGame("3", "윙스팬")))
-        return games
+    override suspend fun updateGame(old: String, new: String) {
+        val entity =  dao.observeGames().first().first() { it.name == old } ?: return
+        dao.updateGameName(entity.id, new)
     }
 
     override suspend fun searchGames(query: String): List<BoardGame> {
@@ -37,13 +42,6 @@ class GameRepositoryImpl @Inject constructor(private val bggRemoteDataSource: Bg
         return BggXmlParser.parseSearchResult(xml).map { BoardGame(it.id, it.name) }
     }
 
-//    override fun observeGames(): Flow<List<BoardGame>> = flow {
-//        var count = 1
-//        while (true) {
-//            Log.d("Flow", "emit: count=$count")
-//            emit(List(count++) { BoardGame("Game $it",) })
-//            delay(3000)
-//        }
-//    }
+    override fun observeGames(): Flow<List<BoardGame>> = dao.observeGames().map { list -> list.map { it.toDomain() } }
 }
 

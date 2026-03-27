@@ -1,6 +1,9 @@
 package com.kurt.bgmate.di
 
 import android.content.Context
+import androidx.room.Room
+import com.kurt.bgmate.data.local.BoardGameDao
+import com.kurt.bgmate.data.local.BoardGameDatabase
 import com.kurt.bgmate.data.remote.BggApiService
 import com.kurt.bgmate.data.remote.BggRemoteDataSource
 import com.kurt.bgmate.data.repository.GameRepositoryImpl
@@ -52,7 +55,18 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGameRepository(remoteDataSource: BggRemoteDataSource): GameRepository =
-        GameRepositoryImpl(remoteDataSource)
+    fun provideGameRepository(
+        dao: BoardGameDao,
+        remoteDataSource: BggRemoteDataSource
+    ): GameRepository =
+        GameRepositoryImpl(dao, remoteDataSource)
+
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): BoardGameDatabase =
+        Room.databaseBuilder(context, BoardGameDatabase::class.java, "bgmate.db").build()
+
+    @Provides
+    fun provideGameDao(database: BoardGameDatabase) = database.gameDao()
 }
 

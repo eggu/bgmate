@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.preview.PreviewDummy
 
 @Composable
@@ -41,7 +40,7 @@ fun GameDetailScreen(
     var newGameName by remember { mutableStateOf(game?.name ?: "알 수 없는") }
 
     fun submitUpdate() {
-        id?.let { viewModel.updateGame(BoardGame(id, newGameName)) }
+        game?.let { viewModel.updateGame(it.name, newGameName) }
         navController?.popBackStack()
     }
 
