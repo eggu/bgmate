@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -147,7 +148,7 @@ fun GameListScreen(
 fun PreviewGameListScreen() {
     GameListScreen(
         navController = null,
-        viewModel = PreviewDummy.createGameListViewModel(),
+        viewModel = PreviewDummy.createGameListViewModel(LocalContext.current),
     )
 }
 

@@ -26,7 +26,7 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
                 Screen.GameList.route
             )
 
-            val id = backStackEntry.arguments?.getString("id")?.toInt()
+            val id = backStackEntry.arguments?.getString("id")
             GameDetailScreen(id, navController = navController, viewModel)
         }
     }

@@ -1,10 +1,13 @@
 package com.kurt.bgmate.data.repository
 
+import com.kurt.bgmate.data.remote.BggRemoteDataSource
+import com.kurt.bgmate.data.remote.BggXmlParser
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.repository.GameRepository
 import javax.inject.Inject
 
-class GameRepositoryImpl @Inject constructor() : GameRepository {
+class GameRepositoryImpl @Inject constructor(private val bggRemoteDataSource: BggRemoteDataSource) :
+    GameRepository {
     private val games = mutableListOf<BoardGame>()
 
     override fun getGames(): List<BoardGame> = games.toList()
@@ -25,7 +28,13 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
     }
 
     override suspend fun fetchGames(): List<BoardGame> {
-        return listOf(BoardGame(1, "카탄",), BoardGame(2, "아줄",), BoardGame(3, "윙스팬",))
+        games.addAll(listOf(BoardGame("1", "카탄"), BoardGame("2", "아줄"), BoardGame("3", "윙스팬")))
+        return games
+    }
+
+    override suspend fun searchGames(query: String): List<BoardGame> {
+        val xml = bggRemoteDataSource.searchGames(query)
+        return BggXmlParser.parseSearchResult(xml).map { BoardGame(it.id, it.name) }
     }
 
 //    override fun observeGames(): Flow<List<BoardGame>> = flow {

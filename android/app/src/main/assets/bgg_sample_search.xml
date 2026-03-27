@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items total="5" termsofuse="https://boardgamegeek.com/xmlapi/termsofuse" page="1">
+    <item type="boardgame" id="13">
+        <name type="primary" sortindex="1" value="Catan"/>
+        <yearpublished value="1995"/>
+    </item>
+    <item type="boardgame" id="396790">
+        <name type="primary" sortindex="1" value="Catan: 3D Edition"/>
+        <yearpublished value="2021"/>
+    </item>
+    <item type="boardgame" id="522">
+        <name type="primary" sortindex="1" value="Catan Card Game"/>
+        <yearpublished value="1996"/>
+    </item>
+    <item type="boardgame" id="42">
+        <name type="primary" sortindex="1" value="Tigris &amp; Euphrates"/>
+        <yearpublished value="1997"/>
+    </item>
+    <item type="boardgame" id="174430">
+        <name type="primary" sortindex="1" value="Gloomhaven"/>
+        <yearpublished value="2017"/>
+    </item>
+</items>

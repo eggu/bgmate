@@ -10,6 +10,8 @@ interface GameRepository {
 
     suspend fun fetchGames(): List<BoardGame>
 
+    suspend fun searchGames(query: String): List<BoardGame>
+
 //    fun observeGames(): Flow<List<BoardGame>>
 }
 

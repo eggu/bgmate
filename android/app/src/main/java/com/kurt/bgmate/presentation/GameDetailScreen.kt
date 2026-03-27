@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,7 +33,7 @@ import com.kurt.bgmate.preview.PreviewDummy
 
 @Composable
 fun GameDetailScreen(
-    id: Int?,
+    id: String?,
     navController: NavHostController? = null,
     viewModel: GameListViewModel = hiltViewModel()
 ) {
@@ -92,8 +93,8 @@ fun GameDetailScreen(
 @Composable
 fun PreviewGameDetailScreen() {
     GameDetailScreen(
-        1,
-        viewModel = PreviewDummy.createGameListViewModel(),
+        1.toString(),
+        viewModel = PreviewDummy.createGameListViewModel(LocalContext.current),
     )
 }
 
