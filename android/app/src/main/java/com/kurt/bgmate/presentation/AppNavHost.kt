@@ -3,7 +3,7 @@ package com.kurt.bgmate.presentation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,10 +21,7 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
                 navController.getBackStackEntry(Screen.GameList.route)
             }
 
-            val viewModel: GameListViewModel = hiltViewModel(
-                gameListBackStackEntry,
-                Screen.GameList.route
-            )
+            val viewModel: GameListViewModel = hiltViewModel(gameListBackStackEntry)
 
             val id = backStackEntry.arguments?.getString("id")
             GameDetailScreen(id, navController = navController, viewModel)
