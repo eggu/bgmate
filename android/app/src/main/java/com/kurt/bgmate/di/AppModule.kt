@@ -64,7 +64,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): BoardGameDatabase =
-        Room.databaseBuilder(context, BoardGameDatabase::class.java, "bgmate.db").build()
+        Room.databaseBuilder(context, BoardGameDatabase::class.java, "bgmate.db")
+            .fallbackToDestructiveMigration(true)
+            .build()
 
     @Provides
     fun provideGameDao(database: BoardGameDatabase) = database.gameDao()

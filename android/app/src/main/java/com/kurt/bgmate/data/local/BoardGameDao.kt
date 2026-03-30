@@ -13,7 +13,7 @@ interface BoardGameDao {
     @Query("SELECT * FROM board_games ORDER BY addedAt DESC")
     fun observeGames(): Flow<List<BoardGameEntity>>
 
-    @Query("SELECT * FROM board_games WHERE id = :id")
+    @Query("SELECT * FROM board_games WHERE bggId = :id")
     suspend fun getGameById(id: String): BoardGameEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -25,9 +25,9 @@ interface BoardGameDao {
     @Delete
     suspend fun delete(game: BoardGameEntity)
 
-    @Query("DELETE FROM board_games WHERE id = :id")
+    @Query("DELETE FROM board_games WHERE bggId = :id")
     suspend fun deleteGameById(id: String)
 
-    @Query("UPDATE board_games SET name = :name WHERE id = :id")
+    @Query("UPDATE board_games SET name = :name WHERE bggId = :id")
     suspend fun updateGameName(id: String, name: String)
 }

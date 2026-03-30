@@ -24,7 +24,7 @@ class GameRepositoryImpl @Inject constructor(
     override suspend fun addGame(name: String) {
         // 임시 ID 생성 — BGG 승인 후 실제 bggId로 교체 예정
         val tempId = "local_${System.currentTimeMillis()}"
-        dao.insertGame(BoardGameEntity(id = tempId, name = name))
+        dao.insertGame(BoardGameEntity(bggId = tempId, name = name))
     }
 
     override suspend fun removeGame(name: String) {
@@ -34,7 +34,7 @@ class GameRepositoryImpl @Inject constructor(
 
     override suspend fun updateGame(old: String, new: String) {
         val entity =  dao.observeGames().first().first() { it.name == old } ?: return
-        dao.updateGameName(entity.id, new)
+        dao.updateGameName(entity.bggId, new)
     }
 
     override suspend fun searchGames(query: String): List<BoardGame> {
