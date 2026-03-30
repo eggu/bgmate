@@ -42,6 +42,10 @@ class GameRepositoryImpl @Inject constructor(
         return BggXmlParser.parseSearchResult(xml).map { BoardGame(it.id, it.name) }
     }
 
+    override suspend fun getGameById(id: String): BoardGame? {
+        return dao.getGameById(id = id)?.toDomain()
+    }
+
     override fun observeGames(): Flow<List<BoardGame>> = dao.observeGames().map { list -> list.map { it.toDomain() } }
 }
 

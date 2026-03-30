@@ -89,7 +89,7 @@ class GameListViewModel @Inject constructor(
     }
 
     fun getGameById(id: String?): BoardGame? {
-        return games.value.find { it.id == id }
+        return games.value.find { it.bggId == id }
     }
 }
 

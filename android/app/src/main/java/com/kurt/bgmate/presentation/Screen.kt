@@ -7,5 +7,13 @@ sealed class Screen(val route: String) {
             const val route: String = "detail/{id}"
         }
     }
+
+    data class ScoreTracker(val bggId: String) : Screen("score_tracker/$bggId") {
+        companion object {
+            const val route: String = "score_tracker/{bggId}"
+        }
+
+        fun createRoute() = "score_tracker/$bggId"
+    }
 }
 

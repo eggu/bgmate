@@ -70,5 +70,8 @@ object AppModule {
 
     @Provides
     fun provideGameDao(database: BoardGameDatabase) = database.gameDao()
+
+    @Provides
+    fun provideSessionDao(database: BoardGameDatabase) = database.sessionDao()
 }
 

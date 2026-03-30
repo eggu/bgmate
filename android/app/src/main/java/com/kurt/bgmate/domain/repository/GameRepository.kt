@@ -11,6 +11,8 @@ interface GameRepository {
 
     suspend fun searchGames(query: String): List<BoardGame>
 
+    suspend fun getGameById(id: String): BoardGame?
+
     fun observeGames(): Flow<List<BoardGame>>
 }
 

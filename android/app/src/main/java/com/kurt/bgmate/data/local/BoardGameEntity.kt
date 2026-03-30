@@ -21,14 +21,14 @@ data class BoardGameEntity(
 }
 
 fun BoardGameEntity.toDomain() = BoardGame(
-    id = bggId,
+    bggId = bggId,
     name = name,
     yearPublished = yearPublished,
     thumbnailUrl = thumbnailUrl,
 )
 
 fun BoardGame.toEntity() = BoardGameEntity(
-    bggId = id,
+    bggId = bggId,
     name = name,
     yearPublished = yearPublished,
     thumbnailUrl = thumbnailUrl,

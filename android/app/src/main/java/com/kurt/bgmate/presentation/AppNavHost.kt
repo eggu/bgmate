@@ -3,10 +3,13 @@ package com.kurt.bgmate.presentation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.kurt.bgmate.presentation.scoretracker.ScoreTrackerScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -25,6 +28,12 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
 
             val id = backStackEntry.arguments?.getString("id")
             GameDetailScreen(id, navController = navController, viewModel)
+        }
+        composable(
+            Screen.ScoreTracker("{bggId}").createRoute(),
+            arguments = listOf(navArgument("bggId") { type = NavType.StringType })
+        ) {
+            ScoreTrackerScreen { navController.popBackStack() }
         }
     }
 }

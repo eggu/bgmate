@@ -144,7 +144,7 @@ fun GameListContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                navController?.navigate("detail/${game.id}") {
+                                navController?.navigate(Screen.ScoreTracker(game.bggId).createRoute()) {
                                     launchSingleTop = true
                                 }
                             }
