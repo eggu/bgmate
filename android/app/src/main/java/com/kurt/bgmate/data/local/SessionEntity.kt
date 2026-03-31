@@ -21,7 +21,8 @@ import com.kurt.bgmate.domain.model.ScoreSession
 data class SessionEntity(
     @PrimaryKey(autoGenerate = true) val sessionId: Long,
     val bggId: String,
-    val playedAt: Long = System.currentTimeMillis()
+    val playedAt: Long = System.currentTimeMillis(),
+    val gameName: String,
 ) {
     companion object {
         const val COL_SESSION_ID = "sessionId"
@@ -33,13 +34,11 @@ fun ScoreSession.toSessionEntity(): SessionEntity {
     return SessionEntity(
         sessionId = 0,
         bggId = game.bggId,
-        playedAt = System.currentTimeMillis()
+        gameName = game.name,
     )
 }
 
-fun PlayerScore.toPlayerEntity(sessionId: Long): PlayerEntity = PlayerEntity(
-    playerId = 0,
-    sessionId = sessionId,
+fun PlayerScore.toPlayerEntity(): PlayerEntity = PlayerEntity(
     name = name
 )
 

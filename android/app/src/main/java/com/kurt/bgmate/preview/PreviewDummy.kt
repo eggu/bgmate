@@ -17,7 +17,8 @@ object PreviewDummy {
         val db = Room.inMemoryDatabaseBuilder(context, BoardGameDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        val repository = GameRepositoryImpl(db.gameDao(), BggRemoteDataSource(context))
+        val repository =
+            GameRepositoryImpl(db.gameDao(), db.sessionDao(), BggRemoteDataSource(context))
         val viewModel = GameListViewModel(repository = repository)
         // ViewModel의 StateFlow은 add/remove/update에서 갱신되므로 미리 seed를 넣습니다.
         previewGames.forEach { viewModel.addGame(it) }

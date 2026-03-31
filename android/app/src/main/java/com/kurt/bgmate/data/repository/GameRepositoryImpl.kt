@@ -2,10 +2,12 @@ package com.kurt.bgmate.data.repository
 
 import com.kurt.bgmate.data.local.BoardGameDao
 import com.kurt.bgmate.data.local.BoardGameEntity
+import com.kurt.bgmate.data.local.SessionDao
 import com.kurt.bgmate.data.local.toDomain
 import com.kurt.bgmate.data.remote.BggRemoteDataSource
 import com.kurt.bgmate.data.remote.BggXmlParser
 import com.kurt.bgmate.domain.model.BoardGame
+import com.kurt.bgmate.domain.model.ScoreSession
 import com.kurt.bgmate.domain.repository.GameRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -13,7 +15,8 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GameRepositoryImpl @Inject constructor(
-    private val dao: BoardGameDao,
+    private val gameDao: BoardGameDao,
+    val sessionDao: SessionDao,
     private val bggRemoteDataSource: BggRemoteDataSource
 ) :
     GameRepository {
@@ -24,17 +27,17 @@ class GameRepositoryImpl @Inject constructor(
     override suspend fun addGame(name: String) {
         // 임시 ID 생성 — BGG 승인 후 실제 bggId로 교체 예정
         val tempId = "local_${System.currentTimeMillis()}"
-        dao.insertGame(BoardGameEntity(bggId = tempId, name = name))
+        gameDao.insertGame(BoardGameEntity(bggId = tempId, name = name))
     }
 
     override suspend fun removeGame(name: String) {
-       val entity =  dao.observeGames().first().first() { it.name == name }
-        dao.delete(entity)
+       val entity =  gameDao.observeGames().first().first() { it.name == name }
+        gameDao.delete(entity)
     }
 
     override suspend fun updateGame(old: String, new: String) {
-        val entity =  dao.observeGames().first().first() { it.name == old } ?: return
-        dao.updateGameName(entity.bggId, new)
+        val entity =  gameDao.observeGames().first().first() { it.name == old } ?: return
+        gameDao.updateGameName(entity.bggId, new)
     }
 
     override suspend fun searchGames(query: String): List<BoardGame> {
@@ -43,9 +46,15 @@ class GameRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getGameById(id: String): BoardGame? {
-        return dao.getGameById(id = id)?.toDomain()
+        return gameDao.getGameById(id = id)?.toDomain()
     }
 
-    override fun observeGames(): Flow<List<BoardGame>> = dao.observeGames().map { list -> list.map { it.toDomain() } }
+    override fun observeGames(): Flow<List<BoardGame>> = gameDao.observeGames().map { list -> list.map { it.toDomain() } }
+
+    override fun observeSessionHistory(): Flow<List<ScoreSession>> =
+        sessionDao.observeAllSessions().map { list -> list.map { it.toDomain() } }
+
+    override suspend fun getSessionById(sessionId: Long): ScoreSession? =
+        sessionDao.getSessionWithDetails(sessionId)?.toDomain()
 }
 

@@ -7,6 +7,9 @@ import androidx.room.PrimaryKey
 import com.kurt.bgmate.data.local.PlayerEntity.Companion.COL_PLAYER_ID
 import com.kurt.bgmate.data.local.ScoreEntryEntity.Companion.TABLE_NAME
 import com.kurt.bgmate.data.local.SessionEntity.Companion.COL_SESSION_ID
+import com.kurt.bgmate.domain.model.BoardGame
+import com.kurt.bgmate.domain.model.PlayerScore
+import com.kurt.bgmate.domain.model.ScoreSession
 
 @Entity(
     tableName = TABLE_NAME,

@@ -9,6 +9,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.kurt.bgmate.presentation.history.SessionDetailScreen
+import com.kurt.bgmate.presentation.history.SessionHistoryScreen
 import com.kurt.bgmate.presentation.scoretracker.ScoreTrackerScreen
 
 @Composable
@@ -30,11 +32,21 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
             GameDetailScreen(id, navController = navController, viewModel)
         }
         composable(
-            Screen.ScoreTracker("{bggId}").createRoute(),
+            Screen.ScoreTracker.route,
             arguments = listOf(navArgument("bggId") { type = NavType.StringType })
         ) {
             ScoreTrackerScreen { navController.popBackStack() }
         }
+        composable(Screen.SessionHistory.route) {
+            SessionHistoryScreen(onSessionClick = { sessionId ->
+                navController.navigate(Screen.SessionDetail(sessionId).createRoute())
+            }, onNavigateBack = { navController.popBackStack() })
+        }
+        composable(
+            Screen.SessionDetail.route,
+            arguments = listOf(navArgument("sessionId") { type = NavType.LongType })
+        ) {
+            SessionDetailScreen(onNavigateBack = { navController.popBackStack() })
+        }
     }
 }
-

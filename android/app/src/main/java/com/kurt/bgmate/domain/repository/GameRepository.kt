@@ -1,6 +1,7 @@
 package com.kurt.bgmate.domain.repository
 
 import com.kurt.bgmate.domain.model.BoardGame
+import com.kurt.bgmate.domain.model.ScoreSession
 import kotlinx.coroutines.flow.Flow
 
 interface GameRepository {
@@ -14,5 +15,8 @@ interface GameRepository {
     suspend fun getGameById(id: String): BoardGame?
 
     fun observeGames(): Flow<List<BoardGame>>
+
+    fun observeSessionHistory(): Flow<List<ScoreSession>>
+    suspend fun getSessionById(sessionId: Long): ScoreSession?
 }
 

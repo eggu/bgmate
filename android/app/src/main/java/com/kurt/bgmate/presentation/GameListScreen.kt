@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
@@ -31,6 +32,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,6 +58,7 @@ import com.kurt.bgmate.preview.PreviewDummy
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameListScreen(
     navController: NavController? = null,
@@ -64,6 +67,14 @@ fun GameListScreen(
     val showAddSheet by viewModel.showAddSheet.collectAsStateWithLifecycle()
 
     Scaffold(
+        topBar = {
+            TopAppBar(title = { Text(text = "게임 목록") }, actions = {
+                IconButton(onClick = { navController?.navigate(Screen.SessionHistory.route) }) {
+                    Icon(Icons.AutoMirrored.Default.List, contentDescription = "전적 기록")
+                }
+            })
+
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = viewModel::openAddSheet) {
                 Icon(Icons.Default.Add, contentDescription = "게임 추가")
@@ -144,7 +155,9 @@ fun GameListContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                navController?.navigate(Screen.ScoreTracker(game.bggId).createRoute()) {
+                                navController?.navigate(
+                                    Screen.ScoreTracker(game.bggId).createRoute()
+                                ) {
                                     launchSingleTop = true
                                 }
                             }

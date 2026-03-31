@@ -13,8 +13,8 @@ interface SessionDao {
     @Insert
     suspend fun insertSession(session: SessionEntity): Long
 
-    @Insert
-    suspend fun insertPlayer(player: PlayerEntity): Long
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPlayerIfNotExists(player: PlayerEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertScore(scoreEntry: ScoreEntryEntity)
@@ -27,6 +27,10 @@ interface SessionDao {
     @Query("SELECT * FROM sessions WHERE sessionId = :sessionId")
     suspend fun getSessionWithDetails(sessionId: Long): SessionWithDetails?
 
+    @Query("SELECT * FROM players WHERE name = :name")
+    suspend fun getPlayerByName(name: String): PlayerEntity
+
+
     @Query("DELETE FROM sessions WHERE sessionId = :sessionId")
     suspend fun deleteSession(sessionId: Long)
 
@@ -37,9 +41,10 @@ interface SessionDao {
         scores: List<ScoreEntryEntity>
     ) {
         val sessionId = insertSession(session)
-        val playerIds = players.map { player -> insertPlayer(player.copy(sessionId = sessionId)) }
-        scores.forEachIndexed { index, score ->
-            insertScore(score.copy(playerId = playerIds[index], sessionId = sessionId))
+        players.forEachIndexed { index, playerEntity ->
+            insertPlayerIfNotExists(playerEntity)
+            val playerId = getPlayerByName(playerEntity.name).playerId
+            insertScore(scores[index].copy(playerId = playerId, sessionId = sessionId))
         }
     }
 }

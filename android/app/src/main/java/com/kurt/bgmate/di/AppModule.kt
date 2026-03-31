@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.kurt.bgmate.data.local.BoardGameDao
 import com.kurt.bgmate.data.local.BoardGameDatabase
+import com.kurt.bgmate.data.local.SessionDao
 import com.kurt.bgmate.data.remote.BggApiService
 import com.kurt.bgmate.data.remote.BggRemoteDataSource
 import com.kurt.bgmate.data.repository.GameRepositoryImpl
@@ -56,10 +57,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideGameRepository(
-        dao: BoardGameDao,
+        gameDao: BoardGameDao,
+        sessionDao: SessionDao,
         remoteDataSource: BggRemoteDataSource
     ): GameRepository =
-        GameRepositoryImpl(dao, remoteDataSource)
+        GameRepositoryImpl(gameDao, sessionDao, remoteDataSource)
 
     @Provides
     @Singleton

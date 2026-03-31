@@ -64,7 +64,8 @@ class ScoreTrackerViewModel @Inject constructor(
                             playerId = index.toLong(),
                             name = name
                         )
-                    }
+                    },
+                    playedAt = System.currentTimeMillis()
                 )
             }
         }
@@ -89,7 +90,7 @@ class ScoreTrackerViewModel @Inject constructor(
             try {
                 sessionDao.insertSessionWithPlayers(
                     session = current.toSessionEntity(),
-                    players = current.players.map { it.toPlayerEntity(0) },
+                    players = current.players.map { it.toPlayerEntity() },
                     scores = current.players.map { it.toScoreEntryEntity(0) }
                 )
                 _isFinished.update { true }
