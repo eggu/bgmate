@@ -6,6 +6,8 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.kurt.bgmate.data.local.BoardGameEntity.Companion.COL_BGG_ID
 import com.kurt.bgmate.data.local.SessionEntity.Companion.TABLE_NAME
+import com.kurt.bgmate.domain.model.PlayerScore
+import com.kurt.bgmate.domain.model.ScoreSession
 
 
 @Entity(
@@ -26,3 +28,24 @@ data class SessionEntity(
         const val TABLE_NAME = "sessions"
     }
 }
+
+fun ScoreSession.toSessionEntity(): SessionEntity {
+    return SessionEntity(
+        sessionId = 0,
+        bggId = game.bggId,
+        playedAt = System.currentTimeMillis()
+    )
+}
+
+fun PlayerScore.toPlayerEntity(sessionId: Long): PlayerEntity = PlayerEntity(
+    playerId = 0,
+    sessionId = sessionId,
+    name = name
+)
+
+fun PlayerScore.toScoreEntryEntity(sessionId: Long): ScoreEntryEntity = ScoreEntryEntity(
+    entryId = 0,
+    sessionId = sessionId,
+    playerId = 0,
+    score = totalScore
+)

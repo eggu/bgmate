@@ -5,6 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kurt.bgmate.data.local.SessionDao
+import com.kurt.bgmate.data.local.toPlayerEntity
+import com.kurt.bgmate.data.local.toScoreEntryEntity
+import com.kurt.bgmate.data.local.toSessionEntity
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.model.PlayerScore
 import com.kurt.bgmate.domain.model.ScoreSession
@@ -24,6 +27,10 @@ class ScoreTrackerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    companion object {
+        const val TAG = "ScoreTrackerViewModel"
+    }
+
     // Navigation 라우트에서 bggId 추출
     private val bggId: String = checkNotNull(savedStateHandle["bggId"])
 
@@ -35,6 +42,9 @@ class ScoreTrackerViewModel @Inject constructor(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _isFinished = MutableStateFlow(false)
+    val isFinished: StateFlow<Boolean> = _isFinished.asStateFlow()
 
     init {
         Log.d("ScoreTrackerViewModel", "ScoreTrackerViewModel initialized: $bggId")
@@ -67,7 +77,27 @@ class ScoreTrackerViewModel @Inject constructor(
                     if (player.playerId == playerId) {
                         player.copy(totalScore = score)
                     } else player
-                })
+                }.sortedByDescending { it.totalScore }
+            )
+        }
+    }
+
+    fun finishSession() {
+        val current = _session.value ?: return
+        viewModelScope.launch {
+            _isLoading.update { true }
+            try {
+                sessionDao.insertSessionWithPlayers(
+                    session = current.toSessionEntity(),
+                    players = current.players.map { it.toPlayerEntity(0) },
+                    scores = current.players.map { it.toScoreEntryEntity(0) }
+                )
+                _isFinished.update { true }
+            } catch (e: Exception) {
+                Log.e(TAG, "저장 실패", e)
+            } finally {
+                _isLoading.update { false }
+            }
         }
     }
 

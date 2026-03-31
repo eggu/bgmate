@@ -17,7 +17,7 @@ interface SessionDao {
     suspend fun insertPlayer(player: PlayerEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertScoreEntry(scoreEntry: ScoreEntryEntity)
+    suspend fun insertScore(scoreEntry: ScoreEntryEntity)
 
     @Transaction
     @Query("SELECT * FROM sessions ORDER BY playedAt DESC")
@@ -29,4 +29,17 @@ interface SessionDao {
 
     @Query("DELETE FROM sessions WHERE sessionId = :sessionId")
     suspend fun deleteSession(sessionId: Long)
+
+    @Transaction
+    suspend fun insertSessionWithPlayers(
+        session: SessionEntity,
+        players: List<PlayerEntity>,
+        scores: List<ScoreEntryEntity>
+    ) {
+        val sessionId = insertSession(session)
+        val playerIds = players.map { player -> insertPlayer(player.copy(sessionId = sessionId)) }
+        scores.forEachIndexed { index, score ->
+            insertScore(score.copy(playerId = playerIds[index], sessionId = sessionId))
+        }
+    }
 }
