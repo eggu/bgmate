@@ -111,6 +111,7 @@ com.kurt.bgmate
 ```kotlin
 fun getGames(): List<BoardGame>
 suspend fun addGame(name: String)
+suspend fun addGame(game: BoardGame)                      // BGG 검색 결과 게임 직접 추가
 suspend fun removeGame(name: String)
 suspend fun updateGame(old: String, new: String)
 suspend fun searchGames(query: String): List<BoardGame>   // BGG API 검색
@@ -140,6 +141,12 @@ fun observeHistory(): Flow<List<JudgeResult>>                // 판정 기록 �
 | `SessionDao` | `@Dao` | 세션/플레이어/점수 삽입 및 조회. `@Transaction insertSessionWithPlayers()` 제공 |
 | `JudgeHistoryDao` | `@Dao` | 규칙 판정 기록 삽입 및 조회 |
 | `SessionWithDetails` | `data class` | `@Relation`으로 세션 + 플레이어 + 점수를 한 번에 조회하는 복합 결과 |
+
+**매핑 확장 함수** (`BoardGameEntity.kt` 내 정의)
+```kotlin
+fun BoardGameEntity.toDomain(): BoardGame   // Entity → Domain 모델 변환
+fun BoardGame.toEntity(): BoardGameEntity   // Domain → Entity 변환
+```
 
 #### Remote (BGG API)
 
@@ -263,6 +270,45 @@ Screen.SESSION_DETAIL / sessionDetail(sessionId) // "session_detail/{sessionId}"
 | 클래스 | 종류 | 설명 |
 |---|---|---|
 | `PreviewDummy` | `object` | Hilt 없이 Preview용 ViewModel 인스턴스를 생성하는 헬퍼 |
+
+---
+
+## 테스트 구조
+
+### 단위 테스트 (`src/test/`)
+
+```
+com.kurt.bgmate
+├── util/
+│   └── MainDispatcherRule.kt                           # TestCoroutineDispatcher 설정 Rule
+├── fake/
+│   ├── FakeGameRepository.kt                           # GameRepository 인메모리 Fake 구현체
+│   ├── FakeRuleJudgeRepository.kt                      # RuleJudgeRepository Fake 구현체
+│   └── FakeSessionDao.kt                               # SessionDao Fake 구현체
+├── data/
+│   └── local/
+│       └── BoardGameEntityMapperTest.kt                # toDomain / toEntity 매핑 검증
+└── presentation/
+    ├── GameListViewModelTest.kt                         # 게임 목록 ViewModel 단위 테스트
+    ├── RuleJudgeViewModelTest.kt                        # 규칙 판정 ViewModel 단위 테스트
+    └── scoretracker/
+        ├── ScoreTrackerViewModelTest.kt                 # 점수 추적 ViewModel 기본 동작 테스트
+        └── ScoreTrackerViewModelEdgeTest.kt             # 점수 추적 ViewModel 엣지 케이스 테스트
+```
+
+### 계측 테스트 (`src/androidTest/`)
+
+```
+com.kurt.bgmate
+└── data/
+    └── remote/
+        └── BggDataSourcesInstrumentedTest.kt           # BggRemoteDataSource 실제 API 호출 테스트
+```
+
+**테스트 전략**
+- ViewModel 테스트: `Fake*` 구현체를 주입해 Repository 의존성 없이 순수 로직 검증
+- 매핑 테스트: 엔티티↔도메인 왕복 변환 정확성 검증
+- 계측 테스트: 실제 BGG API 응답을 사용한 통합 검증
 
 ---
 
