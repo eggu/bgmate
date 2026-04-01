@@ -3,7 +3,7 @@ package com.kurt.bgmate.preview
 import android.content.Context
 import androidx.room.Room
 import com.kurt.bgmate.data.local.BoardGameDatabase
-import com.kurt.bgmate.data.remote.BggRemoteDataSource
+import com.kurt.bgmate.data.remote.BggMockRemoteDataSource
 import com.kurt.bgmate.data.repository.GameRepositoryImpl
 import com.kurt.bgmate.presentation.GameListViewModel
 
@@ -18,7 +18,7 @@ object PreviewDummy {
             .allowMainThreadQueries()
             .build()
         val repository =
-            GameRepositoryImpl(db.gameDao(), db.sessionDao(), BggRemoteDataSource(context))
+            GameRepositoryImpl(db.gameDao(), db.sessionDao(), BggMockRemoteDataSource(context))
         val viewModel = GameListViewModel(repository = repository)
         // ViewModel의 StateFlow은 add/remove/update에서 갱신되므로 미리 seed를 넣습니다.
         previewGames.forEach { viewModel.addGame(it) }

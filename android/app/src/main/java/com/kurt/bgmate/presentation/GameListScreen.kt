@@ -1,5 +1,6 @@
 package com.kurt.bgmate.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,10 +49,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kurt.bgmate.domain.model.BoardGame
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -63,6 +66,13 @@ fun GameListScreen(
     viewModel: GameListViewModel = hiltViewModel()
 ) {
     val showAddSheet by viewModel.showAddSheet.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(viewModel, context) {
+        viewModel.toastMessage.collect { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         floatingActionButton = {
@@ -102,7 +112,7 @@ fun GameListContent(
 
     LaunchedEffect(Unit) {
         snapshotFlow { searchQuery }
-            .debounce(300)
+            .debounce(1200)
             .distinctUntilChanged()
             .collect { query ->
                 viewModel.search(query)
@@ -138,39 +148,11 @@ fun GameListContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn {
-                items(if (searchQuery.isNotBlank()) searchResults else games) { game ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onNavigateToDetail(game.bggId) }
-                            .padding(vertical = 12.dp, horizontal = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = game.name,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(vertical = 8.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
+            if (searchQuery.isBlank())
+                MyCollections(games, onNavigateToDetail, onGameClick, viewModel)
+            else
+                SearchResults(searchResults, onGameClick = { viewModel.addGame(it)})
 
-                        IconButton(onClick = { onGameClick(game.bggId) }) {
-                            Icon(
-                                imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "점수 기록 시작"
-                            )
-                        }
-
-                        IconButton(onClick = { viewModel.removeGame(game) }) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "삭제"
-                            )
-                        }
-                    }
-                }
-            }
             if (isLoading) {
                 Box(
                     modifier = Modifier
@@ -190,6 +172,70 @@ fun GameListContent(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MyCollections(
+    games: List<BoardGame>,
+    onNavigateToDetail: (String) -> Unit,
+    onGameClick: (String) -> Unit,
+    viewModel: GameListViewModel
+) {
+    LazyColumn {
+        items(games) { game ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onNavigateToDetail(game.bggId) }
+                    .padding(vertical = 12.dp, horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = game.name,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 8.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(onClick = { onGameClick(game.bggId) }) {
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = "점수 기록 시작"
+                    )
+                }
+
+                IconButton(onClick = { viewModel.removeGame(game) }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "삭제"
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchResults(searchResults: List<BoardGame>, onGameClick: (BoardGame) -> Unit,) {
+    LazyColumn {
+        items(searchResults) { game ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onGameClick(game) }
+                    .padding(vertical = 12.dp, horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = game.name,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 8.dp)
+                )
             }
         }
     }

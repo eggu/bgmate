@@ -2,10 +2,12 @@ package com.kurt.bgmate.di
 
 import android.content.Context
 import androidx.room.Room
+import com.kurt.bgmate.BuildConfig
 import com.kurt.bgmate.data.local.BoardGameDao
 import com.kurt.bgmate.data.local.BoardGameDatabase
 import com.kurt.bgmate.data.local.JudgeHistoryDao
 import com.kurt.bgmate.data.local.SessionDao
+import com.kurt.bgmate.data.remote.BggApiRemoteDataSource
 import com.kurt.bgmate.data.remote.BggApiService
 import com.kurt.bgmate.data.remote.BggRemoteDataSource
 import com.kurt.bgmate.data.repository.GameRepositoryImpl
@@ -22,6 +24,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -29,20 +32,27 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(
-            HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
+    fun provideOkHttpClient(@Named("bgg_api_token") token: String): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .header("Authorization", "Bearer $token")
+                    .build()
+                chain.proceed(request)
             }
-        )
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .build()
+            .addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+            )
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build()
 
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl("https://www.boardgamegeek.com/")
+        .baseUrl("https://boardgamegeek.com/")
         .addConverterFactory(ScalarsConverterFactory.create())
         .client(okHttpClient)
         .build()
@@ -54,8 +64,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideBggRemoteDataSource(@ApplicationContext context: Context): BggRemoteDataSource =
-        BggRemoteDataSource(context)
+    fun provideBggRemoteDataSource(bggApiService: BggApiService): BggRemoteDataSource =
+        BggApiRemoteDataSource(bggApiService)
 
     @Provides
     @Singleton
@@ -90,5 +100,8 @@ object AppModule {
         @ApplicationContext context: Context
     ): RuleJudgeRepository =
         RuleJudgeRepositoryImpl(okHttpClient, judgeHistoryDao, context)
-}
 
+    @Provides
+    @Named("bgg_api_token")
+    fun provideBggApiToken(): String = BuildConfig.BGG_API_TOKEN
+}

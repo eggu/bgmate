@@ -4,8 +4,8 @@ import com.kurt.bgmate.data.local.BoardGameDao
 import com.kurt.bgmate.data.local.BoardGameEntity
 import com.kurt.bgmate.data.local.SessionDao
 import com.kurt.bgmate.data.local.toDomain
+import com.kurt.bgmate.data.local.toEntity
 import com.kurt.bgmate.data.remote.BggRemoteDataSource
-import com.kurt.bgmate.data.remote.BggXmlParser
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.model.ScoreSession
 import com.kurt.bgmate.domain.repository.GameRepository
@@ -30,6 +30,10 @@ class GameRepositoryImpl @Inject constructor(
         gameDao.insertGame(BoardGameEntity(bggId = tempId, name = name))
     }
 
+    override suspend fun addGame(game: BoardGame) {
+        gameDao.insertGame(game.toEntity())
+    }
+
     override suspend fun removeGame(name: String) {
        val entity =  gameDao.observeGames().first().first() { it.name == name }
         gameDao.delete(entity)
@@ -41,8 +45,7 @@ class GameRepositoryImpl @Inject constructor(
     }
 
     override suspend fun searchGames(query: String): List<BoardGame> {
-        val xml = bggRemoteDataSource.searchGames(query)
-        return BggXmlParser.parseSearchResult(xml).map { BoardGame(it.id, it.name) }
+        return bggRemoteDataSource.searchGames(query)
     }
 
     override suspend fun getGameById(id: String): BoardGame? {
@@ -57,4 +60,3 @@ class GameRepositoryImpl @Inject constructor(
     override suspend fun getSessionById(sessionId: Long): ScoreSession? =
         sessionDao.getSessionWithDetails(sessionId)?.toDomain()
 }
-

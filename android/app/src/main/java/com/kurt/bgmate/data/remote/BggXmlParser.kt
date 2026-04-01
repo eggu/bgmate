@@ -1,6 +1,7 @@
 package com.kurt.bgmate.data.remote
 
 import android.util.Xml
+import com.kurt.bgmate.domain.model.BoardGame
 import org.xmlpull.v1.XmlPullParser
 
 // data/remote/BggXmlParser.kt
@@ -30,15 +31,19 @@ object BggXmlParser {
                         currentName = ""
                         currentYear = null
                     }
+
                     "name" -> {
-                        if (parser.getAttributeValue(null, "type") == "primary") {
+                        val type = parser.getAttributeValue(null, "type")
+                        if (type == "primary" || type == "alternate") {
                             currentName = parser.getAttributeValue(null, "value") ?: ""
                         }
                     }
+
                     "yearpublished" -> {
                         currentYear = parser.getAttributeValue(null, "value")
                     }
                 }
+
                 XmlPullParser.END_TAG -> {
                     if (parser.name == "item" && currentId.isNotEmpty()) {
                         results.add(BggSearchItem(currentId, currentName, currentYear))
@@ -50,3 +55,6 @@ object BggXmlParser {
         return results
     }
 }
+
+fun BggXmlParser.BggSearchItem.toDomain(): BoardGame =
+    BoardGame(bggId = id, name = name, yearPublished = year)

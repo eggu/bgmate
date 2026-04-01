@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface GameRepository {
     fun getGames(): List<BoardGame>
     suspend fun addGame(name: String)
+    suspend fun addGame(game: BoardGame)
     suspend fun removeGame(name: String)
     suspend fun updateGame(old: String, new: String)
 

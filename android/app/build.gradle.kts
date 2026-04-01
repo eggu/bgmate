@@ -23,6 +23,7 @@ android {
         val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
         buildConfigField("String", "CLAUDE_API_KEY", "\"${properties["CLAUDE_API_KEY"]}\"")
+        buildConfigField("String", "BGG_API_TOKEN", "\"${properties["BGG_API_TOKEN"]}\"")
     }
 
     buildTypes {

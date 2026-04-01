@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import okio.IOException
@@ -36,6 +39,8 @@ class GameListViewModel @Inject constructor(
     private val _searchResults = MutableStateFlow<List<BoardGame>>(emptyList())
     val searchResults: StateFlow<List<BoardGame>> = _searchResults.asStateFlow()
 
+    private val _toastMessage = MutableSharedFlow<String>()
+    val toastMessage: SharedFlow<String> = _toastMessage.asSharedFlow()
 
     // BottomSheet 표시 여부
     private val _showAddSheet = MutableStateFlow(false)
@@ -48,8 +53,16 @@ class GameListViewModel @Inject constructor(
         val trimmedText = name.trim()
         if (trimmedText.isBlank()) return
         viewModelScope.launch {
-            repository.addGame(name)
+            repository.addGame(trimmedText)
             closeAddSheet()
+            _toastMessage.emit("\"$trimmedText\" 게임이 추가되었습니다.")
+        }
+    }
+
+    fun addGame(game: BoardGame) {
+        viewModelScope.launch {
+            repository.addGame(game)
+            _toastMessage.emit("\"${game.name}\" 게임이 추가되었습니다.")
         }
     }
 
@@ -92,5 +105,4 @@ class GameListViewModel @Inject constructor(
         return games.value.find { it.bggId == id }
     }
 }
-
 
