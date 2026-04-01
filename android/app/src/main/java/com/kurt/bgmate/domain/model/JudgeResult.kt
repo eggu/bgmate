@@ -1,6 +1,7 @@
 package com.kurt.bgmate.domain.model
 
 data class JudgeResult(
+    val id: Long = 0,
     val gameName: String,
     val dispute: String,
     val answer: String,

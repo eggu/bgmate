@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.kurt.bgmate.data.local.BoardGameDao
 import com.kurt.bgmate.data.local.BoardGameDatabase
+import com.kurt.bgmate.data.local.JudgeHistoryDao
 import com.kurt.bgmate.data.local.SessionDao
 import com.kurt.bgmate.data.remote.BggApiService
 import com.kurt.bgmate.data.remote.BggRemoteDataSource
@@ -79,11 +80,15 @@ object AppModule {
     fun provideSessionDao(database: BoardGameDatabase) = database.sessionDao()
 
     @Provides
+    fun provideJudgeHistoryDao(database: BoardGameDatabase) = database.judgeHistoryDao()
+
+    @Provides
     @Singleton
     fun provideRuleJudgeRepository(
         okHttpClient: OkHttpClient,
+        judgeHistoryDao: JudgeHistoryDao,
         @ApplicationContext context: Context
     ): RuleJudgeRepository =
-        RuleJudgeRepositoryImpl(okHttpClient, context)
+        RuleJudgeRepositoryImpl(okHttpClient, judgeHistoryDao, context)
 }
 

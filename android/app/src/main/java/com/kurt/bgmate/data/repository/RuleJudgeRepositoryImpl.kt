@@ -2,13 +2,17 @@ package com.kurt.bgmate.data.repository
 
 import android.content.Context
 import com.kurt.bgmate.BuildConfig
+import com.kurt.bgmate.data.local.JudgeHistoryDao
+import com.kurt.bgmate.data.local.JudgeHistoryEntity
+import com.kurt.bgmate.data.local.toDomain
+import com.kurt.bgmate.domain.model.JudgeResult
 import com.kurt.bgmate.domain.repository.RuleJudgeRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import okhttp3.Dispatcher
+import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -20,6 +24,7 @@ import javax.inject.Inject
 
 class RuleJudgeRepositoryImpl @Inject constructor(
     private val okHttpClient: OkHttpClient,
+    val judgeHistoryDao: JudgeHistoryDao,
     @ApplicationContext private val context: Context
 ) : RuleJudgeRepository {
     companion object {
@@ -84,4 +89,21 @@ class RuleJudgeRepositoryImpl @Inject constructor(
             }
         }
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun saveHistory(
+        gameName: String,
+        dispute: String,
+        answer: String
+    ) {
+        judgeHistoryDao.insert(
+            JudgeHistoryEntity(
+                gameName = gameName,
+                dispute = dispute,
+                answer = answer
+            )
+        )
+    }
+
+    override fun observeHistory(): Flow<List<JudgeResult>> =
+        judgeHistoryDao.observeAll().map { list -> list.map { it.toDomain() } }
 }
