@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 class FakeSessionDao : SessionDao {
 
     var insertCalled = false
+    var insertException: Exception? = null
     var lastInsertedSession: SessionEntity? = null
     var lastInsertedPlayers: List<PlayerEntity> = emptyList()
     var lastInsertedScores: List<ScoreEntryEntity> = emptyList()
@@ -44,6 +45,7 @@ class FakeSessionDao : SessionDao {
         players: List<PlayerEntity>,
         scores: List<ScoreEntryEntity>
     ) {
+        insertException?.let { throw it }
         insertCalled = true
         lastInsertedSession = session
         lastInsertedPlayers = players

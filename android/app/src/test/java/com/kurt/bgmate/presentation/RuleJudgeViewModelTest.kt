@@ -3,6 +3,9 @@ package com.kurt.bgmate.presentation
 import com.kurt.bgmate.fake.FakeRuleJudgeRepository
 import com.kurt.bgmate.presentation.rulejudge.RuleJudgeViewModel
 import com.kurt.bgmate.util.MainDispatcherRule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -79,6 +82,17 @@ class RuleJudgeViewModelTest {
         assertEquals("카드를 뽑을 수 있나요?", dispute)
     }
 
+    @Test
+    fun `judge - gameName과 dispute는 trim된 값으로 저장된다`() = runTest {
+        fakeRepository.judgeChunks = listOf("판정 완료")
+
+        viewModel.judge("  Pandemic  ", "  카드를 뽑을 수 있나요?  ")
+
+        val (gameName, dispute, _) = fakeRepository.savedHistories.single()
+        assertEquals("Pandemic", gameName)
+        assertEquals("카드를 뽑을 수 있나요?", dispute)
+    }
+
     // ── judge 실패 흐름 ────────────────────────────────────────────
 
     @Test
@@ -119,5 +133,21 @@ class RuleJudgeViewModelTest {
         viewModel.reset()
 
         assertEquals("", viewModel.streamingText.value)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `judge - 성공 후 history에 결과가 반영된다`() = runTest {
+        fakeRepository.judgeChunks = listOf("최종 판정")
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.history.collect {}
+        }
+
+        viewModel.judge("Catan", "분쟁 상황")
+
+        val history = viewModel.history.value
+        assertEquals(1, history.size)
+        assertEquals("Catan", history.single().gameName)
+        assertEquals("최종 판정", history.single().answer)
     }
 }

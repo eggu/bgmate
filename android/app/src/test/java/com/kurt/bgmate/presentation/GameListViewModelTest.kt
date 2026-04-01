@@ -2,9 +2,13 @@ package com.kurt.bgmate.presentation
 
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.fake.FakeGameRepository
+import com.kurt.bgmate.presentation.common.UiEvent
 import com.kurt.bgmate.util.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -52,6 +56,21 @@ class GameListViewModelTest {
         assertEquals(listOf("Pandemic"), fakeRepository.addedByNameCalls)
     }
 
+    @Test
+    fun `addGame - 성공 시 완료 메시지 이벤트를 보낸다`() = runTest {
+        val event = backgroundScope.async(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiEvent.first()
+        }
+
+        viewModel.addGame("  Pandemic  ")
+        advanceUntilIdle()
+
+        assertEquals(
+            UiEvent.ShowMessage("\"Pandemic\" 게임이 추가되었습니다."),
+            event.await()
+        )
+    }
+
     // ── addGame(BoardGame) ─────────────────────────────────────────
 
     @Test
@@ -61,6 +80,22 @@ class GameListViewModelTest {
         viewModel.addGame(game)
 
         assertEquals(listOf(game), fakeRepository.addedByGameCalls)
+    }
+
+    @Test
+    fun `addGame(BoardGame) - 성공 시 완료 메시지 이벤트를 보낸다`() = runTest {
+        val game = BoardGame(bggId = "174430", name = "Gloomhaven")
+        val event = backgroundScope.async(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiEvent.first()
+        }
+
+        viewModel.addGame(game)
+        advanceUntilIdle()
+
+        assertEquals(
+            UiEvent.ShowMessage("\"Gloomhaven\" 게임이 추가되었습니다."),
+            event.await()
+        )
     }
 
     // ── removeGame ─────────────────────────────────────────────────
@@ -90,6 +125,15 @@ class GameListViewModelTest {
     fun `closeAddSheet - showAddSheet가 false가 된다`() {
         viewModel.openAddSheet()
         viewModel.closeAddSheet()
+
+        assertFalse(viewModel.showAddSheet.value)
+    }
+
+    @Test
+    fun `addGame - 성공 시 showAddSheet가 false가 된다`() = runTest {
+        viewModel.openAddSheet()
+
+        viewModel.addGame("Pandemic")
 
         assertFalse(viewModel.showAddSheet.value)
     }
