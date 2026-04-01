@@ -1,14 +1,13 @@
 package com.kurt.bgmate.presentation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.kurt.bgmate.presentation.history.SessionDetailScreen
 import com.kurt.bgmate.presentation.history.SessionHistoryScreen
 import com.kurt.bgmate.presentation.rulejudge.RuleJudgeScreen
@@ -18,40 +17,54 @@ import com.kurt.bgmate.presentation.scoretracker.ScoreTrackerScreen
 fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
-        startDestination = Screen.GameList.route,
+        startDestination = BottomNavItem.Collection.route,
         modifier = modifier,
     ) {
-        composable(Screen.GameList.route) { GameListScreen(navController = navController) }
-        composable(Screen.GameDetail.route) { backStackEntry ->
-            val gameListBackStackEntry = remember(navController) {
-                navController.getBackStackEntry(Screen.GameList.route)
+        // ── 탭 1: 컬렉션 ──────────────────────────────────
+        navigation(startDestination = BottomNavItem.Collection.root, route = BottomNavItem.Collection.route) {
+
+            composable(Screen.GAME_LIST) {
+                GameListScreen(onGameClick = { bggId ->
+                    navController.navigate(Screen.scoreTracker(bggId))
+                }, onNavigateToDetail = { bggId ->
+                    navController.navigate(Screen.gameDetail(bggId))
+                })
             }
-
-            val viewModel: GameListViewModel = hiltViewModel(gameListBackStackEntry)
-
-            val id = backStackEntry.arguments?.getString("id")
-            GameDetailScreen(id, navController = navController, viewModel)
-        }
-        composable(
-            Screen.ScoreTracker.route,
-            arguments = listOf(navArgument("bggId") { type = NavType.StringType })
-        ) {
-            ScoreTrackerScreen { navController.popBackStack() }
-        }
-        composable(Screen.SessionHistory.route) {
-            SessionHistoryScreen(onSessionClick = { sessionId ->
-                navController.navigate(Screen.SessionDetail(sessionId).createRoute())
-            }, onNavigateBack = { navController.popBackStack() })
-        }
-        composable(
-            Screen.SessionDetail.route,
-            arguments = listOf(navArgument("sessionId") { type = NavType.LongType })
-        ) {
-            SessionDetailScreen(onNavigateBack = { navController.popBackStack() })
+            composable(
+                Screen.GAME_DETAIL,
+                arguments = listOf(navArgument("id") { type = NavType.StringType })
+            ) {
+                GameDetailScreen(onNavigateBack = { navController.popBackStack() })
+            }
+            composable(
+                Screen.SCORE_TRACKER,
+                arguments = listOf(navArgument("bggId") { type = NavType.StringType })
+            ) {
+                ScoreTrackerScreen { navController.popBackStack() }
+            }
         }
 
-        composable(Screen.RuleJudge.route) {
-            RuleJudgeScreen()
+        // ── 탭 2: 규칙 판정관 ──────────────────────────────
+        navigation(startDestination = BottomNavItem.RuleJudge.root, route = BottomNavItem.RuleJudge.route) {
+            composable(Screen.RULE_JUDGE) {
+                RuleJudgeScreen()
+            }
         }
+
+        // ── 탭 3: 전적 기록 ────────────────────────────────
+        navigation(startDestination = BottomNavItem.History.root, route = BottomNavItem.History.route) {
+            composable(Screen.SESSION_HISTORY) {
+                SessionHistoryScreen { sessionId ->
+                    navController.navigate(Screen.sessionDetail(sessionId))
+                }
+            }
+            composable(
+                Screen.SESSION_DETAIL,
+                arguments = listOf(navArgument("sessionId") { type = NavType.LongType })
+            ) {
+                SessionDetailScreen(onNavigateBack = { navController.popBackStack() })
+            }
+        }
+
     }
 }

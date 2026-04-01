@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,11 +17,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,52 +48,37 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import com.kurt.bgmate.preview.PreviewDummy
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameListScreen(
-    navController: NavController? = null,
+    onGameClick: (String) -> Unit = {},
+    onNavigateToDetail: (String) -> Unit = {},
     viewModel: GameListViewModel = hiltViewModel()
 ) {
     val showAddSheet by viewModel.showAddSheet.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text(text = "게임 목록") }, actions = {
-                IconButton(onClick = { navController?.navigate(Screen.SessionHistory.route) }) {
-                    Icon(Icons.AutoMirrored.Default.List, contentDescription = "전적 기록")
-                }
-                IconButton(onClick = { navController?.navigate(Screen.RuleJudge.route) }) {
-                    Icon(Icons.Default.Build, contentDescription = "규칙 판정")
-                }
-            })
-
-        },
         floatingActionButton = {
             FloatingActionButton(onClick = viewModel::openAddSheet) {
                 Icon(Icons.Default.Add, contentDescription = "게임 추가")
             }
         }
     ) { paddingValues ->
-        // 기존 목록 UI
         GameListContent(
             modifier = Modifier.padding(paddingValues),
-            navController,
-            viewModel = viewModel
+            onGameClick = onGameClick,
+            onNavigateToDetail = onNavigateToDetail,
+            viewModel = viewModel,
         )
     }
 
-    // BottomSheet는 Scaffold 밖에 선언
     if (showAddSheet) {
         AddGameBottomSheet(
             onDismiss = viewModel::closeAddSheet,
@@ -105,16 +90,13 @@ fun GameListScreen(
 @Composable
 fun GameListContent(
     modifier: Modifier,
-    navController: NavController? = null,
+    onGameClick: (String) -> Unit = {},
+    onNavigateToDetail: (String) -> Unit = {},
     viewModel: GameListViewModel
 ) {
     val games by viewModel.games.collectAsStateWithLifecycle()
     val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
-    val submitNewGame = {
-        viewModel.addGame(searchQuery)
-        searchQuery = ""
-    }
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
 
@@ -123,11 +105,11 @@ fun GameListContent(
             .debounce(300)
             .distinctUntilChanged()
             .collect { query ->
-                viewModel.search(query) // ViewModel에 검색어 전달
+                viewModel.search(query)
             }
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = modifier.padding(16.dp)) {
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
@@ -136,7 +118,10 @@ fun GameListContent(
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             trailingIcon = {
                 if (searchQuery.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.search("") }) {
+                    IconButton(onClick = {
+                        searchQuery = ""
+                        viewModel.search("")
+                    }) {
                         Icon(Icons.Default.Clear, contentDescription = "검색어 지우기")
                     }
                 }
@@ -144,13 +129,13 @@ fun GameListContent(
             modifier = Modifier.fillMaxWidth()
         )
         if (error != null) {
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = error!!,
                 color = MaterialTheme.colorScheme.error
             )
         }
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn {
@@ -158,23 +143,26 @@ fun GameListContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                navController?.navigate(
-                                    Screen.ScoreTracker(game.bggId).createRoute()
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            }
-                            .padding(vertical = 12.dp, horizontal = 4.dp)
+                            .clickable { onNavigateToDetail(game.bggId) }
+                            .padding(vertical = 12.dp, horizontal = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = game.name, modifier = Modifier
+                            text = game.name,
+                            modifier = Modifier
                                 .weight(1f)
                                 .padding(vertical = 8.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        Button(onClick = { viewModel.removeGame(game) }) {
+                        IconButton(onClick = { onGameClick(game.bggId) }) {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "점수 기록 시작"
+                            )
+                        }
+
+                        IconButton(onClick = { viewModel.removeGame(game) }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = "삭제"
@@ -193,7 +181,7 @@ fun GameListContent(
                             awaitPointerEventScope {
                                 while (true) {
                                     val event = awaitPointerEvent()
-                                    event.changes.forEach { it.consume() } // 터치/클릭 이벤트 소비
+                                    event.changes.forEach { it.consume() }
                                 }
                             }
                         }
@@ -259,18 +247,7 @@ fun AddGameBottomSheet(
         }
     }
 
-    // Sheet가 열리면 키보드 자동 포커스
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewGameListScreen() {
-    GameListScreen(
-        navController = null,
-        viewModel = PreviewDummy.createGameListViewModel(LocalContext.current),
-    )
-}
-

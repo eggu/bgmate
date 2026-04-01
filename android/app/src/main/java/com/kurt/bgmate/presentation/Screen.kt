@@ -1,29 +1,18 @@
 package com.kurt.bgmate.presentation
 
-sealed class Screen(val route: String) {
-    object GameList : Screen("game_list")
-    data class GameDetail(val id: Int) : Screen("detail/$id") {
-        companion object {
-            const val route: String = "detail/{id}"
-        }
-    }
+object Screen {
+    const val GAME_LIST = "game_list"
+    const val GAME_DETAIL = "detail/{id}"
+    fun gameDetail(id: String) = "detail/$id"
 
-    data class ScoreTracker(val bggId: String) : Screen("score_tracker/{bggId}") {
-        fun createRoute() = "score_tracker/$bggId"
+    const val SCORE_TRACKER = "score_tracker/{bggId}"
+    fun scoreTracker(bggId: String) = "score_tracker/$bggId"
 
-        companion object {
-            const val route: String = "score_tracker/{bggId}"
-        }
-    }
+    // 규칙 판정관 탭
+    const val RULE_JUDGE = "rule_judge"
 
-    object SessionHistory : Screen("session_history")
-    data class SessionDetail(val sessionId: Long) : Screen("session_detail/{sessionId}") {
-        fun createRoute(): String = "session_detail/$sessionId"
-
-        companion object {
-            const val route: String = "session_detail/{sessionId}"
-        }
-    }
-
-    object RuleJudge : Screen("rule_judge")
+    // 전적 기록 탭
+    const val SESSION_HISTORY = "session_history"
+    const val SESSION_DETAIL = "session_detail/{sessionId}"
+    fun sessionDetail(sessionId: Long) = "session_detail/$sessionId"
 }
