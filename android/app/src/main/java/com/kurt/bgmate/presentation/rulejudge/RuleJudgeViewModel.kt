@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kurt.bgmate.domain.model.JudgeResult
 import com.kurt.bgmate.domain.repository.RuleJudgeRepository
+import com.kurt.bgmate.presentation.common.BaseViewModel
 import com.kurt.bgmate.presentation.rulejudge.RuleJudgeViewModel.UiState.Idle
 import com.kurt.bgmate.presentation.rulejudge.RuleJudgeViewModel.UiState.Loading
 import com.kurt.bgmate.presentation.rulejudge.RuleJudgeViewModel.UiState.Result
@@ -21,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RuleJudgeViewModel @Inject constructor(private val ruleJudgeRepository: RuleJudgeRepository) :
-    ViewModel() {
+    BaseViewModel() {
 
     companion object {
         private const val TAG = "RuleJudgeViewModel"

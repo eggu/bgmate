@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kurt.bgmate.domain.model.JudgeResult
+import com.kurt.bgmate.presentation.common.LoadingOverlay
+import com.kurt.bgmate.presentation.common.ObserveUiEvents
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -55,6 +57,8 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
     var dispute by remember { mutableStateOf("") }
 
     val isLoading = uiState is RuleJudgeViewModel.UiState.Loading
+
+    ObserveUiEvents(viewModel.uiEvent)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -157,13 +161,7 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
         }
 
         // 로딩 중 터치 차단
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) { detectTapGestures { } }
-            )
-        }
+        LoadingOverlay(isLoading)
     }
 }
 

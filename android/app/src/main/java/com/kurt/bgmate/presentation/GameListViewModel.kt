@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.repository.GameRepository
+import com.kurt.bgmate.presentation.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class GameListViewModel @Inject constructor(
     private val repository: GameRepository,
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _games = MutableStateFlow<List<BoardGame>>(emptyList())
 
@@ -31,16 +32,11 @@ class GameListViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
     private val _error = MutableStateFlow<String?>(null)
     val error = _error.asStateFlow()
 
     private val _searchResults = MutableStateFlow<List<BoardGame>>(emptyList())
     val searchResults: StateFlow<List<BoardGame>> = _searchResults.asStateFlow()
-
-    private val _toastMessage = MutableSharedFlow<String>()
-    val toastMessage: SharedFlow<String> = _toastMessage.asSharedFlow()
 
     // BottomSheet 표시 여부
     private val _showAddSheet = MutableStateFlow(false)
@@ -55,14 +51,14 @@ class GameListViewModel @Inject constructor(
         viewModelScope.launch {
             repository.addGame(trimmedText)
             closeAddSheet()
-            _toastMessage.emit("\"$trimmedText\" 게임이 추가되었습니다.")
+            showMessage("\"$trimmedText\" 게임이 추가되었습니다.")
         }
     }
 
     fun addGame(game: BoardGame) {
         viewModelScope.launch {
             repository.addGame(game)
-            _toastMessage.emit("\"${game.name}\" 게임이 추가되었습니다.")
+            showMessage("\"${game.name}\" 게임이 추가되었습니다.")
         }
     }
 
@@ -84,7 +80,7 @@ class GameListViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            _isLoading.value = true
+            setLoading(true)
             try {
                 val response = repository.searchGames(query)
                 _searchResults.value = response
@@ -96,7 +92,7 @@ class GameListViewModel @Inject constructor(
             } catch (e: Exception) {
                 _error.value = "오류: ${e.message}"
             } finally {
-                _isLoading.value = false
+                setLoading(false)
             }
         }
     }

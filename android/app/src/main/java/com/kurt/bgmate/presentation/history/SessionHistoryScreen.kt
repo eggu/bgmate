@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kurt.bgmate.domain.model.ScoreSession
+import com.kurt.bgmate.presentation.common.LoadingOverlay
+import com.kurt.bgmate.presentation.common.ObserveUiEvents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +33,10 @@ fun SessionHistoryScreen(
     viewModel: SessionHistoryViewModel = hiltViewModel(),
     onSessionClick: (Long) -> Unit
 ) {
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val sessions by viewModel.sessions.collectAsStateWithLifecycle()
+
+    ObserveUiEvents(viewModel.uiEvent)
 
     Scaffold(
         topBar = {
@@ -40,38 +45,43 @@ fun SessionHistoryScreen(
             )
         }
     ) { paddingValues ->
-        if (sessions.isEmpty()) {
-            // 빈 상태 — 기록 없음 안내
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "아직 기록된 게임이 없습니다.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(
-                    items = sessions,
-                    key = { it.sessionId }
-                ) { session ->
-                    SessionHistoryCard(
-                        session = session,
-                        onClick = { onSessionClick(session.sessionId) }
+        Box(modifier = Modifier.padding(paddingValues)) {
+
+            if (sessions.isEmpty()) {
+                // 빈 상태 — 기록 없음 안내
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "아직 기록된 게임이 없습니다.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(
+                        items = sessions,
+                        key = { it.sessionId }
+                    ) { session ->
+                        SessionHistoryCard(
+                            session = session,
+                            onClick = { onSessionClick(session.sessionId) }
+                        )
+                    }
+                }
             }
+
+            LoadingOverlay(isLoading)
         }
     }
 }

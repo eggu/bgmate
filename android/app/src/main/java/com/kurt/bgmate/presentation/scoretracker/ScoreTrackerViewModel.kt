@@ -12,6 +12,7 @@ import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.model.PlayerScore
 import com.kurt.bgmate.domain.model.ScoreSession
 import com.kurt.bgmate.domain.repository.GameRepository
+import com.kurt.bgmate.presentation.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +26,7 @@ class ScoreTrackerViewModel @Inject constructor(
     private val sessionDao: SessionDao,
     val gameRepository: GameRepository,
     savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+) : BaseViewModel() {
 
     companion object {
         const val TAG = "ScoreTrackerViewModel"
@@ -39,10 +40,6 @@ class ScoreTrackerViewModel @Inject constructor(
 
     private val _session = MutableStateFlow<ScoreSession?>(null)
     val session: StateFlow<ScoreSession?> = _session.asStateFlow()
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
     private val _isFinished = MutableStateFlow(false)
     val isFinished: StateFlow<Boolean> = _isFinished.asStateFlow()
 
@@ -86,7 +83,7 @@ class ScoreTrackerViewModel @Inject constructor(
     fun finishSession() {
         val current = _session.value ?: return
         viewModelScope.launch {
-            _isLoading.update { true }
+            setLoading(true)
             try {
                 sessionDao.insertSessionWithPlayers(
                     session = current.toSessionEntity(),
@@ -97,7 +94,7 @@ class ScoreTrackerViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e(TAG, "저장 실패", e)
             } finally {
-                _isLoading.update { false }
+                setLoading(false)
             }
         }
     }

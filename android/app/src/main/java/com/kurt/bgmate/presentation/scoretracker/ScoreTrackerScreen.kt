@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,9 +18,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kurt.bgmate.presentation.common.LoadingOverlay
+import com.kurt.bgmate.presentation.common.ObserveUiEvents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +32,8 @@ fun ScoreTrackerScreen(
     val session by viewModel.session.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val isFinished by viewModel.isFinished.collectAsStateWithLifecycle()
+
+    ObserveUiEvents(viewModel.uiEvent)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -72,13 +74,7 @@ fun ScoreTrackerScreen(
             }
         }
 
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) { detectTapGestures { } }) {
-            }
-        }
+        LoadingOverlay(isLoading)
     }
 }
 

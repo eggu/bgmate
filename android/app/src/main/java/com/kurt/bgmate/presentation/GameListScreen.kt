@@ -1,7 +1,6 @@
 package com.kurt.bgmate.presentation
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -34,7 +32,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,14 +44,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kurt.bgmate.domain.model.BoardGame
+import com.kurt.bgmate.presentation.common.LoadingOverlay
+import com.kurt.bgmate.presentation.common.ObserveUiEvents
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -67,12 +64,6 @@ fun GameListScreen(
 ) {
     val showAddSheet by viewModel.showAddSheet.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
-    LaunchedEffect(viewModel, context) {
-        viewModel.toastMessage.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
-    }
 
     Scaffold(
         floatingActionButton = {
@@ -109,6 +100,8 @@ fun GameListContent(
     var searchQuery by remember { mutableStateOf("") }
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
+
+    ObserveUiEvents(uiEvent = viewModel.uiEvent)
 
     LaunchedEffect(Unit) {
         snapshotFlow { searchQuery }
@@ -151,28 +144,10 @@ fun GameListContent(
             if (searchQuery.isBlank())
                 MyCollections(games, onNavigateToDetail, onGameClick, viewModel)
             else
-                SearchResults(searchResults, onGameClick = { viewModel.addGame(it)})
+                SearchResults(searchResults, onGameClick = { viewModel.addGame(it) })
 
-            if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color(0x66FFFFFF))
-                        .clickable(enabled = false) {}
-                        .pointerInput(Unit) {
-                            awaitPointerEventScope {
-                                while (true) {
-                                    val event = awaitPointerEvent()
-                                    event.changes.forEach { it.consume() }
-                                }
-                            }
-                        }
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
+
+            LoadingOverlay(isLoading)
         }
     }
 }
@@ -220,7 +195,7 @@ private fun MyCollections(
 }
 
 @Composable
-fun SearchResults(searchResults: List<BoardGame>, onGameClick: (BoardGame) -> Unit,) {
+fun SearchResults(searchResults: List<BoardGame>, onGameClick: (BoardGame) -> Unit) {
     LazyColumn {
         items(searchResults) { game ->
             Row(
