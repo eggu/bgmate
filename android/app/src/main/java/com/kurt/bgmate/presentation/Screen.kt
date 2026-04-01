@@ -24,4 +24,6 @@ sealed class Screen(val route: String) {
             const val route: String = "session_detail/{sessionId}"
         }
     }
+
+    object RuleJudge : Screen("rule_judge")
 }

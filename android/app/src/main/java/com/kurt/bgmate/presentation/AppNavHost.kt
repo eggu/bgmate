@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.kurt.bgmate.presentation.history.SessionDetailScreen
 import com.kurt.bgmate.presentation.history.SessionHistoryScreen
+import com.kurt.bgmate.presentation.rulejudge.RuleJudgeScreen
 import com.kurt.bgmate.presentation.scoretracker.ScoreTrackerScreen
 
 @Composable
@@ -47,6 +48,10 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
             arguments = listOf(navArgument("sessionId") { type = NavType.LongType })
         ) {
             SessionDetailScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(Screen.RuleJudge.route) {
+            RuleJudgeScreen()
         }
     }
 }

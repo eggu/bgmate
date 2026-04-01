@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
@@ -71,6 +72,9 @@ fun GameListScreen(
             TopAppBar(title = { Text(text = "게임 목록") }, actions = {
                 IconButton(onClick = { navController?.navigate(Screen.SessionHistory.route) }) {
                     Icon(Icons.AutoMirrored.Default.List, contentDescription = "전적 기록")
+                }
+                IconButton(onClick = { navController?.navigate(Screen.RuleJudge.route) }) {
+                    Icon(Icons.Default.Build, contentDescription = "규칙 판정")
                 }
             })
 

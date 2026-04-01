@@ -8,7 +8,9 @@ import com.kurt.bgmate.data.local.SessionDao
 import com.kurt.bgmate.data.remote.BggApiService
 import com.kurt.bgmate.data.remote.BggRemoteDataSource
 import com.kurt.bgmate.data.repository.GameRepositoryImpl
+import com.kurt.bgmate.data.repository.RuleJudgeRepositoryImpl
 import com.kurt.bgmate.domain.repository.GameRepository
+import com.kurt.bgmate.domain.repository.RuleJudgeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -75,5 +77,13 @@ object AppModule {
 
     @Provides
     fun provideSessionDao(database: BoardGameDatabase) = database.sessionDao()
+
+    @Provides
+    @Singleton
+    fun provideRuleJudgeRepository(
+        okHttpClient: OkHttpClient,
+        @ApplicationContext context: Context
+    ): RuleJudgeRepository =
+        RuleJudgeRepositoryImpl(okHttpClient, context)
 }
 
