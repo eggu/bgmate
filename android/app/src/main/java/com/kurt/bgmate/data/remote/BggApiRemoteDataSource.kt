@@ -18,11 +18,15 @@ class BggApiRemoteDataSource @Inject constructor(
 
     override suspend fun fetchThumbnails(ids: List<String>): Map<String, String> {
         if (ids.isEmpty()) return emptyMap()
-        return try {
-            val xmlString = bggApiService.getGameDetail(ids.joinToString(","))
-            BggXmlParser.parseThingThumbnails(xmlString)
-        } catch (e: Exception) {
-            emptyMap()
-        }
+        return ids.chunked(20)
+            .flatMap { chunk ->
+                try {
+                    val xmlString = bggApiService.getGameDetail(chunk.joinToString(","))
+                    BggXmlParser.parseThingThumbnails(xmlString).entries
+                } catch (e: Exception) {
+                    emptyList()
+                }
+            }
+            .associate { it.key to it.value }
     }
 }

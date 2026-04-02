@@ -11,6 +11,9 @@ interface BggApiService {
         @Query("type") type: String = "boardgame",
     ): String
 
-    @GET("xmlapi2/thing/{id}")
-    suspend fun getGameDetail(@Path("id") gameId: String): String
+    @GET("xmlapi2/thing")
+    suspend fun getGameDetail(
+        @Query(value = "id", encoded = true) gameId: String,
+        @Query("type") type: String = "boardgame"
+    ): String
 }

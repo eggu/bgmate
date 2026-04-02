@@ -72,7 +72,11 @@ object BggXmlParser {
                 }
                 XmlPullParser.TEXT -> {
                     if (insideThumbnail && currentId.isNotEmpty()) {
-                        val url = parser.text?.trim() ?: ""
+                        val raw = parser.text?.trim() ?: ""
+                        val url = when {
+                            raw.startsWith("//") -> "https:$raw"
+                            else -> raw
+                        }
                         if (url.isNotEmpty()) result[currentId] = url
                     }
                 }
