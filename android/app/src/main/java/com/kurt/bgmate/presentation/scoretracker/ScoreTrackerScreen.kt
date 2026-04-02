@@ -47,7 +47,8 @@ fun ScoreTrackerScreen(
         inputContent = {
             ScoreInputContent(
                 viewModel = viewModel,
-                modifier = Modifier
+                modifier = Modifier,
+                onCancelSetup = onNavigateBack
             )
         }
     )

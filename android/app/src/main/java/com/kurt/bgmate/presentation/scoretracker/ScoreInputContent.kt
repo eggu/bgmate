@@ -55,7 +55,8 @@ import com.kurt.bgmate.domain.model.PlayerScore
 @Composable
 fun ScoreInputContent(
     viewModel: ScoreTrackerViewModel,
-    modifier: Modifier
+    modifier: Modifier,
+    onCancelSetup: () -> Unit = {}
 ) {
     val session by viewModel.session.collectAsStateWithLifecycle()
     val showPlayerSetupSheet by viewModel.showPlayerSetupSheet.collectAsStateWithLifecycle()
@@ -71,7 +72,8 @@ fun ScoreInputContent(
             playerNames = pendingPlayerNames,
             onAddPlayer = { viewModel.addPendingPlayer(it) },
             onRemovePlayer = { viewModel.removePendingPlayer(it) },
-            onConfirm = { viewModel.confirmPlayers() }
+            onConfirm = { viewModel.confirmPlayers() },
+            onCancel = onCancelSetup
         )
     }
 
@@ -178,7 +180,8 @@ fun PlayerSetupBottomSheet(
     playerNames: List<String>,
     onAddPlayer: (String) -> Unit,
     onRemovePlayer: (Int) -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
 ) {
     var text by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -189,7 +192,7 @@ fun PlayerSetupBottomSheet(
     }
 
     ModalBottomSheet(
-        onDismissRequest = { /* 플레이어 없이 닫기 불가 — 무시 */ },
+        onDismissRequest = onCancel,
         sheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true,
             confirmValueChange = { newValue -> newValue != SheetValue.Hidden }
@@ -251,6 +254,15 @@ fun PlayerSetupBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("게임 시작")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = onCancel,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("취소")
             }
         }
     }
