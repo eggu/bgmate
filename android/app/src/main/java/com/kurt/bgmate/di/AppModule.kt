@@ -11,8 +11,10 @@ import com.kurt.bgmate.data.remote.BggApiRemoteDataSource
 import com.kurt.bgmate.data.remote.BggApiService
 import com.kurt.bgmate.data.remote.BggRemoteDataSource
 import com.kurt.bgmate.data.repository.GameRepositoryImpl
+import com.kurt.bgmate.data.repository.RecommendRepositoryImpl
 import com.kurt.bgmate.data.repository.RuleJudgeRepositoryImpl
 import com.kurt.bgmate.domain.repository.GameRepository
+import com.kurt.bgmate.domain.repository.RecommendRepository
 import com.kurt.bgmate.domain.repository.RuleJudgeRepository
 import dagger.Module
 import dagger.Provides
@@ -100,6 +102,15 @@ object AppModule {
         @ApplicationContext context: Context
     ): RuleJudgeRepository =
         RuleJudgeRepositoryImpl(okHttpClient, judgeHistoryDao, context)
+
+    @Provides
+    @Singleton
+    fun provideRecommendRepository(
+        okHttpClient: OkHttpClient,
+        @ApplicationContext context: Context
+    ): RecommendRepository =
+        RecommendRepositoryImpl(okHttpClient, context)
+
 
     @Provides
     @Named("bgg_api_token")
