@@ -92,6 +92,14 @@ class GameListViewModel @Inject constructor(
             try {
                 val response = repository.searchGames(query)
                 _searchResults.value = response
+                val ids = response.mapNotNull { it.bggId.takeIf { id -> id.isNotBlank() } }
+                val thumbnails = repository.fetchThumbnails(ids)
+                if (thumbnails.isNotEmpty()) {
+                    _searchResults.value = response.map { game ->
+                        val url = thumbnails[game.bggId]
+                        if (url != null) game.copy(thumbnailUrl = url) else game
+                    }
+                }
             } catch (e: HttpException) {
                 _error.value = "서버 오류: ${e.code()}"
             } catch (e: IOException) {

@@ -16,6 +16,7 @@ retrofit = "3.0.0"
 loggingInterceptor = "5.3.2"
 roomRuntime = "2.8.4"
 coroutinesTest = "1.10.1"
+coil = "3.1.0"
 
 [libraries]
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
@@ -47,6 +48,8 @@ squareup-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = 
 squareup-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 squareup-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 squareup-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

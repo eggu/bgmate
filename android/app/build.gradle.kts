@@ -74,6 +74,10 @@ dependencies {
     // OkHttp 로깅
     implementation(libs.squareup.logging.interceptor)
 
+    // Coil (이미지 로딩)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

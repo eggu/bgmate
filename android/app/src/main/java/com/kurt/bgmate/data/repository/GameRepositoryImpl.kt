@@ -45,6 +45,10 @@ class GameRepositoryImpl @Inject constructor(
         return bggRemoteDataSource.searchGames(query)
     }
 
+    override suspend fun fetchThumbnails(ids: List<String>): Map<String, String> {
+        return bggRemoteDataSource.fetchThumbnails(ids)
+    }
+
     override suspend fun getGameById(id: String): BoardGame? {
         return gameDao.getGameById(id = id)?.toDomain()
     }

@@ -54,6 +54,36 @@ object BggXmlParser {
         }
         return results
     }
+
+    fun parseThingThumbnails(xml: String): Map<String, String> {
+        val result = mutableMapOf<String, String>()
+        val parser = Xml.newPullParser()
+        parser.setInput(xml.reader())
+
+        var currentId = ""
+        var insideThumbnail = false
+
+        var eventType = parser.eventType
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+            when (eventType) {
+                XmlPullParser.START_TAG -> when (parser.name) {
+                    "item" -> currentId = parser.getAttributeValue(null, "id") ?: ""
+                    "thumbnail" -> insideThumbnail = true
+                }
+                XmlPullParser.TEXT -> {
+                    if (insideThumbnail && currentId.isNotEmpty()) {
+                        val url = parser.text?.trim() ?: ""
+                        if (url.isNotEmpty()) result[currentId] = url
+                    }
+                }
+                XmlPullParser.END_TAG -> {
+                    if (parser.name == "thumbnail") insideThumbnail = false
+                }
+            }
+            eventType = parser.next()
+        }
+        return result
+    }
 }
 
 fun BggXmlParser.BggSearchItem.toDomain(): BoardGame =

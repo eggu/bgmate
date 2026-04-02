@@ -74,11 +74,13 @@ class GameListViewModelTest {
     @Test
     fun `addGame - 이미 등록된 이름이면 repository를 호출하지 않고 안내 메시지를 보낸다`() = runTest {
         fakeRepository.setGames(listOf(BoardGame(bggId = "1", name = "Pandemic")))
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.games.collect {} }
         val event = backgroundScope.async(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiEvent.first()
         }
 
         viewModel.addGame("pandemic")
+        collectJob.cancel()
         advanceUntilIdle()
 
         assertTrue(fakeRepository.addedByNameCalls.isEmpty())
@@ -118,11 +120,13 @@ class GameListViewModelTest {
     @Test
     fun `addGame(BoardGame) - 이미 등록된 게임이면 repository를 호출하지 않고 안내 메시지를 보낸다`() = runTest {
         fakeRepository.setGames(listOf(BoardGame(bggId = "174430", name = "Gloomhaven")))
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.games.collect {} }
         val event = backgroundScope.async(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiEvent.first()
         }
 
         viewModel.addGame(BoardGame(bggId = "174430", name = "Gloomhaven"))
+        collectJob.cancel()
         advanceUntilIdle()
 
         assertTrue(fakeRepository.addedByGameCalls.isEmpty())

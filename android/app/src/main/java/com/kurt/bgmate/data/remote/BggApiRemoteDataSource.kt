@@ -15,4 +15,14 @@ class BggApiRemoteDataSource @Inject constructor(
             emptyList()
         }
     }
+
+    override suspend fun fetchThumbnails(ids: List<String>): Map<String, String> {
+        if (ids.isEmpty()) return emptyMap()
+        return try {
+            val xmlString = bggApiService.getGameDetail(ids.joinToString(","))
+            BggXmlParser.parseThingThumbnails(xmlString)
+        } catch (e: Exception) {
+            emptyMap()
+        }
+    }
 }

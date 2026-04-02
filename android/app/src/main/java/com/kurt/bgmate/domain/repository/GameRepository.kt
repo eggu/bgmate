@@ -11,6 +11,7 @@ interface GameRepository {
     suspend fun updateGame(old: String, new: String)
 
     suspend fun searchGames(query: String): List<BoardGame>
+    suspend fun fetchThumbnails(ids: List<String>): Map<String, String>
 
     suspend fun getGameById(id: String): BoardGame?
 

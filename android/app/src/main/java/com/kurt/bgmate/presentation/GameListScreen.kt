@@ -52,6 +52,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.preview.PreviewDummy
+import com.kurt.bgmate.presentation.common.GameThumbnail
 import com.kurt.bgmate.presentation.common.LoadingOverlay
 import com.kurt.bgmate.presentation.common.ObserveUiEvents
 import com.kurt.bgmate.ui.theme.BGMateTheme
@@ -193,9 +194,11 @@ private fun MyCollections(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onGameClick(game.bggId) }
-                    .padding(vertical = 12.dp, horizontal = 4.dp),
+                    .padding(vertical = 8.dp, horizontal = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                GameThumbnail(thumbnailUrl = game.thumbnailUrl)
+                Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = game.name,
                     modifier = Modifier
@@ -230,9 +233,11 @@ fun SearchResults(searchResults: List<BoardGame>, onGameClick: (BoardGame) -> Un
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onGameClick(game) }
-                    .padding(vertical = 12.dp, horizontal = 4.dp),
+                    .padding(vertical = 8.dp, horizontal = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                GameThumbnail(thumbnailUrl = game.thumbnailUrl)
+                Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = game.name,
                     modifier = Modifier

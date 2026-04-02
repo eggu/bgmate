@@ -23,8 +23,6 @@ class FakeGameRepository : GameRepository {
         _gamesFlow.value = games
     }
 
-    override fun getGames(): List<BoardGame> = _gamesFlow.value
-
     override suspend fun addGame(name: String) {
         addedByNameCalls.add(name)
         _gamesFlow.value = _gamesFlow.value + BoardGame(bggId = "local_$name", name = name)
@@ -60,4 +58,6 @@ class FakeGameRepository : GameRepository {
     override fun observeSessionHistory(): Flow<List<ScoreSession>> = flowOf(emptyList())
 
     override suspend fun getSessionById(sessionId: Long): ScoreSession? = null
+
+    override suspend fun fetchThumbnails(ids: List<String>): Map<String, String> = emptyMap()
 }

@@ -20,4 +20,6 @@ class BggMockRemoteDataSource @Inject constructor(
             .let(BggXmlParser::parseSearchResult)
             .map { it.toDomain() }
     }
+
+    override suspend fun fetchThumbnails(ids: List<String>): Map<String, String> = emptyMap()
 }
