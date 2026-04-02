@@ -1,18 +1,14 @@
 package com.kurt.bgmate.presentation
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.repository.GameRepository
 import com.kurt.bgmate.presentation.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import okio.IOException
@@ -24,9 +20,6 @@ class GameListViewModel @Inject constructor(
     private val repository: GameRepository,
 ) : BaseViewModel() {
 
-    private val _games = MutableStateFlow<List<BoardGame>>(emptyList())
-
-    //    val games: StateFlow<List<BoardGame>> = _games.asStateFlow()
     val games: StateFlow<List<BoardGame>> = repository.observeGames().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -42,12 +35,21 @@ class GameListViewModel @Inject constructor(
     private val _showAddSheet = MutableStateFlow(false)
     val showAddSheet: StateFlow<Boolean> = _showAddSheet.asStateFlow()
 
-    fun openAddSheet() { _showAddSheet.value = true }
-    fun closeAddSheet() { _showAddSheet.value = false }
+    fun openAddSheet() {
+        _showAddSheet.value = true
+    }
+
+    fun closeAddSheet() {
+        _showAddSheet.value = false
+    }
 
     fun addGame(name: String) {
         val trimmedText = name.trim()
         if (trimmedText.isBlank()) return
+        if (games.value.any { it.name.equals(trimmedText, ignoreCase = true) }) {
+            showMessage("이미 등록된 게임입니다.")
+            return
+        }
         viewModelScope.launch {
             repository.addGame(trimmedText)
             closeAddSheet()
@@ -56,6 +58,12 @@ class GameListViewModel @Inject constructor(
     }
 
     fun addGame(game: BoardGame) {
+        if (games.value.any {
+                it.bggId == game.bggId || it.name.equals(game.name, ignoreCase = true)
+            }) {
+            showMessage("이미 등록된 게임입니다.")
+            return
+        }
         viewModelScope.launch {
             repository.addGame(game)
             showMessage("\"${game.name}\" 게임이 추가되었습니다.")
@@ -76,7 +84,6 @@ class GameListViewModel @Inject constructor(
 
     fun search(query: String) {
         if (query.isBlank()) {
-            _games.value = repository.getGames()
             return
         }
         viewModelScope.launch {
@@ -84,7 +91,6 @@ class GameListViewModel @Inject constructor(
             try {
                 val response = repository.searchGames(query)
                 _searchResults.value = response
-                _games.value = response
             } catch (e: HttpException) {
                 _error.value = "서버 오류: ${e.code()}"
             } catch (e: IOException) {
@@ -101,4 +107,3 @@ class GameListViewModel @Inject constructor(
         return games.value.find { it.bggId == id }
     }
 }
-

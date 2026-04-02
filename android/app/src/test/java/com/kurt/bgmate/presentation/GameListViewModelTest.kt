@@ -71,6 +71,23 @@ class GameListViewModelTest {
         )
     }
 
+    @Test
+    fun `addGame - 이미 등록된 이름이면 repository를 호출하지 않고 안내 메시지를 보낸다`() = runTest {
+        fakeRepository.setGames(listOf(BoardGame(bggId = "1", name = "Pandemic")))
+        val event = backgroundScope.async(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiEvent.first()
+        }
+
+        viewModel.addGame("pandemic")
+        advanceUntilIdle()
+
+        assertTrue(fakeRepository.addedByNameCalls.isEmpty())
+        assertEquals(
+            UiEvent.ShowMessage("이미 등록된 게임입니다."),
+            event.await()
+        )
+    }
+
     // ── addGame(BoardGame) ─────────────────────────────────────────
 
     @Test
@@ -94,6 +111,23 @@ class GameListViewModelTest {
 
         assertEquals(
             UiEvent.ShowMessage("\"Gloomhaven\" 게임이 추가되었습니다."),
+            event.await()
+        )
+    }
+
+    @Test
+    fun `addGame(BoardGame) - 이미 등록된 게임이면 repository를 호출하지 않고 안내 메시지를 보낸다`() = runTest {
+        fakeRepository.setGames(listOf(BoardGame(bggId = "174430", name = "Gloomhaven")))
+        val event = backgroundScope.async(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiEvent.first()
+        }
+
+        viewModel.addGame(BoardGame(bggId = "174430", name = "Gloomhaven"))
+        advanceUntilIdle()
+
+        assertTrue(fakeRepository.addedByGameCalls.isEmpty())
+        assertEquals(
+            UiEvent.ShowMessage("이미 등록된 게임입니다."),
             event.await()
         )
     }

@@ -20,9 +20,6 @@ class GameRepositoryImpl @Inject constructor(
     private val bggRemoteDataSource: BggRemoteDataSource
 ) :
     GameRepository {
-    private val games = mutableListOf<BoardGame>()
-
-    override fun getGames(): List<BoardGame> = games.toList()
 
     override suspend fun addGame(name: String) {
         // 임시 ID 생성 — BGG 승인 후 실제 bggId로 교체 예정
