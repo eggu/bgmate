@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
@@ -33,6 +34,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.kurt.bgmate.domain.model.ScoreSession
 import com.kurt.bgmate.domain.repository.GameRepository
+import com.kurt.bgmate.preview.PreviewDummy
+import com.kurt.bgmate.ui.theme.BGMateTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -67,6 +70,18 @@ fun SessionDetailScreen(
 ) {
     val session by viewModel.session.collectAsStateWithLifecycle()
 
+    SessionDetailScreenContent(
+        session = session,
+        onNavigateBack = onNavigateBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SessionDetailScreenContent(
+    session: ScoreSession?,
+    onNavigateBack: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -140,5 +155,16 @@ fun SessionDetailScreen(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewSessionDetailScreen() {
+    BGMateTheme {
+        SessionDetailScreenContent(
+            session = PreviewDummy.sampleSession,
+            onNavigateBack = {}
+        )
     }
 }

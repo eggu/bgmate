@@ -18,10 +18,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kurt.bgmate.domain.model.ScoreSession
+import com.kurt.bgmate.preview.PreviewDummy
 import com.kurt.bgmate.presentation.common.LoadingOverlay
 import com.kurt.bgmate.presentation.common.ObserveUiEvents
+import com.kurt.bgmate.ui.theme.BGMateTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,6 +39,29 @@ fun ScoreTrackerScreen(
 
     ObserveUiEvents(viewModel.uiEvent)
 
+    ScoreTrackerScreenContent(
+        session = session,
+        isLoading = isLoading,
+        isFinished = isFinished,
+        onNavigateBack = onNavigateBack,
+        inputContent = {
+            ScoreInputContent(
+                viewModel = viewModel,
+                modifier = Modifier
+            )
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ScoreTrackerScreenContent(
+    session: ScoreSession?,
+    isLoading: Boolean,
+    isFinished: Boolean,
+    onNavigateBack: () -> Unit,
+    inputContent: @Composable () -> Unit,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             topBar = {
@@ -67,10 +94,9 @@ fun ScoreTrackerScreen(
                         onConfirm = onNavigateBack
                     )
                 } else
-                    ScoreInputContent(
-                        viewModel = viewModel,
-                        modifier = Modifier.padding(paddingValues)
-                    )
+                    Box(modifier = Modifier.padding(paddingValues)) {
+                        inputContent()
+                    }
             }
         }
 
@@ -78,3 +104,16 @@ fun ScoreTrackerScreen(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun PreviewScoreTrackerScreen() {
+    BGMateTheme {
+        ScoreTrackerScreenContent(
+            session = PreviewDummy.sampleSession,
+            isLoading = false,
+            isFinished = true,
+            onNavigateBack = {},
+            inputContent = {}
+        )
+    }
+}

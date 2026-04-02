@@ -19,12 +19,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kurt.bgmate.domain.model.ScoreSession
+import com.kurt.bgmate.preview.PreviewDummy
 import com.kurt.bgmate.presentation.common.LoadingOverlay
 import com.kurt.bgmate.presentation.common.ObserveUiEvents
+import com.kurt.bgmate.ui.theme.BGMateTheme
 
 @Composable
 fun SessionHistoryScreen(
@@ -36,6 +39,19 @@ fun SessionHistoryScreen(
 
     ObserveUiEvents(viewModel.uiEvent)
 
+    SessionHistoryScreenContent(
+        sessions = sessions,
+        isLoading = isLoading,
+        onSessionClick = onSessionClick
+    )
+}
+
+@Composable
+private fun SessionHistoryScreenContent(
+    sessions: List<ScoreSession>,
+    isLoading: Boolean,
+    onSessionClick: (Long) -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -137,5 +153,17 @@ fun SessionHistoryCard(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewSessionHistoryScreen() {
+    BGMateTheme {
+        SessionHistoryScreenContent(
+            sessions = PreviewDummy.sampleSessions,
+            isLoading = false,
+            onSessionClick = {}
+        )
     }
 }

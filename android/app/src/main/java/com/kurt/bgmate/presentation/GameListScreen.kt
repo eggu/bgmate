@@ -45,13 +45,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kurt.bgmate.domain.model.BoardGame
+import com.kurt.bgmate.preview.PreviewDummy
 import com.kurt.bgmate.presentation.common.LoadingOverlay
 import com.kurt.bgmate.presentation.common.ObserveUiEvents
+import com.kurt.bgmate.ui.theme.BGMateTheme
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -270,5 +273,16 @@ fun AddGameBottomSheet(
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewGameListScreen() {
+    BGMateTheme {
+        GameListContent(
+            modifier = Modifier,
+            viewModel = PreviewDummy.createGameListViewModel(LocalContext.current)
+        )
     }
 }

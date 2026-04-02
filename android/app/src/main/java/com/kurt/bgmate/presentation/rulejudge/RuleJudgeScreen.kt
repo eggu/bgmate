@@ -42,14 +42,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.model.JudgeResult
+import com.kurt.bgmate.preview.PreviewDummy
 import com.kurt.bgmate.presentation.common.LoadingOverlay
 import com.kurt.bgmate.presentation.common.ObserveUiEvents
+import com.kurt.bgmate.ui.theme.BGMateTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -69,14 +72,49 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
 
     ObserveUiEvents(viewModel.uiEvent)
 
+    RuleJudgeScreenContent(
+        uiState = uiState,
+        streamingText = streamingText,
+        history = history,
+        games = games,
+        gameName = gameName,
+        dispute = dispute,
+        showGamePicker = showGamePicker,
+        onGameNameChange = { gameName = it },
+        onDisputeChange = { dispute = it },
+        onShowGamePickerChange = { showGamePicker = it },
+        onGameSelected = { selectedGame ->
+            gameName = selectedGame.name
+            showGamePicker = false
+        },
+        onJudgeClick = { viewModel.judge(gameName, dispute) },
+        onReset = viewModel::reset
+    )
+}
+
+@Composable
+private fun RuleJudgeScreenContent(
+    uiState: RuleJudgeViewModel.UiState,
+    streamingText: String,
+    history: List<JudgeResult>,
+    games: List<BoardGame>,
+    gameName: String,
+    dispute: String,
+    showGamePicker: Boolean,
+    onGameNameChange: (String) -> Unit,
+    onDisputeChange: (String) -> Unit,
+    onShowGamePickerChange: (Boolean) -> Unit,
+    onGameSelected: (BoardGame) -> Unit,
+    onJudgeClick: () -> Unit,
+    onReset: () -> Unit,
+) {
+    val isLoading = uiState is RuleJudgeViewModel.UiState.Loading
+
     if (showGamePicker) {
         GamePickerBottomSheet(
             games = games,
-            onDismiss = { showGamePicker = false },
-            onGameSelected = { selectedGame ->
-                gameName = selectedGame.name
-                showGamePicker = false
-            }
+            onDismiss = { onShowGamePickerChange(false) },
+            onGameSelected = onGameSelected
         )
     }
 
@@ -94,11 +132,9 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-
-            // 게임 이름 입력
             OutlinedTextField(
                 value = gameName,
-                onValueChange = { gameName = it },
+                onValueChange = onGameNameChange,
                 label = { Text("게임 이름") },
                 placeholder = { Text("예: 카탄, 아그리콜라") },
                 supportingText = { Text("직접 입력하거나 아래 버튼에서 내 컬렉션 게임을 선택하세요.") },
@@ -106,25 +142,16 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             )
-
             OutlinedButton(
-                onClick = { showGamePicker = true },
+                onClick = { onShowGamePickerChange(true) },
                 enabled = !isLoading && games.isNotEmpty(),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = if (games.isEmpty()) {
-                        "내 컬렉션에 게임이 없습니다"
-                    } else {
-                        "내 컬렉션에서 선택"
-                    }
-                )
+                Text(if (games.isEmpty()) "내 컬렉션에 게임이 없습니다" else "내 컬렉션에서 선택")
             }
-
-            // 분쟁 상황 입력
             OutlinedTextField(
                 value = dispute,
-                onValueChange = { dispute = it },
+                onValueChange = onDisputeChange,
                 label = { Text("분쟁 상황") },
                 placeholder = { Text("어떤 상황인지 구체적으로 입력하세요.") },
                 minLines = 4,
@@ -132,10 +159,8 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             )
-
-            // 판정 요청 버튼
             Button(
-                onClick = { viewModel.judge(gameName, dispute) },
+                onClick = onJudgeClick,
                 enabled = !isLoading && gameName.isNotBlank() && dispute.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -151,8 +176,6 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
                     Text("판정 요청")
                 }
             }
-
-            // 결과 영역
             AnimatedVisibility(
                 visible = streamingText.isNotEmpty(),
                 enter = fadeIn()
@@ -163,12 +186,10 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
                             text = streamingText,
                             style = MaterialTheme.typography.bodyMedium
                         )
-
-                        // 판정 완료 후 다시 질문 버튼
                         if (uiState is RuleJudgeViewModel.UiState.Result) {
                             Spacer(modifier = Modifier.height(12.dp))
                             OutlinedButton(
-                                onClick = { viewModel.reset() },
+                                onClick = onReset,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text("다시 질문하기")
@@ -177,16 +198,13 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
                     }
                 }
             }
-
-            // 에러 표시
             if (uiState is RuleJudgeViewModel.UiState.Error) {
                 Text(
-                    text = (uiState as RuleJudgeViewModel.UiState.Error).message,
+                    text = uiState.message,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
-
             if (history.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
@@ -199,8 +217,6 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
                 }
             }
         }
-
-        // 로딩 중 터치 차단
         LoadingOverlay(isLoading)
     }
 }
@@ -315,5 +331,27 @@ fun JudgeHistoryCard(result: JudgeResult) {
                 overflow = if (expanded) TextOverflow.Clip else TextOverflow.Ellipsis
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewRuleJudgeScreen() {
+    BGMateTheme {
+        RuleJudgeScreenContent(
+            uiState = RuleJudgeViewModel.UiState.Result("카탄에서는 도로가 기존 도로와 연결되어야 합니다."),
+            streamingText = "카탄에서는 도로가 기존 도로와 연결되어야 합니다.",
+            history = PreviewDummy.sampleJudgeHistory,
+            games = PreviewDummy.sampleBoardGames,
+            gameName = "카탄",
+            dispute = "이 위치에 도로를 놓을 수 있나요?",
+            showGamePicker = false,
+            onGameNameChange = {},
+            onDisputeChange = {},
+            onShowGamePickerChange = {},
+            onGameSelected = {},
+            onJudgeClick = {},
+            onReset = {}
+        )
     }
 }
