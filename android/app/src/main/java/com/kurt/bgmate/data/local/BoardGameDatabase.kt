@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [BoardGameEntity::class, SessionEntity::class, PlayerEntity::class, ScoreEntryEntity::class, JudgeHistoryEntity::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class BoardGameDatabase : RoomDatabase() {

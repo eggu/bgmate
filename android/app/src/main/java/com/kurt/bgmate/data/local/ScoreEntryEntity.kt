@@ -18,6 +18,7 @@ import com.kurt.bgmate.domain.model.ScoreSession
             entity = SessionEntity::class,
             parentColumns = [COL_SESSION_ID],
             childColumns = [COL_SESSION_ID],
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = PlayerEntity::class,
