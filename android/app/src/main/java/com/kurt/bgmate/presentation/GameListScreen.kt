@@ -162,6 +162,29 @@ private fun MyCollections(
     onGameClick: (String) -> Unit,
     viewModel: GameListViewModel
 ) {
+    if (games.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "아직 컬렉션에 게임이 없습니다.",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "위 검색창에서 게임을 찾아 컬렉션에 추가해보세요.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        return
+    }
+
     LazyColumn {
         items(games) { game ->
             Row(
