@@ -8,6 +8,8 @@ object Screen {
     const val SCORE_TRACKER = "score_tracker/{bggId}"
     fun scoreTracker(bggId: String) = "score_tracker/$bggId"
 
+    const val RECOMMEND = "recommend"
+
     // 규칙 판정관 탭
     const val RULE_JUDGE = "rule_judge"
 

@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.kurt.bgmate.presentation.history.SessionDetailScreen
 import com.kurt.bgmate.presentation.history.SessionHistoryScreen
+import com.kurt.bgmate.presentation.recommend.RecommendScreen
 import com.kurt.bgmate.presentation.rulejudge.RuleJudgeScreen
 import com.kurt.bgmate.presentation.scoretracker.ScoreTrackerScreen
 
@@ -44,14 +45,21 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
             }
         }
 
-        // ── 탭 2: 규칙 판정관 ──────────────────────────────
+        // ── 탭 2: 게임 추천 ────────────────────────────────
+        navigation(startDestination = BottomNavItem.Recommend.root, route = BottomNavItem.Recommend.route) {
+            composable(Screen.RECOMMEND) {
+                RecommendScreen()
+            }
+        }
+
+        // ── 탭 3: 규칙 판정관 ──────────────────────────────
         navigation(startDestination = BottomNavItem.RuleJudge.root, route = BottomNavItem.RuleJudge.route) {
             composable(Screen.RULE_JUDGE) {
                 RuleJudgeScreen()
             }
         }
 
-        // ── 탭 3: 전적 기록 ────────────────────────────────
+        // ── 탭 4: 전적 기록 ────────────────────────────────
         navigation(startDestination = BottomNavItem.History.root, route = BottomNavItem.History.route) {
             composable(Screen.SESSION_HISTORY) {
                 SessionHistoryScreen { sessionId ->

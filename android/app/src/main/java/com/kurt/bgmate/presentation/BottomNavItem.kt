@@ -1,6 +1,7 @@
 package com.kurt.bgmate.presentation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.Inventory2
@@ -17,6 +18,12 @@ enum class BottomNavItem(
         label = "컬렉션",
         root = Screen.GAME_LIST,
         icon = Icons.Outlined.Inventory2
+    ),
+    Recommend(
+        route = "tab_recommend",
+        label = "게임 추천",
+        root = Screen.RECOMMEND,
+        icon = Icons.Outlined.AutoAwesome
     ),
     RuleJudge(
         route = "tab_rule_judge",
