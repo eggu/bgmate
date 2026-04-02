@@ -62,11 +62,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 @Composable
 fun GameListScreen(
     onGameClick: (String) -> Unit = {},
-    onNavigateToDetail: (String) -> Unit = {},
     viewModel: GameListViewModel = hiltViewModel()
 ) {
     val showAddSheet by viewModel.showAddSheet.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     Scaffold(
         floatingActionButton = {
@@ -78,7 +76,6 @@ fun GameListScreen(
         GameListContent(
             modifier = Modifier.padding(paddingValues),
             onGameClick = onGameClick,
-            onNavigateToDetail = onNavigateToDetail,
             viewModel = viewModel,
         )
     }
@@ -95,7 +92,6 @@ fun GameListScreen(
 fun GameListContent(
     modifier: Modifier,
     onGameClick: (String) -> Unit = {},
-    onNavigateToDetail: (String) -> Unit = {},
     viewModel: GameListViewModel
 ) {
     val games by viewModel.games.collectAsStateWithLifecycle()
@@ -145,7 +141,7 @@ fun GameListContent(
 
         Box(modifier = Modifier.fillMaxSize()) {
             if (searchQuery.isBlank())
-                MyCollections(games, onNavigateToDetail, onGameClick, viewModel)
+                MyCollections(games, onGameClick, viewModel)
             else
                 SearchResults(
                     searchResults,
@@ -165,7 +161,6 @@ fun GameListContent(
 @Composable
 private fun MyCollections(
     games: List<BoardGame>,
-    onNavigateToDetail: (String) -> Unit,
     onGameClick: (String) -> Unit,
     viewModel: GameListViewModel
 ) {
@@ -197,7 +192,7 @@ private fun MyCollections(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onNavigateToDetail(game.bggId) }
+                    .clickable { onGameClick(game.bggId) }
                     .padding(vertical = 12.dp, horizontal = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {

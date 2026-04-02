@@ -27,8 +27,6 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
             composable(Screen.GAME_LIST) {
                 GameListScreen(onGameClick = { bggId ->
                     navController.navigate(Screen.scoreTracker(bggId))
-                }, onNavigateToDetail = { bggId ->
-                    navController.navigate(Screen.gameDetail(bggId))
                 })
             }
             composable(
