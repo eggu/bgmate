@@ -1,9 +1,10 @@
 package com.kurt.bgmate.presentation.rulejudge
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kurt.bgmate.domain.model.JudgeResult
+import com.kurt.bgmate.domain.model.BoardGame
+import com.kurt.bgmate.domain.repository.GameRepository
 import com.kurt.bgmate.domain.repository.RuleJudgeRepository
 import com.kurt.bgmate.presentation.common.BaseViewModel
 import com.kurt.bgmate.presentation.rulejudge.RuleJudgeViewModel.UiState.Idle
@@ -21,7 +22,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RuleJudgeViewModel @Inject constructor(private val ruleJudgeRepository: RuleJudgeRepository) :
+class RuleJudgeViewModel @Inject constructor(
+    private val ruleJudgeRepository: RuleJudgeRepository,
+    gameRepository: GameRepository
+) :
     BaseViewModel() {
 
     companion object {
@@ -42,6 +46,13 @@ class RuleJudgeViewModel @Inject constructor(private val ruleJudgeRepository: Ru
     val streamingText = _streamingText.asStateFlow()
 
     val history: StateFlow<List<JudgeResult>> = ruleJudgeRepository.observeHistory()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    val games: StateFlow<List<BoardGame>> = gameRepository.observeGames()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

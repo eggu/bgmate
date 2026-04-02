@@ -2,6 +2,7 @@ package com.kurt.bgmate.presentation.rulejudge
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -23,11 +26,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.model.JudgeResult
 import com.kurt.bgmate.presentation.common.LoadingOverlay
 import com.kurt.bgmate.presentation.common.ObserveUiEvents
@@ -52,13 +59,26 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val streamingText by viewModel.streamingText.collectAsStateWithLifecycle()
     val history by viewModel.history.collectAsStateWithLifecycle()
+    val games by viewModel.games.collectAsStateWithLifecycle()
 
     var gameName by remember { mutableStateOf("") }
     var dispute by remember { mutableStateOf("") }
+    var showGamePicker by remember { mutableStateOf(false) }
 
     val isLoading = uiState is RuleJudgeViewModel.UiState.Loading
 
     ObserveUiEvents(viewModel.uiEvent)
+
+    if (showGamePicker) {
+        GamePickerBottomSheet(
+            games = games,
+            onDismiss = { showGamePicker = false },
+            onGameSelected = { selectedGame ->
+                gameName = selectedGame.name
+                showGamePicker = false
+            }
+        )
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -69,6 +89,11 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text("AI 규칙 판정관", style = MaterialTheme.typography.headlineSmall)
+            Text(
+                text = "게임 이름을 직접 입력하거나, 내 컬렉션에서 선택해서 바로 규칙 판정을 요청할 수 있어요.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
             // 게임 이름 입력
             OutlinedTextField(
@@ -76,10 +101,25 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
                 onValueChange = { gameName = it },
                 label = { Text("게임 이름") },
                 placeholder = { Text("예: 카탄, 아그리콜라") },
+                supportingText = { Text("직접 입력하거나 아래 버튼에서 내 컬렉션 게임을 선택하세요.") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             )
+
+            OutlinedButton(
+                onClick = { showGamePicker = true },
+                enabled = !isLoading && games.isNotEmpty(),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = if (games.isEmpty()) {
+                        "내 컬렉션에 게임이 없습니다"
+                    } else {
+                        "내 컬렉션에서 선택"
+                    }
+                )
+            }
 
             // 분쟁 상황 입력
             OutlinedTextField(
@@ -162,6 +202,61 @@ fun RuleJudgeScreen(viewModel: RuleJudgeViewModel = hiltViewModel()) {
 
         // 로딩 중 터치 차단
         LoadingOverlay(isLoading)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun GamePickerBottomSheet(
+    games: List<BoardGame>,
+    onDismiss: () -> Unit,
+    onGameSelected: (BoardGame) -> Unit,
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "내 컬렉션에서 선택",
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                text = "판정을 받을 게임을 골라 주세요.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(
+                    items = games,
+                    key = { it.bggId }
+                ) { game ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                            .clickable { onGameSelected(game) },
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    ) {
+                        Text(
+                            text = game.name,
+                            modifier = Modifier.padding(16.dp),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

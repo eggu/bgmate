@@ -1,5 +1,6 @@
 package com.kurt.bgmate.presentation
 
+import com.kurt.bgmate.fake.FakeGameRepository
 import com.kurt.bgmate.fake.FakeRuleJudgeRepository
 import com.kurt.bgmate.presentation.rulejudge.RuleJudgeViewModel
 import com.kurt.bgmate.util.MainDispatcherRule
@@ -19,12 +20,14 @@ class RuleJudgeViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var fakeRepository: FakeRuleJudgeRepository
+    private lateinit var fakeGameRepository: FakeGameRepository
     private lateinit var viewModel: RuleJudgeViewModel
 
     @Before
     fun setUp() {
         fakeRepository = FakeRuleJudgeRepository()
-        viewModel = RuleJudgeViewModel(fakeRepository)
+        fakeGameRepository = FakeGameRepository()
+        viewModel = RuleJudgeViewModel(fakeRepository, fakeGameRepository)
     }
 
     // ── judge 입력 방어 ────────────────────────────────────────────
