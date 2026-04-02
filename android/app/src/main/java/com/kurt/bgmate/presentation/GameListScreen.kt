@@ -147,7 +147,14 @@ fun GameListContent(
             if (searchQuery.isBlank())
                 MyCollections(games, onNavigateToDetail, onGameClick, viewModel)
             else
-                SearchResults(searchResults, onGameClick = { viewModel.addGame(it) })
+                SearchResults(
+                    searchResults,
+                    onGameClick = {
+                        viewModel.addGame(it)
+                        searchQuery = ""
+                        viewModel.search("")
+                    }
+                )
 
 
             LoadingOverlay(isLoading)

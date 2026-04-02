@@ -84,6 +84,7 @@ class GameListViewModel @Inject constructor(
 
     fun search(query: String) {
         if (query.isBlank()) {
+            _searchResults.value = emptyList()
             return
         }
         viewModelScope.launch {
