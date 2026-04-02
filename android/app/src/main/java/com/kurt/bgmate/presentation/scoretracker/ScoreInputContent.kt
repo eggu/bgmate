@@ -30,6 +30,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -189,7 +190,10 @@ fun PlayerSetupBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = { /* 플레이어 없이 닫기 불가 — 무시 */ },
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+            confirmValueChange = { newValue -> newValue != SheetValue.Hidden }
+        )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("플레이어 추가", style = MaterialTheme.typography.titleLarge)
