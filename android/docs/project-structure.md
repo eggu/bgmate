@@ -27,9 +27,12 @@ com.kurt.bgmate
 │   │   ├── BoardGame.kt                           # 보드게임 도메인 모델
 │   │   ├── JudgeResult.kt                         # 규칙 판정 결과 모델
 │   │   ├── PlayerScore.kt                         # 플레이어 점수 모델
+│   │   ├── RecommendCondition.kt                  # 추천 조건 모델 (PlayTime, Mood enum 포함)
+│   │   ├── RecommendResult.kt                     # 추천 결과 모델
 │   │   └── ScoreSession.kt                        # 게임 세션 + 플레이어 점수 모델
 │   └── repository/
 │       ├── GameRepository.kt                      # 게임 CRUD/BGG 검색 인터페이스
+│       ├── RecommendRepository.kt                 # AI 게임 추천 인터페이스
 │       └── RuleJudgeRepository.kt                 # AI 규칙 판정 인터페이스
 │
 ├── data/
@@ -53,6 +56,7 @@ com.kurt.bgmate
 │   │   └── SearchResponse.kt                      # API 응답 데이터 클래스
 │   └── repository/
 │       ├── GameRepositoryImpl.kt                  # GameRepository 구현체
+│       ├── RecommendRepositoryImpl.kt             # RecommendRepository 구현체
 │       └── RuleJudgeRepositoryImpl.kt             # RuleJudgeRepository 구현체
 │
 ├── presentation/
@@ -66,7 +70,12 @@ com.kurt.bgmate
 │   │   ├── BaseViewModel.kt                       # 로딩/이벤트 공통 ViewModel
 │   │   ├── UiEvent.kt                             # UI 이벤트 sealed interface
 │   │   ├── LoadingOverlay.kt                      # 로딩 오버레이 Composable
-│   │   └── ObserveUiEvents.kt                     # UiEvent 구독 헬퍼 Composable
+│   │   ├── ObserveUiEvents.kt                     # UiEvent 구독 헬퍼 Composable
+│   │   ├── FilterChip.kt                          # 커스텀 필터 칩 Composable
+│   │   └── GameThumbnail.kt                       # 게임 썸네일 이미지 Composable (Coil3)
+│   ├── recommend/                                 # 게임 추천 기능
+│   │   ├── RecommendScreen.kt                     # 게임 추천 화면
+│   │   └── RecommendViewModel.kt                  # 게임 추천 ViewModel
 │   ├── rulejudge/                                 # 규칙 판정관 기능
 │   │   ├── RuleJudgeScreen.kt                     # 규칙 판정 화면
 │   │   └── RuleJudgeViewModel.kt                  # 규칙 판정 ViewModel
@@ -92,6 +101,15 @@ com.kurt.bgmate
     └── Type.kt                                    # Typography 정의
 ```
 
+**Assets**
+```
+assets/
+├── bgg_sample_search.xml       # BGG API Mock용 샘플 XML
+├── rule_judge_prompt.txt       # 규칙 판정 AI 프롬프트
+├── recommend_prompt_owned.txt  # 소유 게임 기반 추천 프롬프트
+└── recommend_prompt_all.txt    # 신규 게임 포함 전체 추천 프롬프트
+```
+
 ---
 
 ## 주요 클래스
@@ -103,22 +121,37 @@ com.kurt.bgmate
 | `BoardGame` | `data class` | 보드게임 도메인 모델. `bggId`, `name`, `yearPublished?`, `thumbnailUrl?` |
 | `JudgeResult` | `data class` | 규칙 판정 결과. `id`, `gameName`, `dispute`, `answer`, `askedAt` |
 | `PlayerScore` | `data class` | 플레이어 점수. `playerId`, `name`, `totalScore` |
+| `RecommendCondition` | `data class` | 추천 조건. `playerCount`, `playTimeMinutes`, `moods` |
+| `RecommendResult` | `data class` | 추천 결과. `name`, `reason`, `isOwned`, `bggScore?`, `difficulty?` |
 | `ScoreSession` | `data class` | 게임 세션. `sessionId`, `game`, `players`, `playedAt` |
 | `GameRepository` | `interface` | 게임 CRUD, BGG 검색, 세션 조회 계약 정의 |
+| `RecommendRepository` | `interface` | AI 게임 추천 계약 정의 |
 | `RuleJudgeRepository` | `interface` | AI 규칙 판정 및 판정 기록 계약 정의 |
+
+**`RecommendCondition` 관련 enum**
+```kotlin
+enum class PlayTime { SHORT, MEDIUM, LONG }       // 30분 이하 / 30~60분 / 60분 이상
+enum class Mood { STRATEGY, COOPERATIVE, DEDUCTION, COMPETITIVE,
+                  ROLE_PLAYING, PARTY, CREATIVE, DEXTERITY, RELAXED, CASUAL }
+```
 
 **GameRepository 메서드**
 ```kotlin
-fun getGames(): List<BoardGame>
 suspend fun addGame(name: String)
 suspend fun addGame(game: BoardGame)                      // BGG 검색 결과 게임 직접 추가
 suspend fun removeGame(name: String)
 suspend fun updateGame(old: String, new: String)
 suspend fun searchGames(query: String): List<BoardGame>   // BGG API 검색
+suspend fun fetchThumbnails(ids: List<String>): Map<String, String>  // BGG /xmlapi2/thing 썸네일 일괄 조회
 suspend fun getGameById(id: String): BoardGame?
 fun observeGames(): Flow<List<BoardGame>>                 // 로컬 DB 실시간 관찰
 fun observeSessionHistory(): Flow<List<ScoreSession>>     // 세션 기록 실시간 관찰
 suspend fun getSessionById(sessionId: Long): ScoreSession?
+```
+
+**RecommendRepository 메서드**
+```kotlin
+suspend fun recommend(condition: RecommendCondition, includeNew: Boolean, ownedGames: List<BoardGame>): List<RecommendResult>
 ```
 
 **RuleJudgeRepository 메서드**
@@ -155,7 +188,7 @@ fun BoardGame.toEntity(): BoardGameEntity   // Domain → Entity 변환
 | `BggRemoteDataSource` | `interface` | 원격 데이터 소스 계약 |
 | `BggApiRemoteDataSource` | `class` | 실제 API 호출 및 파싱 결과를 도메인 모델로 변환 |
 | `BggMockRemoteDataSource` | `class` | 테스트/개발용 Mock 데이터 소스 |
-| `BggApiService` | Retrofit `interface` | BoardGameGeek XML API v2 호출 |
+| `BggApiService` | Retrofit `interface` | BoardGameGeek XML API v2 호출 (`/xmlapi2/search`, `/xmlapi2/thing`) |
 | `BggXmlParser` | `object` | XML 문자열을 `BoardGame` 리스트로 파싱 |
 
 #### Repository
@@ -163,6 +196,7 @@ fun BoardGame.toEntity(): BoardGameEntity   // Domain → Entity 변환
 | 클래스 | 종류 | 설명 |
 |---|---|---|
 | `GameRepositoryImpl` | `class` | `GameRepository` 구현체. Room + BGG API 통합 |
+| `RecommendRepositoryImpl` | `class` | `RecommendRepository` 구현체. Claude AI API 통합 |
 | `RuleJudgeRepositoryImpl` | `class` | `RuleJudgeRepository` 구현체. Claude AI API + Room 통합 |
 
 ---
@@ -177,6 +211,8 @@ fun BoardGame.toEntity(): BoardGameEntity   // Domain → Entity 변환
 | `UiEvent` | `sealed interface` | UI 이벤트 타입 정의. `ShowMessage(message)` |
 | `LoadingOverlay` | `@Composable` | 전체 화면 로딩 오버레이 |
 | `ObserveUiEvents` | `@Composable` | `BaseViewModel.uiEvent`를 구독해 스낵바 등을 처리하는 헬퍼 |
+| `FilterChip` | `@Composable` | 선택/해제 가능한 커스텀 필터 칩 |
+| `GameThumbnail` | `@Composable` | Coil3 `AsyncImage`를 사용한 게임 썸네일 이미지 |
 
 #### 게임 목록
 
@@ -193,6 +229,26 @@ val searchResults: StateFlow<List<BoardGame>>  // BGG 검색 결과
 val isLoading: StateFlow<Boolean>
 val error: StateFlow<String?>
 val showAddSheet: StateFlow<Boolean>           // 게임 추가 BottomSheet 표시
+```
+
+#### 게임 추천 (recommend/)
+
+| 클래스 | 종류 | 설명 |
+|---|---|---|
+| `RecommendViewModel` | `@HiltViewModel` | 추천 조건 관리, AI 추천 요청 |
+| `RecommendScreen` | `@Composable` | 게임 추천 조건 입력 및 결과 표시 화면 |
+
+**RecommendUiState**
+```kotlin
+data class RecommendUiState(
+    val selectedPlayerCount: Int? = null,
+    val selectedPlayTime: PlayTime? = null,
+    val selectedMoods: Set<Mood> = emptySet(),
+    val includeNew: Boolean = true,
+    val hasRequested: Boolean = false,
+    val results: List<RecommendResult> = emptyList(),
+)
+// recommendEnabled: selectedPlayerCount != null && selectedPlayTime != null
 ```
 
 #### 규칙 판정관 (rulejudge/)
@@ -241,6 +297,7 @@ val pendingPlayerNames: StateFlow<List<String>>      // 입력 중인 플레이�
 **BottomNavItem 탭**
 ```kotlin
 BottomNavItem.Collection    // 컬렉션 탭 → Screen.GAME_LIST
+BottomNavItem.Recommend     // 게임 추천 탭 → Screen.RECOMMEND
 BottomNavItem.RuleJudge     // 규칙 판정관 탭 → Screen.RULE_JUDGE
 BottomNavItem.History       // 전적 기록 탭 → Screen.SESSION_HISTORY
 ```
@@ -250,6 +307,7 @@ BottomNavItem.History       // 전적 기록 탭 → Screen.SESSION_HISTORY
 Screen.GAME_LIST                        // "game_list"
 Screen.GAME_DETAIL / gameDetail(id)     // "detail/{id}"
 Screen.SCORE_TRACKER / scoreTracker(id) // "score_tracker/{bggId}"
+Screen.RECOMMEND                        // "recommend"
 Screen.RULE_JUDGE                       // "rule_judge"
 Screen.SESSION_HISTORY                  // "session_history"
 Screen.SESSION_DETAIL / sessionDetail(sessionId) // "session_detail/{sessionId}"
@@ -283,6 +341,7 @@ com.kurt.bgmate
 │   └── MainDispatcherRule.kt                           # TestCoroutineDispatcher 설정 Rule
 ├── fake/
 │   ├── FakeGameRepository.kt                           # GameRepository 인메모리 Fake 구현체
+│   ├── FakeRecommendRepository.kt                      # RecommendRepository Fake 구현체
 │   ├── FakeRuleJudgeRepository.kt                      # RuleJudgeRepository Fake 구현체
 │   └── FakeSessionDao.kt                               # SessionDao Fake 구현체
 ├── data/
@@ -291,6 +350,8 @@ com.kurt.bgmate
 └── presentation/
     ├── GameListViewModelTest.kt                         # 게임 목록 ViewModel 단위 테스트
     ├── RuleJudgeViewModelTest.kt                        # 규칙 판정 ViewModel 단위 테스트
+    ├── recommend/
+    │   └── RecommendViewModelTest.kt                    # 게임 추천 ViewModel 단위 테스트
     └── scoretracker/
         ├── ScoreTrackerViewModelTest.kt                 # 점수 추적 ViewModel 기본 동작 테스트
         └── ScoreTrackerViewModelEdgeTest.kt             # 점수 추적 ViewModel 엣지 케이스 테스트
@@ -323,5 +384,6 @@ com.kurt.bgmate
 | DI | Hilt |
 | 로컬 DB | Room |
 | 네트워크 | Retrofit2 + OkHttp (BGG XML API) |
-| AI | Claude API (규칙 판정, 스트리밍) |
+| 이미지 로딩 | Coil3 (`AsyncImage`) |
+| AI | Claude API (게임 추천, 규칙 판정, 스트리밍) |
 | 아키텍처 | Clean Architecture (Domain / Data / Presentation) |
