@@ -10,6 +10,9 @@ import com.kurt.bgmate.data.local.SessionDao
 import com.kurt.bgmate.data.remote.BggApiRemoteDataSource
 import com.kurt.bgmate.data.remote.BggApiService
 import com.kurt.bgmate.data.remote.BggRemoteDataSource
+import com.kurt.bgmate.data.remote.llm.GeminiLlmClient
+import com.kurt.bgmate.data.remote.llm.LlmClient
+// import com.kurt.bgmate.data.remote.llm.ClaudeLlmClient  // Claude 롤백용: 주석 해제하여 사용
 import com.kurt.bgmate.data.repository.GameRepositoryImpl
 import com.kurt.bgmate.data.repository.RecommendRepositoryImpl
 import com.kurt.bgmate.data.repository.RuleJudgeRepositoryImpl
@@ -50,6 +53,30 @@ object AppModule {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
+
+    @Provides
+    @Singleton
+    @Named("llm")
+    fun provideLlmOkHttpClient(): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+            )
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(120, TimeUnit.SECONDS)
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideLlmClient(@Named("llm") okHttpClient: OkHttpClient): LlmClient {
+        // Gemini 사용 (현재 활성)
+        return GeminiLlmClient(okHttpClient, BuildConfig.GEMINI_API_KEY)
+
+        // Claude 롤백: 아래 주석 해제하고 위 줄 주석 처리
+        // return ClaudeLlmClient(okHttpClient, BuildConfig.CLAUDE_API_KEY)
+    }
 
     @Provides
     @Singleton
@@ -97,20 +124,19 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRuleJudgeRepository(
-        okHttpClient: OkHttpClient,
+        llmClient: LlmClient,
         judgeHistoryDao: JudgeHistoryDao,
         @ApplicationContext context: Context
     ): RuleJudgeRepository =
-        RuleJudgeRepositoryImpl(okHttpClient, judgeHistoryDao, context)
+        RuleJudgeRepositoryImpl(llmClient, judgeHistoryDao, context)
 
     @Provides
     @Singleton
     fun provideRecommendRepository(
-        okHttpClient: OkHttpClient,
+        llmClient: LlmClient,
         @ApplicationContext context: Context
     ): RecommendRepository =
-        RecommendRepositoryImpl(okHttpClient, context)
-
+        RecommendRepositoryImpl(llmClient, context)
 
     @Provides
     @Named("bgg_api_token")

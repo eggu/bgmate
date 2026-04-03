@@ -2,7 +2,9 @@ package com.kurt.bgmate.data.repository
 
 import android.content.Context
 import android.util.Log
-import com.kurt.bgmate.BuildConfig
+import com.kurt.bgmate.data.remote.llm.LlmClient
+import com.kurt.bgmate.data.remote.llm.LlmMessage
+import com.kurt.bgmate.data.remote.llm.LlmRequest
 import com.kurt.bgmate.domain.model.BoardGame
 import com.kurt.bgmate.domain.model.RecommendCondition
 import com.kurt.bgmate.domain.model.RecommendResult
@@ -10,17 +12,13 @@ import com.kurt.bgmate.domain.repository.RecommendRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import okio.IOException
 import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
 
 class RecommendRepositoryImpl @Inject constructor(
-    private val okHttpClient: OkHttpClient,
+    private val llmClient: LlmClient,
     @ApplicationContext private val context: Context
 ) : RecommendRepository {
     companion object {
@@ -34,9 +32,12 @@ class RecommendRepositoryImpl @Inject constructor(
     ): List<RecommendResult> = withContext(Dispatchers.IO) {
         try {
             val prompt = buildPrompt(condition, ownedGames, includeNew)
-            val raw = requestRecommend(prompt)
-            val parsed = parseRecommendResponse(raw)
-            parsed
+            val request = LlmRequest(
+                messages = listOf(LlmMessage(role = "user", content = prompt)),
+                maxTokens = 8192
+            )
+            val response = llmClient.complete(request)
+            parseRecommendResponse(response.text)
         } catch (e: Exception) {
             Log.e(TAG, "recommend: $e", e)
             throw IOException("추천을 가져오지 못했습니다.")
@@ -64,35 +65,6 @@ class RecommendRepositoryImpl @Inject constructor(
             .replace("{gameList}", gameListText)
     }
 
-    private fun requestRecommend(prompt: String): String {
-        val requestBody = JSONObject().apply {
-            put("model", "claude-sonnet-4-20250514")
-            put("max_tokens", 1000)
-            put("messages", JSONArray().apply {
-                put(JSONObject().apply {
-                    put("role", "user")
-                    put("content", prompt)
-                })
-            })
-        }.toString().toRequestBody("application/json".toMediaType())
-
-        val request = Request.Builder()
-            .url("https://api.anthropic.com/v1/messages")
-            .addHeader("x-api-key", BuildConfig.CLAUDE_API_KEY)
-            .addHeader("anthropic-version", "2023-06-01")
-            .post(requestBody)
-            .build()
-
-        val response = okHttpClient.newCall(request).execute()
-        val body = response.body.string()
-
-        // content[0].text 추출
-        return JSONObject(body)
-            .getJSONArray("content")
-            .getJSONObject(0)
-            .getString("text")
-    }
-
     private fun parseRecommendResponse(raw: String): List<RecommendResult> {
         return try {
             val start = raw.indexOf('[')
@@ -105,7 +77,7 @@ class RecommendRepositoryImpl @Inject constructor(
                 RecommendResult(
                     name = obj.getString("name"),
                     reason = obj.getString("reason"),
-                    isOwned = obj.optBoolean("isOwned", false),  // 누락 시 false
+                    isOwned = obj.optBoolean("isOwned", false),
                     bggScore = obj.optDouble("bggScore", 0.0).toFloat(),
                     difficulty = obj.optString("difficulty", "")
                 )
