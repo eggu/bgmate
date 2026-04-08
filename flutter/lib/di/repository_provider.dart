@@ -1,0 +1,10 @@
+import 'package:bgmate_flutter/data/repository/game_repository_impl.dart';
+import 'package:bgmate_flutter/di/database_provider.dart';
+import 'package:bgmate_flutter/domain/repository/game_repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'repository_provider.g.dart';
+
+@Riverpod(keepAlive: true)
+GameRepository gameRepository(Ref ref) =>
+    GameRepositoryImpl(ref.watch(gameDaoProvider));
