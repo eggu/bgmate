@@ -31,5 +31,17 @@ void main() {
     test('빈 XML 문자열이면 빈 리스트를 반환한다', () {
       expect(BggXmlParser.parseSearchResults(''), isEmpty);
     });
+
+    test('id가 없는 item은 파싱 결과에서 제외된다', () {
+      const xml = '''
+    <?xml version="1.0" encoding="utf-8"?>
+    <items total="1">
+      <item type="boardgame">
+        <name type="primary" value="No ID Game"/>
+      </item>
+    </items>
+  ''';
+      expect(BggXmlParser.parseSearchResults(xml), isEmpty);
+    });
   });
 }

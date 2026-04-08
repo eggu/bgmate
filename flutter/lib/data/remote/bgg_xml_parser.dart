@@ -47,10 +47,14 @@ class BggXmlParser {
           .firstOrNull
           ?.getAttribute('value');
 
+      if (yearText == null || yearText.isEmpty) return null;
+      final year = int.tryParse(yearText);
+      if (year == null) return null;
+
       return BoardGame(
         bggId: bggId,
         name: name,
-        yearPublished: int.tryParse(yearText ?? ''),
+        yearPublished: year,
         thumbnail: '', // Search API에는 썸네일 없음 — Thing API에서 별도 요청
       );
     } catch (_) {

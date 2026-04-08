@@ -27,6 +27,17 @@ class $GameTableTable extends GameTable
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _yearPublishedMeta = const VerificationMeta(
+    'yearPublished',
+  );
+  @override
+  late final GeneratedColumn<int> yearPublished = GeneratedColumn<int>(
+    'year_published',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _thumbnailMeta = const VerificationMeta(
     'thumbnail',
   );
@@ -87,15 +98,29 @@ class $GameTableTable extends GameTable
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     bggId,
     name,
+    yearPublished,
     thumbnail,
     minPlayers,
     maxPlayers,
     playingTime,
     description,
+    createdAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -122,6 +147,17 @@ class $GameTableTable extends GameTable
       );
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('year_published')) {
+      context.handle(
+        _yearPublishedMeta,
+        yearPublished.isAcceptableOrUnknown(
+          data['year_published']!,
+          _yearPublishedMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_yearPublishedMeta);
     }
     if (data.containsKey('thumbnail')) {
       context.handle(
@@ -159,6 +195,12 @@ class $GameTableTable extends GameTable
         ),
       );
     }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
     return context;
   }
 
@@ -175,6 +217,10 @@ class $GameTableTable extends GameTable
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
+      )!,
+      yearPublished: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year_published'],
       )!,
       thumbnail: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -196,6 +242,10 @@ class $GameTableTable extends GameTable
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      ),
     );
   }
 
@@ -208,30 +258,38 @@ class $GameTableTable extends GameTable
 class GameTableData extends DataClass implements Insertable<GameTableData> {
   final int bggId;
   final String name;
+  final int yearPublished;
   final String thumbnail;
   final int minPlayers;
   final int maxPlayers;
   final int playingTime;
   final String description;
+  final DateTime? createdAt;
   const GameTableData({
     required this.bggId,
     required this.name,
+    required this.yearPublished,
     required this.thumbnail,
     required this.minPlayers,
     required this.maxPlayers,
     required this.playingTime,
     required this.description,
+    this.createdAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['bgg_id'] = Variable<int>(bggId);
     map['name'] = Variable<String>(name);
+    map['year_published'] = Variable<int>(yearPublished);
     map['thumbnail'] = Variable<String>(thumbnail);
     map['min_players'] = Variable<int>(minPlayers);
     map['max_players'] = Variable<int>(maxPlayers);
     map['playing_time'] = Variable<int>(playingTime);
     map['description'] = Variable<String>(description);
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime>(createdAt);
+    }
     return map;
   }
 
@@ -239,11 +297,15 @@ class GameTableData extends DataClass implements Insertable<GameTableData> {
     return GameTableCompanion(
       bggId: Value(bggId),
       name: Value(name),
+      yearPublished: Value(yearPublished),
       thumbnail: Value(thumbnail),
       minPlayers: Value(minPlayers),
       maxPlayers: Value(maxPlayers),
       playingTime: Value(playingTime),
       description: Value(description),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
     );
   }
 
@@ -255,11 +317,13 @@ class GameTableData extends DataClass implements Insertable<GameTableData> {
     return GameTableData(
       bggId: serializer.fromJson<int>(json['bggId']),
       name: serializer.fromJson<String>(json['name']),
+      yearPublished: serializer.fromJson<int>(json['yearPublished']),
       thumbnail: serializer.fromJson<String>(json['thumbnail']),
       minPlayers: serializer.fromJson<int>(json['minPlayers']),
       maxPlayers: serializer.fromJson<int>(json['maxPlayers']),
       playingTime: serializer.fromJson<int>(json['playingTime']),
       description: serializer.fromJson<String>(json['description']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
     );
   }
   @override
@@ -268,35 +332,44 @@ class GameTableData extends DataClass implements Insertable<GameTableData> {
     return <String, dynamic>{
       'bggId': serializer.toJson<int>(bggId),
       'name': serializer.toJson<String>(name),
+      'yearPublished': serializer.toJson<int>(yearPublished),
       'thumbnail': serializer.toJson<String>(thumbnail),
       'minPlayers': serializer.toJson<int>(minPlayers),
       'maxPlayers': serializer.toJson<int>(maxPlayers),
       'playingTime': serializer.toJson<int>(playingTime),
       'description': serializer.toJson<String>(description),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
     };
   }
 
   GameTableData copyWith({
     int? bggId,
     String? name,
+    int? yearPublished,
     String? thumbnail,
     int? minPlayers,
     int? maxPlayers,
     int? playingTime,
     String? description,
+    Value<DateTime?> createdAt = const Value.absent(),
   }) => GameTableData(
     bggId: bggId ?? this.bggId,
     name: name ?? this.name,
+    yearPublished: yearPublished ?? this.yearPublished,
     thumbnail: thumbnail ?? this.thumbnail,
     minPlayers: minPlayers ?? this.minPlayers,
     maxPlayers: maxPlayers ?? this.maxPlayers,
     playingTime: playingTime ?? this.playingTime,
     description: description ?? this.description,
+    createdAt: createdAt.present ? createdAt.value : this.createdAt,
   );
   GameTableData copyWithCompanion(GameTableCompanion data) {
     return GameTableData(
       bggId: data.bggId.present ? data.bggId.value : this.bggId,
       name: data.name.present ? data.name.value : this.name,
+      yearPublished: data.yearPublished.present
+          ? data.yearPublished.value
+          : this.yearPublished,
       thumbnail: data.thumbnail.present ? data.thumbnail.value : this.thumbnail,
       minPlayers: data.minPlayers.present
           ? data.minPlayers.value
@@ -310,6 +383,7 @@ class GameTableData extends DataClass implements Insertable<GameTableData> {
       description: data.description.present
           ? data.description.value
           : this.description,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
@@ -318,11 +392,13 @@ class GameTableData extends DataClass implements Insertable<GameTableData> {
     return (StringBuffer('GameTableData(')
           ..write('bggId: $bggId, ')
           ..write('name: $name, ')
+          ..write('yearPublished: $yearPublished, ')
           ..write('thumbnail: $thumbnail, ')
           ..write('minPlayers: $minPlayers, ')
           ..write('maxPlayers: $maxPlayers, ')
           ..write('playingTime: $playingTime, ')
-          ..write('description: $description')
+          ..write('description: $description, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -331,11 +407,13 @@ class GameTableData extends DataClass implements Insertable<GameTableData> {
   int get hashCode => Object.hash(
     bggId,
     name,
+    yearPublished,
     thumbnail,
     minPlayers,
     maxPlayers,
     playingTime,
     description,
+    createdAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -343,76 +421,93 @@ class GameTableData extends DataClass implements Insertable<GameTableData> {
       (other is GameTableData &&
           other.bggId == this.bggId &&
           other.name == this.name &&
+          other.yearPublished == this.yearPublished &&
           other.thumbnail == this.thumbnail &&
           other.minPlayers == this.minPlayers &&
           other.maxPlayers == this.maxPlayers &&
           other.playingTime == this.playingTime &&
-          other.description == this.description);
+          other.description == this.description &&
+          other.createdAt == this.createdAt);
 }
 
 class GameTableCompanion extends UpdateCompanion<GameTableData> {
   final Value<int> bggId;
   final Value<String> name;
+  final Value<int> yearPublished;
   final Value<String> thumbnail;
   final Value<int> minPlayers;
   final Value<int> maxPlayers;
   final Value<int> playingTime;
   final Value<String> description;
+  final Value<DateTime?> createdAt;
   const GameTableCompanion({
     this.bggId = const Value.absent(),
     this.name = const Value.absent(),
+    this.yearPublished = const Value.absent(),
     this.thumbnail = const Value.absent(),
     this.minPlayers = const Value.absent(),
     this.maxPlayers = const Value.absent(),
     this.playingTime = const Value.absent(),
     this.description = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   GameTableCompanion.insert({
     this.bggId = const Value.absent(),
     required String name,
+    required int yearPublished,
     this.thumbnail = const Value.absent(),
     this.minPlayers = const Value.absent(),
     this.maxPlayers = const Value.absent(),
     this.playingTime = const Value.absent(),
     this.description = const Value.absent(),
-  }) : name = Value(name);
+    this.createdAt = const Value.absent(),
+  }) : name = Value(name),
+       yearPublished = Value(yearPublished);
   static Insertable<GameTableData> custom({
     Expression<int>? bggId,
     Expression<String>? name,
+    Expression<int>? yearPublished,
     Expression<String>? thumbnail,
     Expression<int>? minPlayers,
     Expression<int>? maxPlayers,
     Expression<int>? playingTime,
     Expression<String>? description,
+    Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (bggId != null) 'bgg_id': bggId,
       if (name != null) 'name': name,
+      if (yearPublished != null) 'year_published': yearPublished,
       if (thumbnail != null) 'thumbnail': thumbnail,
       if (minPlayers != null) 'min_players': minPlayers,
       if (maxPlayers != null) 'max_players': maxPlayers,
       if (playingTime != null) 'playing_time': playingTime,
       if (description != null) 'description': description,
+      if (createdAt != null) 'created_at': createdAt,
     });
   }
 
   GameTableCompanion copyWith({
     Value<int>? bggId,
     Value<String>? name,
+    Value<int>? yearPublished,
     Value<String>? thumbnail,
     Value<int>? minPlayers,
     Value<int>? maxPlayers,
     Value<int>? playingTime,
     Value<String>? description,
+    Value<DateTime?>? createdAt,
   }) {
     return GameTableCompanion(
       bggId: bggId ?? this.bggId,
       name: name ?? this.name,
+      yearPublished: yearPublished ?? this.yearPublished,
       thumbnail: thumbnail ?? this.thumbnail,
       minPlayers: minPlayers ?? this.minPlayers,
       maxPlayers: maxPlayers ?? this.maxPlayers,
       playingTime: playingTime ?? this.playingTime,
       description: description ?? this.description,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -424,6 +519,9 @@ class GameTableCompanion extends UpdateCompanion<GameTableData> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (yearPublished.present) {
+      map['year_published'] = Variable<int>(yearPublished.value);
     }
     if (thumbnail.present) {
       map['thumbnail'] = Variable<String>(thumbnail.value);
@@ -440,6 +538,9 @@ class GameTableCompanion extends UpdateCompanion<GameTableData> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
     return map;
   }
 
@@ -448,11 +549,13 @@ class GameTableCompanion extends UpdateCompanion<GameTableData> {
     return (StringBuffer('GameTableCompanion(')
           ..write('bggId: $bggId, ')
           ..write('name: $name, ')
+          ..write('yearPublished: $yearPublished, ')
           ..write('thumbnail: $thumbnail, ')
           ..write('minPlayers: $minPlayers, ')
           ..write('maxPlayers: $maxPlayers, ')
           ..write('playingTime: $playingTime, ')
-          ..write('description: $description')
+          ..write('description: $description, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -474,21 +577,25 @@ typedef $$GameTableTableCreateCompanionBuilder =
     GameTableCompanion Function({
       Value<int> bggId,
       required String name,
+      required int yearPublished,
       Value<String> thumbnail,
       Value<int> minPlayers,
       Value<int> maxPlayers,
       Value<int> playingTime,
       Value<String> description,
+      Value<DateTime?> createdAt,
     });
 typedef $$GameTableTableUpdateCompanionBuilder =
     GameTableCompanion Function({
       Value<int> bggId,
       Value<String> name,
+      Value<int> yearPublished,
       Value<String> thumbnail,
       Value<int> minPlayers,
       Value<int> maxPlayers,
       Value<int> playingTime,
       Value<String> description,
+      Value<DateTime?> createdAt,
     });
 
 class $$GameTableTableFilterComposer
@@ -507,6 +614,11 @@ class $$GameTableTableFilterComposer
 
   ColumnFilters<String> get name => $composableBuilder(
     column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get yearPublished => $composableBuilder(
+    column: $table.yearPublished,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -534,6 +646,11 @@ class $$GameTableTableFilterComposer
     column: $table.description,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$GameTableTableOrderingComposer
@@ -552,6 +669,11 @@ class $$GameTableTableOrderingComposer
 
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get yearPublished => $composableBuilder(
+    column: $table.yearPublished,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -579,6 +701,11 @@ class $$GameTableTableOrderingComposer
     column: $table.description,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$GameTableTableAnnotationComposer
@@ -595,6 +722,11 @@ class $$GameTableTableAnnotationComposer
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get yearPublished => $composableBuilder(
+    column: $table.yearPublished,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get thumbnail =>
       $composableBuilder(column: $table.thumbnail, builder: (column) => column);
@@ -618,6 +750,9 @@ class $$GameTableTableAnnotationComposer
     column: $table.description,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
 }
 
 class $$GameTableTableTableManager
@@ -653,37 +788,45 @@ class $$GameTableTableTableManager
               ({
                 Value<int> bggId = const Value.absent(),
                 Value<String> name = const Value.absent(),
+                Value<int> yearPublished = const Value.absent(),
                 Value<String> thumbnail = const Value.absent(),
                 Value<int> minPlayers = const Value.absent(),
                 Value<int> maxPlayers = const Value.absent(),
                 Value<int> playingTime = const Value.absent(),
                 Value<String> description = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
               }) => GameTableCompanion(
                 bggId: bggId,
                 name: name,
+                yearPublished: yearPublished,
                 thumbnail: thumbnail,
                 minPlayers: minPlayers,
                 maxPlayers: maxPlayers,
                 playingTime: playingTime,
                 description: description,
+                createdAt: createdAt,
               ),
           createCompanionCallback:
               ({
                 Value<int> bggId = const Value.absent(),
                 required String name,
+                required int yearPublished,
                 Value<String> thumbnail = const Value.absent(),
                 Value<int> minPlayers = const Value.absent(),
                 Value<int> maxPlayers = const Value.absent(),
                 Value<int> playingTime = const Value.absent(),
                 Value<String> description = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
               }) => GameTableCompanion.insert(
                 bggId: bggId,
                 name: name,
+                yearPublished: yearPublished,
                 thumbnail: thumbnail,
                 minPlayers: minPlayers,
                 maxPlayers: maxPlayers,
                 playingTime: playingTime,
                 description: description,
+                createdAt: createdAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

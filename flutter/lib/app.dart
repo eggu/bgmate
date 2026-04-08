@@ -1,4 +1,5 @@
 import 'package:bgmate_flutter/presentation/collection/game_list_screen.dart';
+import 'package:bgmate_flutter/presentation/collection/game_search_screen.dart';
 import 'package:bgmate_flutter/presentation/recommend/recommend_screen.dart';
 import 'package:bgmate_flutter/presentation/rule_judge/rule_judge_screen.dart';
 import 'package:bgmate_flutter/presentation/score_tracker/score_tracker_screen.dart';
@@ -20,6 +21,10 @@ final _router = GoRouter(
             GoRoute(
               path: AppRoutes.collection,
               builder: (_, _) => const GameListScreen(),
+            ),
+            GoRoute(
+              path: AppRoutes.gameSearch,
+              builder: (_, _) => const GameSearchScreen(),
             ),
           ],
         ),

@@ -35,4 +35,11 @@ class GameRepositoryImpl implements GameRepository {
   Future<void> removeFromCollection(BoardGame game) async {
     return _gameDao.deleteByBggId(game.bggId);
   }
+
+  @override
+  Stream<List<BoardGame>> watchGames() {
+    return _gameDao.watchAll().map(
+      (entities) => entities.map((e) => e.toDomain()).toList(),
+    );
+  }
 }

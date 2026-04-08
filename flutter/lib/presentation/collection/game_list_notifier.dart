@@ -10,7 +10,14 @@ class GameListNotifier extends _$GameListNotifier {
   @override
   Future<List<BoardGame>> build() async {
     final repository = ref.watch(gameRepositoryProvider);
-    return repository.getCollection();
+
+    final sub = repository.watchGames().listen((games) {
+      state = AsyncData(games);
+    });
+
+    ref.onDispose(sub.cancel);
+
+    return repository.watchGames().first;
   }
 
   Future<void> refresh() async {

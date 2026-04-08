@@ -15,15 +15,46 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
-      for (final table in allTables) {
-        await m.deleteTable(table.actualTableName);
-        await m.createTable(table);
+      if (from < 3) {
+        await m.addColumn(gameTable, gameTable.yearPublished);
+
+        await customStatement(
+          'UPDATE ${gameTable.actualTableName} '
+          'SET ${gameTable.yearPublished.$name} = 0 '
+          'WHERE ${gameTable.yearPublished.$name} IS NULL',
+        );
       }
+
+      if (from < 4) {
+        await m.addColumn(gameTable, gameTable.createdAt);
+
+        await customStatement(
+          'UPDATE ${gameTable.actualTableName} '
+          'SET ${gameTable.createdAt.$name} = '
+          "CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER) "
+          'WHERE ${gameTable.createdAt.$name} IS NULL',
+        );
+      }
+    },
+    beforeOpen: (details) async {
+      await customStatement(
+        'UPDATE ${gameTable.actualTableName} '
+        'SET ${gameTable.createdAt.$name} = '
+        "CAST(strftime('%s', ${gameTable.createdAt.$name}) AS INTEGER) "
+        "WHERE typeof(${gameTable.createdAt.$name}) = 'text'",
+      );
+
+      await customStatement(
+        'UPDATE ${gameTable.actualTableName} '
+        'SET ${gameTable.createdAt.$name} = '
+        "CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER) "
+        'WHERE ${gameTable.createdAt.$name} IS NULL',
+      );
     },
   );
 }

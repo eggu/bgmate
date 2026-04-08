@@ -11,6 +11,7 @@ extension GameTableDataMapper on GameTableData {
     maxPlayers: maxPlayers,
     playingTime: playingTime,
     description: description,
+    yearPublished: yearPublished,
     isInCollection: true,
   );
 }
@@ -19,6 +20,7 @@ extension BoardGameMapper on BoardGame {
   GameTableCompanion toCompanion() => GameTableCompanion(
     bggId: Value(bggId),
     name: Value(name),
+    yearPublished: Value(yearPublished),
     thumbnail: Value(thumbnail),
     minPlayers: Value(minPlayers),
     maxPlayers: Value(maxPlayers),

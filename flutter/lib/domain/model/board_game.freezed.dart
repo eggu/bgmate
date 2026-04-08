@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BoardGame {
 
- int get bggId; String get name; String get thumbnail; int get minPlayers; int get maxPlayers; int get playingTime; String get description; bool get isInCollection; int? get yearPublished;
+ int get bggId; String get name; int get yearPublished; String get thumbnail; int get minPlayers; int get maxPlayers; int get playingTime; String get description; bool get isInCollection;
 /// Create a copy of BoardGame
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $BoardGameCopyWith<BoardGame> get copyWith => _$BoardGameCopyWithImpl<BoardGame>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardGame&&(identical(other.bggId, bggId) || other.bggId == bggId)&&(identical(other.name, name) || other.name == name)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.minPlayers, minPlayers) || other.minPlayers == minPlayers)&&(identical(other.maxPlayers, maxPlayers) || other.maxPlayers == maxPlayers)&&(identical(other.playingTime, playingTime) || other.playingTime == playingTime)&&(identical(other.description, description) || other.description == description)&&(identical(other.isInCollection, isInCollection) || other.isInCollection == isInCollection)&&(identical(other.yearPublished, yearPublished) || other.yearPublished == yearPublished));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardGame&&(identical(other.bggId, bggId) || other.bggId == bggId)&&(identical(other.name, name) || other.name == name)&&(identical(other.yearPublished, yearPublished) || other.yearPublished == yearPublished)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.minPlayers, minPlayers) || other.minPlayers == minPlayers)&&(identical(other.maxPlayers, maxPlayers) || other.maxPlayers == maxPlayers)&&(identical(other.playingTime, playingTime) || other.playingTime == playingTime)&&(identical(other.description, description) || other.description == description)&&(identical(other.isInCollection, isInCollection) || other.isInCollection == isInCollection));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,bggId,name,thumbnail,minPlayers,maxPlayers,playingTime,description,isInCollection,yearPublished);
+int get hashCode => Object.hash(runtimeType,bggId,name,yearPublished,thumbnail,minPlayers,maxPlayers,playingTime,description,isInCollection);
 
 @override
 String toString() {
-  return 'BoardGame(bggId: $bggId, name: $name, thumbnail: $thumbnail, minPlayers: $minPlayers, maxPlayers: $maxPlayers, playingTime: $playingTime, description: $description, isInCollection: $isInCollection, yearPublished: $yearPublished)';
+  return 'BoardGame(bggId: $bggId, name: $name, yearPublished: $yearPublished, thumbnail: $thumbnail, minPlayers: $minPlayers, maxPlayers: $maxPlayers, playingTime: $playingTime, description: $description, isInCollection: $isInCollection)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $BoardGameCopyWith<$Res>  {
   factory $BoardGameCopyWith(BoardGame value, $Res Function(BoardGame) _then) = _$BoardGameCopyWithImpl;
 @useResult
 $Res call({
- int bggId, String name, String thumbnail, int minPlayers, int maxPlayers, int playingTime, String description, bool isInCollection, int? yearPublished
+ int bggId, String name, int yearPublished, String thumbnail, int minPlayers, int maxPlayers, int playingTime, String description, bool isInCollection
 });
 
 
@@ -62,18 +62,18 @@ class _$BoardGameCopyWithImpl<$Res>
 
 /// Create a copy of BoardGame
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? bggId = null,Object? name = null,Object? thumbnail = null,Object? minPlayers = null,Object? maxPlayers = null,Object? playingTime = null,Object? description = null,Object? isInCollection = null,Object? yearPublished = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? bggId = null,Object? name = null,Object? yearPublished = null,Object? thumbnail = null,Object? minPlayers = null,Object? maxPlayers = null,Object? playingTime = null,Object? description = null,Object? isInCollection = null,}) {
   return _then(_self.copyWith(
 bggId: null == bggId ? _self.bggId : bggId // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,thumbnail: null == thumbnail ? _self.thumbnail : thumbnail // ignore: cast_nullable_to_non_nullable
+as String,yearPublished: null == yearPublished ? _self.yearPublished : yearPublished // ignore: cast_nullable_to_non_nullable
+as int,thumbnail: null == thumbnail ? _self.thumbnail : thumbnail // ignore: cast_nullable_to_non_nullable
 as String,minPlayers: null == minPlayers ? _self.minPlayers : minPlayers // ignore: cast_nullable_to_non_nullable
 as int,maxPlayers: null == maxPlayers ? _self.maxPlayers : maxPlayers // ignore: cast_nullable_to_non_nullable
 as int,playingTime: null == playingTime ? _self.playingTime : playingTime // ignore: cast_nullable_to_non_nullable
 as int,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,isInCollection: null == isInCollection ? _self.isInCollection : isInCollection // ignore: cast_nullable_to_non_nullable
-as bool,yearPublished: freezed == yearPublished ? _self.yearPublished : yearPublished // ignore: cast_nullable_to_non_nullable
-as int?,
+as bool,
   ));
 }
 
@@ -155,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int bggId,  String name,  String thumbnail,  int minPlayers,  int maxPlayers,  int playingTime,  String description,  bool isInCollection,  int? yearPublished)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int bggId,  String name,  int yearPublished,  String thumbnail,  int minPlayers,  int maxPlayers,  int playingTime,  String description,  bool isInCollection)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BoardGame() when $default != null:
-return $default(_that.bggId,_that.name,_that.thumbnail,_that.minPlayers,_that.maxPlayers,_that.playingTime,_that.description,_that.isInCollection,_that.yearPublished);case _:
+return $default(_that.bggId,_that.name,_that.yearPublished,_that.thumbnail,_that.minPlayers,_that.maxPlayers,_that.playingTime,_that.description,_that.isInCollection);case _:
   return orElse();
 
 }
@@ -176,10 +176,10 @@ return $default(_that.bggId,_that.name,_that.thumbnail,_that.minPlayers,_that.ma
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int bggId,  String name,  String thumbnail,  int minPlayers,  int maxPlayers,  int playingTime,  String description,  bool isInCollection,  int? yearPublished)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int bggId,  String name,  int yearPublished,  String thumbnail,  int minPlayers,  int maxPlayers,  int playingTime,  String description,  bool isInCollection)  $default,) {final _that = this;
 switch (_that) {
 case _BoardGame():
-return $default(_that.bggId,_that.name,_that.thumbnail,_that.minPlayers,_that.maxPlayers,_that.playingTime,_that.description,_that.isInCollection,_that.yearPublished);}
+return $default(_that.bggId,_that.name,_that.yearPublished,_that.thumbnail,_that.minPlayers,_that.maxPlayers,_that.playingTime,_that.description,_that.isInCollection);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -193,10 +193,10 @@ return $default(_that.bggId,_that.name,_that.thumbnail,_that.minPlayers,_that.ma
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int bggId,  String name,  String thumbnail,  int minPlayers,  int maxPlayers,  int playingTime,  String description,  bool isInCollection,  int? yearPublished)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int bggId,  String name,  int yearPublished,  String thumbnail,  int minPlayers,  int maxPlayers,  int playingTime,  String description,  bool isInCollection)?  $default,) {final _that = this;
 switch (_that) {
 case _BoardGame() when $default != null:
-return $default(_that.bggId,_that.name,_that.thumbnail,_that.minPlayers,_that.maxPlayers,_that.playingTime,_that.description,_that.isInCollection,_that.yearPublished);case _:
+return $default(_that.bggId,_that.name,_that.yearPublished,_that.thumbnail,_that.minPlayers,_that.maxPlayers,_that.playingTime,_that.description,_that.isInCollection);case _:
   return null;
 
 }
@@ -208,18 +208,18 @@ return $default(_that.bggId,_that.name,_that.thumbnail,_that.minPlayers,_that.ma
 
 
 class _BoardGame implements BoardGame {
-  const _BoardGame({required this.bggId, required this.name, this.thumbnail = '', this.minPlayers = 0, this.maxPlayers = 0, this.playingTime = 0, this.description = '', this.isInCollection = false, this.yearPublished = 0});
+  const _BoardGame({required this.bggId, required this.name, required this.yearPublished, this.thumbnail = '', this.minPlayers = 0, this.maxPlayers = 0, this.playingTime = 0, this.description = '', this.isInCollection = false});
   
 
 @override final  int bggId;
 @override final  String name;
+@override final  int yearPublished;
 @override@JsonKey() final  String thumbnail;
 @override@JsonKey() final  int minPlayers;
 @override@JsonKey() final  int maxPlayers;
 @override@JsonKey() final  int playingTime;
 @override@JsonKey() final  String description;
 @override@JsonKey() final  bool isInCollection;
-@override@JsonKey() final  int? yearPublished;
 
 /// Create a copy of BoardGame
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +231,16 @@ _$BoardGameCopyWith<_BoardGame> get copyWith => __$BoardGameCopyWithImpl<_BoardG
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoardGame&&(identical(other.bggId, bggId) || other.bggId == bggId)&&(identical(other.name, name) || other.name == name)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.minPlayers, minPlayers) || other.minPlayers == minPlayers)&&(identical(other.maxPlayers, maxPlayers) || other.maxPlayers == maxPlayers)&&(identical(other.playingTime, playingTime) || other.playingTime == playingTime)&&(identical(other.description, description) || other.description == description)&&(identical(other.isInCollection, isInCollection) || other.isInCollection == isInCollection)&&(identical(other.yearPublished, yearPublished) || other.yearPublished == yearPublished));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoardGame&&(identical(other.bggId, bggId) || other.bggId == bggId)&&(identical(other.name, name) || other.name == name)&&(identical(other.yearPublished, yearPublished) || other.yearPublished == yearPublished)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.minPlayers, minPlayers) || other.minPlayers == minPlayers)&&(identical(other.maxPlayers, maxPlayers) || other.maxPlayers == maxPlayers)&&(identical(other.playingTime, playingTime) || other.playingTime == playingTime)&&(identical(other.description, description) || other.description == description)&&(identical(other.isInCollection, isInCollection) || other.isInCollection == isInCollection));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,bggId,name,thumbnail,minPlayers,maxPlayers,playingTime,description,isInCollection,yearPublished);
+int get hashCode => Object.hash(runtimeType,bggId,name,yearPublished,thumbnail,minPlayers,maxPlayers,playingTime,description,isInCollection);
 
 @override
 String toString() {
-  return 'BoardGame(bggId: $bggId, name: $name, thumbnail: $thumbnail, minPlayers: $minPlayers, maxPlayers: $maxPlayers, playingTime: $playingTime, description: $description, isInCollection: $isInCollection, yearPublished: $yearPublished)';
+  return 'BoardGame(bggId: $bggId, name: $name, yearPublished: $yearPublished, thumbnail: $thumbnail, minPlayers: $minPlayers, maxPlayers: $maxPlayers, playingTime: $playingTime, description: $description, isInCollection: $isInCollection)';
 }
 
 
@@ -251,7 +251,7 @@ abstract mixin class _$BoardGameCopyWith<$Res> implements $BoardGameCopyWith<$Re
   factory _$BoardGameCopyWith(_BoardGame value, $Res Function(_BoardGame) _then) = __$BoardGameCopyWithImpl;
 @override @useResult
 $Res call({
- int bggId, String name, String thumbnail, int minPlayers, int maxPlayers, int playingTime, String description, bool isInCollection, int? yearPublished
+ int bggId, String name, int yearPublished, String thumbnail, int minPlayers, int maxPlayers, int playingTime, String description, bool isInCollection
 });
 
 
@@ -268,18 +268,18 @@ class __$BoardGameCopyWithImpl<$Res>
 
 /// Create a copy of BoardGame
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? bggId = null,Object? name = null,Object? thumbnail = null,Object? minPlayers = null,Object? maxPlayers = null,Object? playingTime = null,Object? description = null,Object? isInCollection = null,Object? yearPublished = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? bggId = null,Object? name = null,Object? yearPublished = null,Object? thumbnail = null,Object? minPlayers = null,Object? maxPlayers = null,Object? playingTime = null,Object? description = null,Object? isInCollection = null,}) {
   return _then(_BoardGame(
 bggId: null == bggId ? _self.bggId : bggId // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,thumbnail: null == thumbnail ? _self.thumbnail : thumbnail // ignore: cast_nullable_to_non_nullable
+as String,yearPublished: null == yearPublished ? _self.yearPublished : yearPublished // ignore: cast_nullable_to_non_nullable
+as int,thumbnail: null == thumbnail ? _self.thumbnail : thumbnail // ignore: cast_nullable_to_non_nullable
 as String,minPlayers: null == minPlayers ? _self.minPlayers : minPlayers // ignore: cast_nullable_to_non_nullable
 as int,maxPlayers: null == maxPlayers ? _self.maxPlayers : maxPlayers // ignore: cast_nullable_to_non_nullable
 as int,playingTime: null == playingTime ? _self.playingTime : playingTime // ignore: cast_nullable_to_non_nullable
 as int,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,isInCollection: null == isInCollection ? _self.isInCollection : isInCollection // ignore: cast_nullable_to_non_nullable
-as bool,yearPublished: freezed == yearPublished ? _self.yearPublished : yearPublished // ignore: cast_nullable_to_non_nullable
-as int?,
+as bool,
   ));
 }
 

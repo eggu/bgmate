@@ -9,9 +9,21 @@ part 'game_dao.g.dart';
 class GameDao extends DatabaseAccessor<AppDatabase> with _$GameDaoMixin {
   GameDao(super.db);
 
-  Stream<List<GameTableData>> watchAll() => select(gameTable).watch();
+  Stream<List<GameTableData>> watchAll() =>
+      (select(gameTable)
+            ..orderBy([
+              (t) => OrderingTerm.desc(t.createdAt),
+              (t) => OrderingTerm.asc(t.bggId),
+            ]))
+          .watch();
 
-  Future<List<GameTableData>> getAll() => select(gameTable).get();
+  Future<List<GameTableData>> getAll() =>
+      (select(gameTable)
+            ..orderBy([
+              (t) => OrderingTerm.desc(t.createdAt),
+              (t) => OrderingTerm.asc(t.bggId),
+            ]))
+          .get();
 
   Future<void> upsert(GameTableCompanion entry) =>
       into(gameTable).insertOnConflictUpdate(entry);
