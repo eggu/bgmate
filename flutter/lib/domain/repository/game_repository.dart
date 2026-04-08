@@ -8,6 +8,8 @@ abstract interface class GameRepository {
 
   Future<List<BoardGame>> searchBgg(String query);
 
+  Future<List<BoardGame>> enrichWithDetails(List<BoardGame> games);
+
   Future<BoardGame?> getGame(int id);
 
   Future<void> addToCollection(BoardGame game);

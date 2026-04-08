@@ -14,4 +14,11 @@ class BggApiRemoteDataSource implements BggRemoteDataSource {
     final xml = await _apiService.searchGames(query);
     return BggXmlParser.parseSearchResults(xml);
   }
+
+  @override
+  Future<List<BoardGame>> getThingDetails(List<int> ids) async {
+    if (ids.isEmpty) return [];
+    final xml = await _apiService.fetchThingDetails(ids);
+    return BggXmlParser.parseThingResults(xml);
+  }
 }

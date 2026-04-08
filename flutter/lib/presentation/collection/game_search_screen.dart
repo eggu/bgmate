@@ -2,6 +2,7 @@ import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/presentation/collection/game_list_notifier.dart';
 import 'package:bgmate_flutter/presentation/collection/search_debouncer.dart';
 import 'package:bgmate_flutter/presentation/collection/search_notifier.dart';
+import 'package:bgmate_flutter/presentation/widgets/game_thumbnail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,12 +18,28 @@ class GameSearchScreen extends ConsumerStatefulWidget {
 class _GameSearchScreenState extends ConsumerState<GameSearchScreen> {
   final _controller = TextEditingController();
   final _debouncer = SearchDebouncer();
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     _debouncer.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    final pos = _scrollController.position;
+    // 스크롤이 80% 이상 내려갔을 때 다음 배치 로드
+    if (pos.pixels >= pos.maxScrollExtent * 0.8) {
+      ref.read(searchNotifierProvider.notifier).loadNextBatch();
+    }
   }
 
   void _onChanged(String value) {
@@ -39,6 +56,7 @@ class _GameSearchScreenState extends ConsumerState<GameSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchNotifierProvider);
+    final notifier = ref.read(searchNotifierProvider.notifier);
 
     return PopScope(
       canPop: true,
@@ -78,12 +96,23 @@ class _GameSearchScreenState extends ConsumerState<GameSearchScreen> {
                   if (games.isEmpty) {
                     return const Center(child: Text('검색 결과가 없습니다'));
                   }
+                  final enrichedUpTo = notifier.enrichedUpTo;
                   return ListView.builder(
-                    itemCount: games.length,
-                    itemBuilder: (context, index) => _SearchResultItem(
-                      game: games[index],
-                      onAdd: () => _addToCollection(games[index]),
-                    ),
+                    controller: _scrollController,
+                    itemCount: games.length + (notifier.hasMoreToEnrich ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == games.length) {
+                        return const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      return _SearchResultItem(
+                        game: games[index],
+                        isEnriching: index >= enrichedUpTo,
+                        onAdd: () => _addToCollection(games[index]),
+                      );
+                    },
                   );
                 },
               ),
@@ -108,21 +137,51 @@ class _GameSearchScreenState extends ConsumerState<GameSearchScreen> {
 
 class _SearchResultItem extends StatelessWidget {
   final BoardGame game;
+  final bool isEnriching;
   final VoidCallback onAdd;
 
-  const _SearchResultItem({required this.game, required this.onAdd});
+  const _SearchResultItem({
+    required this.game,
+    required this.isEnriching,
+    required this.onAdd,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      leading: SizedBox(
+        width: 56,
+        height: 56,
+        child: GameThumbnail(url: game.thumbnail, isEnriching: isEnriching),
+      ),
       title: Text(game.name),
-      subtitle: game.yearPublished != null
-          ? Text('${game.yearPublished}년 출시')
-          : null,
+      subtitle: _buildSubtitle(game),
       trailing: IconButton(
         onPressed: onAdd,
         icon: const Icon(Icons.add_circle_outline),
       ),
     );
   }
+
+  Widget? _buildSubtitle(BoardGame game) {
+    final parts = <String>[];
+
+    if (game.yearPublished > 0) {
+      parts.add('${game.yearPublished}년');
+    }
+
+    if (game.minPlayers > 0 && game.maxPlayers > 0) {
+      parts.add('${game.minPlayers}~${game.maxPlayers}인');
+    } else if (game.minPlayers > 0) {
+      parts.add('${game.minPlayers}인+');
+    }
+
+    if (game.playingTime > 0) {
+      parts.add('${game.playingTime}분');
+    }
+
+    if (parts.isEmpty) return null;
+    return Text(parts.join(' · '));
+  }
 }
+

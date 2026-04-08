@@ -44,6 +44,48 @@ class AppDatabase extends _$AppDatabase {
     beforeOpen: (details) async {
       await customStatement(
         'UPDATE ${gameTable.actualTableName} '
+        "SET ${gameTable.name.$name} = '' "
+        'WHERE ${gameTable.name.$name} IS NULL',
+      );
+
+      await customStatement(
+        'UPDATE ${gameTable.actualTableName} '
+        'SET ${gameTable.yearPublished.$name} = 0 '
+        'WHERE ${gameTable.yearPublished.$name} IS NULL',
+      );
+
+      await customStatement(
+        'UPDATE ${gameTable.actualTableName} '
+        "SET ${gameTable.thumbnail.$name} = '' "
+        'WHERE ${gameTable.thumbnail.$name} IS NULL',
+      );
+
+      await customStatement(
+        'UPDATE ${gameTable.actualTableName} '
+        'SET ${gameTable.minPlayers.$name} = 0 '
+        'WHERE ${gameTable.minPlayers.$name} IS NULL',
+      );
+
+      await customStatement(
+        'UPDATE ${gameTable.actualTableName} '
+        'SET ${gameTable.maxPlayers.$name} = 0 '
+        'WHERE ${gameTable.maxPlayers.$name} IS NULL',
+      );
+
+      await customStatement(
+        'UPDATE ${gameTable.actualTableName} '
+        'SET ${gameTable.playingTime.$name} = 0 '
+        'WHERE ${gameTable.playingTime.$name} IS NULL',
+      );
+
+      await customStatement(
+        'UPDATE ${gameTable.actualTableName} '
+        "SET ${gameTable.description.$name} = '' "
+        'WHERE ${gameTable.description.$name} IS NULL',
+      );
+
+      await customStatement(
+        'UPDATE ${gameTable.actualTableName} '
         'SET ${gameTable.createdAt.$name} = '
         "CAST(strftime('%s', ${gameTable.createdAt.$name}) AS INTEGER) "
         "WHERE typeof(${gameTable.createdAt.$name}) = 'text'",

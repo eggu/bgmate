@@ -1,6 +1,7 @@
 import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/presentation/collection/game_list_notifier.dart';
 import 'package:bgmate_flutter/routing/app_routes.dart';
+import 'package:bgmate_flutter/presentation/widgets/game_thumbnail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -97,16 +98,16 @@ class _GameCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: SizedBox(
+          width: 56,
+          height: 56,
+          child: GameThumbnail(url: game.thumbnail),
+        ),
         title: Text(
           game.name,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        subtitle: Text(
-          '${game.yearPublished}년',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
+        subtitle: _buildSubtitle(context, game),
         trailing: IconButton(
           icon: const Icon(Icons.delete_outline),
           onPressed: onDelete,
@@ -115,4 +116,25 @@ class _GameCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget? _buildSubtitle(BuildContext context, BoardGame game) {
+    final parts = <String>[];
+
+    if (game.yearPublished > 0) parts.add('${game.yearPublished}년');
+    if (game.minPlayers > 0 && game.maxPlayers > 0) {
+      parts.add('${game.minPlayers}~${game.maxPlayers}인');
+    } else if (game.minPlayers > 0) {
+      parts.add('${game.minPlayers}인+');
+    }
+    if (game.playingTime > 0) parts.add('${game.playingTime}분');
+
+    if (parts.isEmpty) return null;
+    return Text(
+      parts.join(' · '),
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+    );
+  }
 }
+

@@ -3,6 +3,96 @@ import 'package:xml/xml.dart';
 import '../../domain/model/board_game.dart';
 
 class BggXmlParser {
+  /// BGG Thing API XML 응답 → BoardGame 리스트 (상세 정보 포함)
+  static List<BoardGame> parseThingResults(String xmlString) {
+    if (xmlString.isEmpty) return [];
+
+    final document = XmlDocument.parse(xmlString);
+    final items = document.findAllElements('item');
+
+    return items
+        .map((item) => _parseThingItem(item))
+        .whereType<BoardGame>()
+        .toList();
+  }
+
+  static BoardGame? _parseThingItem(XmlElement item) {
+    try {
+      final bggId = int.tryParse(item.getAttribute('id') ?? '');
+      if (bggId == null) return null;
+
+      final nameElements = item.findElements('name');
+      final primaryName = nameElements
+          .where((e) => e.getAttribute('type') == 'primary')
+          .map((e) => e.getAttribute('value') ?? '')
+          .firstOrNull;
+      final name =
+          primaryName ??
+          nameElements.map((e) => e.getAttribute('value') ?? '').firstOrNull ??
+          '';
+      if (name.isEmpty) return null;
+
+      final year =
+          int.tryParse(
+            item
+                    .findElements('yearpublished')
+                    .firstOrNull
+                    ?.getAttribute('value') ??
+                '',
+          ) ??
+          0;
+
+      final thumbnail =
+          item.findElements('thumbnail').firstOrNull?.innerText.trim() ?? '';
+
+      final minPlayers =
+          int.tryParse(
+            item
+                    .findElements('minplayers')
+                    .firstOrNull
+                    ?.getAttribute('value') ??
+                '',
+          ) ??
+          0;
+
+      final maxPlayers =
+          int.tryParse(
+            item
+                    .findElements('maxplayers')
+                    .firstOrNull
+                    ?.getAttribute('value') ??
+                '',
+          ) ??
+          0;
+
+      final playingTime =
+          int.tryParse(
+            item
+                    .findElements('playingtime')
+                    .firstOrNull
+                    ?.getAttribute('value') ??
+                '',
+          ) ??
+          0;
+
+      final description =
+          item.findElements('description').firstOrNull?.innerText.trim() ?? '';
+
+      return BoardGame(
+        bggId: bggId,
+        name: name,
+        yearPublished: year,
+        thumbnail: thumbnail,
+        minPlayers: minPlayers,
+        maxPlayers: maxPlayers,
+        playingTime: playingTime,
+        description: description,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// BGG Search API XML 응답 → BoardGame 리스트
   static List<BoardGame> parseSearchResults(String xmlString) {
     if (xmlString.isEmpty) return [];

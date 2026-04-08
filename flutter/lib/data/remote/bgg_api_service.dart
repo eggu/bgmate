@@ -22,6 +22,16 @@ class BggApiService {
     }
   }
 
+  Future<String> fetchThingDetails(List<int> ids) async {
+    // ids를 리터럴 콤마로 연결 — queryParameters 사용 시 %2C로 인코딩되므로 URL 직접 구성
+    final idParam = ids.join(',');
+    final response = await _dio.get<String>(
+      '/thing?id=$idParam&type=boardgame',
+      options: Options(responseType: ResponseType.plain),
+    );
+    return response.data ?? '';
+  }
+
   Future<String> searchGames(String query) async {
     final response = await _dio.get<String>(
       '/search',

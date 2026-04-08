@@ -22,6 +22,17 @@ class GameRepositoryImpl implements GameRepository {
   }
 
   @override
+  Future<List<BoardGame>> enrichWithDetails(List<BoardGame> games) async {
+    if (games.isEmpty) return games;
+    final ids = games.map((g) => g.bggId).toList();
+    final details = await _bggRemoteDataSource.getThingDetails(ids);
+    final detailMap = {for (final d in details) d.bggId: d};
+    return games
+        .map((g) => detailMap[g.bggId] ?? g)
+        .toList();
+  }
+
+  @override
   Future<BoardGame?> getGame(int id) async {
     final data = await _gameDao.getGame(id);
     return data?.toDomain();
