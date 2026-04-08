@@ -1,12 +1,14 @@
 import 'package:bgmate_flutter/data/local/game_dao.dart';
 import 'package:bgmate_flutter/data/local/game_table_mapper.dart';
+import 'package:bgmate_flutter/data/remote/bgg_remote_data_source.dart';
 import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/domain/repository/game_repository.dart';
 
 class GameRepositoryImpl implements GameRepository {
   final GameDao _gameDao;
+  final BggRemoteDataSource _bggRemoteDataSource;
 
-  GameRepositoryImpl(this._gameDao);
+  GameRepositoryImpl(this._gameDao, this._bggRemoteDataSource);
 
   @override
   Future<List<BoardGame>> getCollection() async {
@@ -16,7 +18,7 @@ class GameRepositoryImpl implements GameRepository {
 
   @override
   Future<List<BoardGame>> searchBgg(String query) async {
-    return List<BoardGame>.empty();
+    return _bggRemoteDataSource.searchGames(query);
   }
 
   @override

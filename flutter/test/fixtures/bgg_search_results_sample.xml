@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items total="4" termsofuse="https://boardgamegeek.com/xmlapi/termsofuse">
+  <item type="boardgame" id="174430">
+    <name type="primary" value="Gloomhaven"/>
+    <name type="alternate" value="Gloomhaven Alt"/>
+    <yearpublished value="2017"/>
+  </item>
+  <item type="boardgame" id="13">
+    <name type="primary" value="CATAN"/>
+    <yearpublished value="1995"/>
+  </item>
+  <item type="boardgame" id="999999">
+    <name type="alternate" value="Nameless Alternate"/>
+  </item>
+  <item type="boardgame">
+    <name type="primary" value="Missing Id"/>
+    <yearpublished value="2024"/>
+  </item>
+</items>

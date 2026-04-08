@@ -13,5 +13,6 @@ sealed class BoardGame with _$BoardGame {
     @Default(0) int playingTime,
     @Default('') String description,
     @Default(false) bool isInCollection,
+    @Default(0) int? yearPublished,
   }) = _BoardGame;
 }

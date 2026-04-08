@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items termsofuse="https://boardgamegeek.com/xmlapi/termsofuse" total="141">
+    <item id="134277" type="boardgame">
+        <name type="alternate" value="The 7 Wonders of Catan (fan expansion for Catan)" />
+        <yearpublished value="2012" />
+    </item>
+    <item id="110308" type="boardgame">
+        <name type="primary" value="7 Wonders: Catan" />
+        <yearpublished value="2011" />
+    </item>
+    <item id="123386" type="boardgame">
+        <name type="primary" value="Baden-Württemberg Catan" />
+        <yearpublished value="2012" />
+    </item>
+    <item id="13" type="boardgame">
+        <name type="primary" value="Catan" />
+        <yearpublished value="1995" />
+    </item>
+    <item id="17419" type="boardgame">
+        <name type="primary" value="Catan 3D Collector&#039;s Edition" />
+        <yearpublished value="2005" />
+    </item>
+    <item id="278" type="boardgame">
+        <name type="primary" value="Catan Card Game" />
+        <yearpublished value="1996" />
+    </item>
+    <item id="27710" type="boardgame">
+        <name type="primary" value="Catan Dice Game" />
+        <yearpublished value="2007" />
+    </item>
+    <item id="39624" type="boardgame">
+        <name type="primary" value="Catan Dice Game &quot;Extra&quot;" />
+        <yearpublished value="2008" />
+    </item>
+    <item id="47410" type="boardgame">
+        <name type="primary" value="Catan Dice Game Deluxe Edition" />
+        <yearpublished value="2009" />
+    </item>
+    <item id="38845" type="boardgame">
+        <name type="primary" value="Catan Dice Game Plus" />
+        <yearpublished value="2007" />
+    </item>
+    <item id="167836" type="boardgame">
+        <name type="alternate" value="Catan Escenarios: Iberia" />
+        <yearpublished value="2014" />
+    </item>
+    <item id="86008" type="boardgame">
+        <name type="primary" value="Catan Geographies: Austria" />
+        <yearpublished value="2010" />
+    </item>
+    <item id="60134" type="boardgame">
+        <name type="primary" value="Catan Geographies: Bayern Edition" />
+        <yearpublished value="2009" />
+    </item>
+    <item id="149857" type="boardgame">
+        <name type="primary" value="Catan Geographies: Corsica" />
+        <yearpublished value="2013" />
+    </item>
+    <item id="173651" type="boardgame">
+        <name type="primary" value="Catan Geographies: Georgia" />
+        <yearpublished value="2015" />
+    </item>
+    <item id="38749" type="boardgame">
+        <name type="primary" value="Catan Geographies: Germany" />
+        <yearpublished value="2008" />
+    </item>
+    <item id="202788" type="boardgame">
+        <name type="primary" value="Catan Geographies: Kennessee" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="131362" type="boardgame">
+        <name type="primary" value="Catan Geographies: Mallorca" />
+        <yearpublished value="2012" />
+    </item>
+    <item id="39093" type="boardgame">
+        <name type="primary" value="Catan Geographies: North Rhine – Westphalia" />
+        <yearpublished value="2008" />
+    </item>
+    <item id="187366" type="boardgame">
+        <name type="primary" value="Catan Geographies: Rickshaw Run" />
+        <yearpublished value="2015" />
+    </item>
+    <item id="32270" type="boardgame">
+        <name type="primary" value="Catan Geographies: Settlers of Hesse" />
+        <yearpublished value="2007" />
+    </item>
+    <item id="169486" type="boardgame">
+        <name type="primary" value="Catan Geographies: The Carolinas" />
+        <yearpublished value="2014" />
+    </item>
+    <item id="103091" type="boardgame">
+        <name type="primary" value="Catan Histories: Merchants of Europe" />
+        <yearpublished value="2011" />
+    </item>
+    <item id="244144" type="boardgame">
+        <name type="primary" value="Catan Histories: Rise of the Inkas" />
+        <yearpublished value="2018" />
+    </item>
+    <item id="67239" type="boardgame">
+        <name type="primary" value="Catan Histories: Settlers of America – Trails to Rails" />
+        <yearpublished value="2010" />
+    </item>
+    <item id="25234" type="boardgame">
+        <name type="primary" value="Catan Histories: Struggle for Rome" />
+        <yearpublished value="2006" />
+    </item>
+    <item id="291296" type="boardgame">
+        <name type="primary"
+            value="Catan Histories: Struggle for Rome – Terror of the Legions expansion" />
+        <yearpublished value="2006" />
+    </item>
+    <item id="229218" type="boardgame">
+        <name type="alternate" value="Catan Juego de Tronos: La Hermandad De La Guardia" />
+        <yearpublished value="2017" />
+    </item>
+    <item id="184842" type="boardgame">
+        <name type="primary" value="Catan Junior" />
+        <yearpublished value="2014" />
+    </item>
+    <item id="140743" type="boardgame">
+        <name type="primary" value="Catan Junior Madagascar" />
+        <yearpublished value="2012" />
+    </item>
+    <item id="269978" type="boardgame">
+        <name type="primary" value="Catan Junior Mitbringspiel" />
+        <yearpublished value="2019" />
+    </item>
+    <item id="292851" type="boardgame">
+        <name type="primary" value="Catan Rhein-Main-Neckar" />
+        <yearpublished value="2019" />
+    </item>
+    <item id="259397" type="boardgame">
+        <name type="primary" value="Catan Scenario: Crop Trust" />
+        <yearpublished value="2018" />
+    </item>
+    <item id="222582" type="boardgame">
+        <name type="primary" value="Catan Scenario: Durango" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="374983" type="boardgame">
+        <name type="primary" value="Catan Scenario: Malta" />
+        <yearpublished value="2022" />
+    </item>
+    <item id="189097" type="boardgame">
+        <name type="primary" value="Catan Scenarios:  Easter Bunny" />
+        <yearpublished value="2015" />
+    </item>
+    <item id="307518" type="boardgame">
+        <name type="primary" value="Catan Scenarios: #WeStayHome" />
+        <yearpublished value="2020" />
+    </item>
+    <item id="186395" type="boardgame">
+        <name type="primary" value="Catan Scenarios: Big Game Big Honor" />
+        <yearpublished value="2015" />
+    </item>
+    <item id="196928" type="boardgame">
+        <name type="primary" value="Catan Scenarios: Catanimals" />
+        <yearpublished value="2010" />
+    </item>
+    <item id="131958" type="boardgame">
+        <name type="primary" value="Catan Scenarios: Frenemies" />
+        <yearpublished value="2012" />
+    </item>
+    <item id="305516" type="boardgame">
+        <name type="primary" value="Catan Scenarios: Global Warming" />
+        <yearpublished value="2020" />
+    </item>
+    <item id="86669" type="boardgame">
+        <name type="primary" value="Catan Scenarios: Helpers of Catan" />
+        <yearpublished value="2010" />
+    </item>
+    <item id="110794" type="boardgame">
+        <name type="primary" value="Catan Scenarios: Oil Springs" />
+        <yearpublished value="2011" />
+    </item>
+    <item id="211081" type="boardgame">
+        <name type="primary" value="Catan scenariusze: Mapy – Polska" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="91534" type="boardgame">
+        <name type="alternate" value="CATAN Szybka Gra Karciana" />
+        <yearpublished value="2011" />
+    </item>
+    <item id="27766" type="boardgame">
+        <name type="alternate" value="Catan telepesei Junior" />
+        <yearpublished value="2007" />
+    </item>
+    <item id="167573" type="boardgame">
+        <name type="alternate" value="Catan World Championship Berlin 2014 Special" />
+        <yearpublished value="2014" />
+    </item>
+    <item id="66056" type="boardgame">
+        <name type="alternate" value="Catan Двубоят" />
+        <yearpublished value="2010" />
+    </item>
+    <item id="298278" type="boardgame">
+        <name type="primary" value="Catan: 25 Jahre Jubiläums-Edition" />
+        <yearpublished value="2020" />
+    </item>
+    <item id="305668" type="boardgame">
+        <name type="primary" value="Catan: 25th Anniversary Edition" />
+        <yearpublished value="2020" />
+    </item>
+    <item id="338697" type="boardgame">
+        <name type="primary" value="Catan: 3D Edition" />
+        <yearpublished value="2021" />
+    </item>
+    <item id="358860" type="boardgame">
+        <name type="primary" value="Catan: 3D Expansions – Seafarers + Cities &amp; Knights" />
+        <yearpublished value="2022" />
+    </item>
+    <item id="2807" type="boardgame">
+        <name type="primary" value="Catan: 5-6 Player Expansion" />
+        <yearpublished value="1996" />
+    </item>
+    <item id="161527" type="boardgame">
+        <name type="primary" value="Catan: Ancient Egypt" />
+        <yearpublished value="2014" />
+    </item>
+    <item id="372510" type="boardgame">
+        <name type="primary" value="Catan: Aufbruch der Menschheit – Der Schamane" />
+        <yearpublished value="2022" />
+    </item>
+    <item id="182880" type="boardgame">
+        <name type="primary" value="Catan: Big Box" />
+        <yearpublished value="2015" />
+    </item>
+    <item id="191710" type="boardgame">
+        <name type="primary" value="Catan: Big Box" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="269980" type="boardgame">
+        <name type="primary" value="Catan: Big Box" />
+        <yearpublished value="2019" />
+    </item>
+    <item id="394723" type="boardgame">
+        <name type="primary" value="Catan: Big Box" />
+        <yearpublished value="2023" />
+    </item>
+    <item id="265030" type="boardgame">
+        <name type="primary" value="Catan: Big Box Jubileumeditie" />
+        <yearpublished value="2018" />
+    </item>
+    <item id="194097" type="boardgame">
+        <name type="primary" value="Catan: Big Game Event Kit" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="104774" type="boardgame">
+        <name type="primary" value="Catan: Catakatoa" />
+        <yearpublished value="2005" />
+    </item>
+    <item id="176966" type="boardgame">
+        <name type="primary" value="Catan: Catan Day 2015 Exclusive Expansion" />
+        <yearpublished value="2015" />
+    </item>
+    <item id="181471" type="boardgame">
+        <name type="primary" value="Catan: Chocolate Edition" />
+        <yearpublished value="2015" />
+    </item>
+    <item id="926" type="boardgame">
+        <name type="primary" value="Catan: Cities &amp; Knights" />
+        <yearpublished value="1998" />
+    </item>
+    <item id="4101" type="boardgame">
+        <name type="primary" value="Catan: Cities &amp; Knights – 5-6 Player Extension" />
+        <yearpublished value="2000" />
+    </item>
+    <item id="265141" type="boardgame">
+        <name type="primary" value="Catan: Cities &amp; Knights – Legend of the Conquerors" />
+        <yearpublished value="2019" />
+    </item>
+    <item id="284815" type="boardgame">
+        <name type="primary" value="Catan: Core + China Map" />
+        <yearpublished value="2019" />
+    </item>
+    <item id="394739" type="boardgame">
+        <name type="primary" value="Catan: Das Duell – Die Big Box" />
+        <yearpublished value="2023" />
+    </item>
+    <item id="324882" type="boardgame">
+        <name type="primary" value="Catan: Das Duell – Finstere &amp; Goldene Zeiten" />
+        <yearpublished value="2021" />
+    </item>
+    <item id="211557" type="boardgame">
+        <name type="primary"
+            value="Catan: Das Duell – Sonderkarte 2016: 20 Jahre Catan, das Spiel für 2" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="212234" type="boardgame">
+        <name type="primary" value="Catan: Das Duell – Sonderkarte 2016: Michael der Wagemutige" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="238673" type="boardgame">
+        <name type="primary"
+            value="Catan: Das Duell – Sonderkarte 2017: Isabell, die Handelsagentin" />
+        <yearpublished value="2017" />
+    </item>
+    <item id="350674" type="boardgame">
+        <name type="primary"
+            value="Catan: Das Duell – Sonderkarte 2021: 25 Jahre CATAN-Kartenspiel" />
+        <yearpublished value="2021" />
+    </item>
+    <item id="350673" type="boardgame">
+        <name type="primary" value="Catan: Das Duell – Sonderkarte 2021: Weinberg" />
+        <yearpublished value="2021" />
+    </item>
+    <item id="372567" type="boardgame">
+        <name type="primary" value="Catan: Das Duell – Sonderkarte 2022: Sonja, die Schäferin" />
+        <yearpublished value="2022" />
+    </item>
+    <item id="402962" type="boardgame">
+        <name type="primary" value="Catan: Das Duell – Sonderkarte 2023: Klaus, Hüter von Catan" />
+        <yearpublished value="2023" />
+    </item>
+    <item id="358858" type="boardgame">
+        <name type="primary" value="Catan: Dawn of Humankind" />
+        <yearpublished value="2022" />
+    </item>
+    <item id="384112" type="boardgame">
+        <name type="primary" value="Catan: Dawn of Humankind – Promo #1" />
+        <yearpublished value="2022" />
+    </item>
+    <item id="73809" type="boardgame">
+        <name type="primary" value="Catan: Delmarva" />
+        <yearpublished value="2010" />
+    </item>
+    <item id="352073" type="boardgame">
+        <name type="primary" value="Catan: Die Stoffräuber" />
+        <yearpublished value="2011" />
+    </item>
+    <item id="203219" type="boardgame">
+        <name type="alternate" value="Catan: Duel" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="456397" type="boardgame">
+        <name type="primary" value="Catan: Ein Herz für den Räuber!" />
+        <yearpublished value="2025" />
+    </item>
+    <item id="20038" type="boardgame">
+        <name type="primary" value="Catan: Event Cards" />
+        <yearpublished value="2005" />
+    </item>
+    <item id="135378" type="boardgame">
+        <name type="primary" value="Catan: Explorers &amp; Pirates" />
+        <yearpublished value="2013" />
+    </item>
+    <item id="144419" type="boardgame">
+        <name type="primary" value="Catan: Explorers &amp; Pirates – 5-6 Player Extension" />
+        <yearpublished value="2013" />
+    </item>
+    <item id="147240" type="boardgame">
+        <name type="primary" value="Catan: Family Edition" />
+        <yearpublished value="2012" />
+    </item>
+    <item id="325333" type="boardgame">
+        <name type="primary" value="Catan: First Adventure" />
+        <yearpublished value="2020" />
+    </item>
+    <item id="238135" type="boardgame">
+        <name type="primary" value="Catan: Hawai&#039;i Scenario" />
+        <yearpublished value="2017" />
+    </item>
+    <item id="250619" type="boardgame">
+        <name type="primary" value="Catan: Het Duel Big Box" />
+        <yearpublished value="2017" />
+    </item>
+    <item id="263939" type="boardgame">
+        <name type="primary" value="Catan: High Priests of the Inkas" />
+        <yearpublished value="2018" />
+    </item>
+    <item id="54528" type="boardgame">
+        <name type="primary" value="Catan: Indiana &amp; Ohio" />
+        <yearpublished value="2009" />
+    </item>
+    <item id="125921" type="boardgame">
+        <name type="primary" value="Catan: Junior" />
+        <yearpublished value="2012" />
+    </item>
+    <item id="456857" type="boardgame">
+        <name type="primary" value="Catan: Mowlin, the Benevolent Ram" />
+        <yearpublished value="2025" />
+    </item>
+    <item id="408727" type="boardgame">
+        <name type="primary" value="Catan: New Energies" />
+        <yearpublished value="2024" />
+    </item>
+    <item id="427672" type="boardgame">
+        <name type="primary" value="Catan: New Energies – Energy Crisis" />
+        <yearpublished value="2024" />
+    </item>
+    <item id="143249" type="boardgame">
+        <name type="primary" value="Catan: New England" />
+        <yearpublished value="2013" />
+    </item>
+    <item id="132481" type="boardgame">
+        <name type="primary" value="Catan: New York" />
+        <yearpublished value="2012" />
+    </item>
+    <item id="464675" type="boardgame">
+        <name type="primary" value="Catan: On the Road" />
+        <yearpublished value="2026" />
+    </item>
+    <item id="101942" type="boardgame">
+        <name type="primary" value="Catan: Penn-Jersey" />
+        <yearpublished value="2011" />
+    </item>
+    <item id="222396" type="boardgame">
+        <name type="primary" value="Catan: Playmat Atoll" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="222394" type="boardgame">
+        <name type="primary" value="Catan: Playmat Desert" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="222393" type="boardgame">
+        <name type="primary" value="Catan: Playmat Gold" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="222395" type="boardgame">
+        <name type="primary" value="Catan: Playmat Island" />
+        <yearpublished value="2016" />
+    </item>
+    <item id="3972" type="boardgame">
+        <name type="primary" value="Catan: Portable Edition" />
+        <yearpublished value="2002" />
+    </item>
+    <item id="325" type="boardgame">
+        <name type="primary" value="Catan: Seafarers" />
+        <yearpublished value="1997" />
+    </item>
+    <item id="223171" type="boardgame">
+        <name type="primary" value="Catan: Seafarers Scenario – Legend of the Sea Robbers" />
+        <yearpublished value="2017" />
+    </item>
+    <item id="4103" type="boardgame">
+        <name type="primary" value="Catan: Seafarers – 5-6 Player Extension" />
+        <yearpublished value="1999" />
+    </item>
+    <item id="217947" type="boardgame">
+        <name type="primary" value="Catan: Seefahrer – 20 Jahre Jubiläums-Edition" />
+        <yearpublished value="2017" />
+    </item>
+    <item id="381626" type="boardgame">
+        <name type="primary" value="Catan: Soccer Fever Scenario" />
+        <yearpublished value="2023" />
+    </item>
+    <item id="282853" type="boardgame">
+        <name type="primary" value="Catan: Starfarers" />
+        <yearpublished value="2019" />
+    </item>
+    <item id="376805" type="boardgame">
+        <name type="primary" value="Catan: Starfarers  –  New Encounters" />
+        <yearpublished value="2023" />
+    </item>
+    <item id="383481" type="boardgame">
+        <name type="primary" value="Catan: Starfarers Duel" />
+        <yearpublished value="2023" />
+    </item>
+    <item id="316229" type="boardgame">
+        <name type="primary" value="Catan: Starfarers – 5-6 Player Extension" />
+        <yearpublished value="2020" />
+    </item>
+    <item id="293002" type="boardgame">
+        <name type="primary" value="Catan: Starfarers – Asteroid Fields" />
+        <yearpublished value="2019" />
+    </item>
+    <item id="324313" type="boardgame">
+        <name type="primary" value="Catan: Starfarers – Space Jump" />
+        <yearpublished value="2020" />
+    </item>
+    <item id="351565" type="boardgame">
+        <name type="primary"
+            value="Catan: Sternenfahrer – Begegnungskarten für Sternenfahrer: Erster Kontakt" />
+        <yearpublished value="2021" />
+    </item>
+    <item id="402919" type="boardgame">
+        <name type="primary"
+            value="Catan: Sternenfahrer – Das Duell: Der Glücksspielplanet Las Wega" />
+        <yearpublished value="2023" />
+    </item>
+    <item id="271159" type="boardgame">
+        <name type="primary" value="Catan: Szenario Der Kölner Dom" />
+        <yearpublished value="2018" />
+    </item>
+    <item id="367791" type="boardgame">
+        <name type="primary" value="Catan: The Helpers" />
+        <yearpublished value="2022" />
+    </item>
+    <item id="416257" type="boardgame">
+        <name type="primary" value="Catan: The Helpers – Leader of the Flock" />
+        <yearpublished value="2024" />
+    </item>
+    <item id="111377" type="boardgame">
+        <name type="alternate" value="Catan: Thuringia" />
+        <yearpublished value="2011" />
+    </item>
+    <item id="27760" type="boardgame">
+        <name type="primary" value="Catan: Traders &amp; Barbarians" />
+        <yearpublished value="2007" />
+    </item>
+    <item id="34691" type="boardgame">
+        <name type="primary" value="Catan: Traders &amp; Barbarians – 5-6 Player Expansion" />
+        <yearpublished value="2008" />
+    </item>
+    <item id="172994" type="boardgame">
+        <name type="primary" value="Catan: Traveler – Compact Edition" />
+        <yearpublished value="2015" />
+    </item>
+    <item id="56157" type="boardgame">
+        <name type="primary" value="Catan: Treasures, Dragons &amp; Adventurers" />
+        <yearpublished value="2009" />
+    </item>
+    <item id="341591" type="boardgame">
+        <name type="primary" value="Catan: Zusatzmaterial für Das Duell – Bonus Box" />
+        <yearpublished value="2021" />
+    </item>
+    <item id="89606" type="boardgame">
+        <name type="alternate"
+            value="Church, Faith &amp; Reformation (fan expansion for Catan: Cities and Knights)" />
+        <yearpublished value="2002" />
+    </item>
+    <item id="29718" type="boardgame">
+        <name type="alternate"
+            value="I Coloni di Catan: Il Gioco di Carte – Cavalieri &amp; Mercanti" />
+        <yearpublished value="1999" />
+    </item>
+    <item id="29715" type="boardgame">
+        <name type="alternate"
+            value="I Coloni di Catan: Il Gioco di Carte – Commercio &amp; Sviluppo" />
+        <yearpublished value="1999" />
+    </item>
+    <item id="29716" type="boardgame">
+        <name type="alternate"
+            value="I Coloni di Catan: Il Gioco di Carte – Politica &amp; Intrighi" />
+        <yearpublished value="1999" />
+    </item>
+    <item id="29717" type="boardgame">
+        <name type="alternate"
+            value="I Coloni di Catan: Il Gioco di Carte – Scienza &amp; Progresso" />
+        <yearpublished value="1999" />
+    </item>
+    <item id="29714" type="boardgame">
+        <name type="alternate"
+            value="I Coloni di Catan: Il Gioco di Carte – Stregoni &amp; Draghi" />
+        <yearpublished value="1999" />
+    </item>
+</items>

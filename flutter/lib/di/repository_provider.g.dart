@@ -48,4 +48,4 @@ final class GameRepositoryProvider
   }
 }
 
-String _$gameRepositoryHash() => r'f80b8d760535351ca460609e93465ebea661dc38';
+String _$gameRepositoryHash() => r'ddcfe9bb6e89ec38effdd1fc2d08a094b64cdfb5';

@@ -2,6 +2,35 @@
 
 A new Flutter project.
 
+## BGG API Token
+
+`BggApiService` reads the BGG auth token from `BGG_API_TOKEN`, and this
+project provides a wrapper script so every Flutter command can reuse the same
+local env file.
+
+Create a Git-ignored `.env.local` file in the project root:
+
+```env
+BGG_API_TOKEN=your_token_here
+```
+
+Then run Flutter through the helper script:
+
+```bash
+./tool/flutter_with_env.sh run
+./tool/flutter_with_env.sh test
+./tool/flutter_with_env.sh build apk
+```
+
+The script automatically adds `--dart-define-from-file=.env.local` when the
+file exists, so the same setup works for Android, iOS, macOS, web, and tests.
+
+If you need to call Flutter directly, you can still pass the file yourself:
+
+```bash
+flutter test --dart-define-from-file=.env.local
+```
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
