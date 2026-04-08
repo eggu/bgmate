@@ -1,3 +1,4 @@
+import 'package:bgmate_flutter/presentation/collection/game_detail_screen.dart';
 import 'package:bgmate_flutter/presentation/collection/game_list_screen.dart';
 import 'package:bgmate_flutter/presentation/collection/game_search_screen.dart';
 import 'package:bgmate_flutter/presentation/recommend/recommend_screen.dart';
@@ -25,6 +26,15 @@ final _router = GoRouter(
             GoRoute(
               path: AppRoutes.gameSearch,
               builder: (_, _) => const GameSearchScreen(),
+            ),
+            GoRoute(
+              path: AppRoutes.gameDetailPath,
+              builder: (context, state) {
+                final bggId = int.parse(
+                  state.pathParameters[AppRoutes.bggIdParam]!,
+                );
+                return GameDetailScreen(bggId: bggId);
+              },
             ),
           ],
         ),

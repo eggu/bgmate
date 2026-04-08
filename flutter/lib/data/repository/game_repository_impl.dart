@@ -22,8 +22,9 @@ class GameRepositoryImpl implements GameRepository {
   }
 
   @override
-  Future<BoardGame> getGame(String id) {
-    throw Exception("");
+  Future<BoardGame?> getGame(int id) async {
+    final data = await _gameDao.getGame(id);
+    return data?.toDomain();
   }
 
   @override

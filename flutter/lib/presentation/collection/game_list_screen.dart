@@ -43,6 +43,9 @@ class GameListScreen extends ConsumerWidget {
                 itemCount: games.length,
                 itemBuilder: (_, i) => _GameCard(
                   game: games[i],
+                  onDetail: () => context.push(
+                    AppRoutes.gameDetailLocation(games[i].bggId),
+                  ),
                   onDelete: () => _confirmDelete(context, ref, games[i]),
                 ),
               ),
@@ -79,9 +82,14 @@ class GameListScreen extends ConsumerWidget {
 
 class _GameCard extends StatelessWidget {
   final BoardGame game;
+  final VoidCallback onDetail;
   final VoidCallback onDelete;
 
-  const _GameCard({required this.game, required this.onDelete});
+  const _GameCard({
+    required this.game,
+    required this.onDetail,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -103,9 +111,7 @@ class _GameCard extends StatelessWidget {
           icon: const Icon(Icons.delete_outline),
           onPressed: onDelete,
         ),
-        onTap: () {
-          // TODO: 게임 상세 화면으로 이동
-        },
+        onTap: onDetail,
       ),
     );
   }

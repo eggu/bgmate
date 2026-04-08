@@ -30,4 +30,8 @@ class GameDao extends DatabaseAccessor<AppDatabase> with _$GameDaoMixin {
 
   Future<void> deleteByBggId(int bggId) =>
       (delete(gameTable)..where((t) => t.bggId.equals(bggId))).go();
+
+  Future<GameTableData?> getGame(int id) async {
+    return (select(gameTable)..where((t) => t.bggId.equals(id))).getSingle();
+  }
 }
