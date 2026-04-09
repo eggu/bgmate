@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
-class GameTable extends Table {
+@DataClassName('BoardGameRecord')
+class BoardGames extends Table {
   IntColumn get bggId => integer()();
 
   TextColumn get name => text()();
@@ -18,6 +19,9 @@ class GameTable extends Table {
   TextColumn get description => text().withDefault(const Constant(''))();
 
   DateTimeColumn get createdAt => dateTime().nullable().clientDefault(() => DateTime.now())();
+
+  @override
+  String get tableName => 'game_table';
 
   @override
   Set<Column> get primaryKey => {bggId};

@@ -52,7 +52,7 @@ class _GameDetailBody extends StatelessWidget {
               height: 200,
               width: double.infinity,
               fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => const _ThumbnailPlaceholder(),
+              errorBuilder: (_, _, _) => const _ThumbnailPlaceholder(),
             ),
           )
         else
@@ -85,7 +85,7 @@ class _ThumbnailPlaceholder extends StatelessWidget {
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: const Icon(Icons.games, size: 64),
