@@ -90,3 +90,44 @@ final class GameDaoProvider
 }
 
 String _$gameDaoHash() => r'2e56370f1d0cedb85db8cad3cfa38d81dc07b29d';
+
+@ProviderFor(sessionDao)
+final sessionDaoProvider = SessionDaoProvider._();
+
+final class SessionDaoProvider
+    extends $FunctionalProvider<SessionDao, SessionDao, SessionDao>
+    with $Provider<SessionDao> {
+  SessionDaoProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sessionDaoProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sessionDaoHash();
+
+  @$internal
+  @override
+  $ProviderElement<SessionDao> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SessionDao create(Ref ref) {
+    return sessionDao(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SessionDao value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SessionDao>(value),
+    );
+  }
+}
+
+String _$sessionDaoHash() => r'5b9f815efbadc4a121e39a35b15781d3f61be6c9';

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PlayerScore {
 
- String get playerName; int get score; int get rank;
+ int get id; int get sessionId; String get playerName; int get score;
 /// Create a copy of PlayerScore
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $PlayerScoreCopyWith<PlayerScore> get copyWith => _$PlayerScoreCopyWithImpl<Play
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlayerScore&&(identical(other.playerName, playerName) || other.playerName == playerName)&&(identical(other.score, score) || other.score == score)&&(identical(other.rank, rank) || other.rank == rank));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlayerScore&&(identical(other.id, id) || other.id == id)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&(identical(other.playerName, playerName) || other.playerName == playerName)&&(identical(other.score, score) || other.score == score));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,playerName,score,rank);
+int get hashCode => Object.hash(runtimeType,id,sessionId,playerName,score);
 
 @override
 String toString() {
-  return 'PlayerScore(playerName: $playerName, score: $score, rank: $rank)';
+  return 'PlayerScore(id: $id, sessionId: $sessionId, playerName: $playerName, score: $score)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $PlayerScoreCopyWith<$Res>  {
   factory $PlayerScoreCopyWith(PlayerScore value, $Res Function(PlayerScore) _then) = _$PlayerScoreCopyWithImpl;
 @useResult
 $Res call({
- String playerName, int score, int rank
+ int id, int sessionId, String playerName, int score
 });
 
 
@@ -62,11 +62,12 @@ class _$PlayerScoreCopyWithImpl<$Res>
 
 /// Create a copy of PlayerScore
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? playerName = null,Object? score = null,Object? rank = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? sessionId = null,Object? playerName = null,Object? score = null,}) {
   return _then(_self.copyWith(
-playerName: null == playerName ? _self.playerName : playerName // ignore: cast_nullable_to_non_nullable
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,sessionId: null == sessionId ? _self.sessionId : sessionId // ignore: cast_nullable_to_non_nullable
+as int,playerName: null == playerName ? _self.playerName : playerName // ignore: cast_nullable_to_non_nullable
 as String,score: null == score ? _self.score : score // ignore: cast_nullable_to_non_nullable
-as int,rank: null == rank ? _self.rank : rank // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -149,10 +150,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String playerName,  int score,  int rank)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  int sessionId,  String playerName,  int score)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PlayerScore() when $default != null:
-return $default(_that.playerName,_that.score,_that.rank);case _:
+return $default(_that.id,_that.sessionId,_that.playerName,_that.score);case _:
   return orElse();
 
 }
@@ -170,10 +171,10 @@ return $default(_that.playerName,_that.score,_that.rank);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String playerName,  int score,  int rank)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  int sessionId,  String playerName,  int score)  $default,) {final _that = this;
 switch (_that) {
 case _PlayerScore():
-return $default(_that.playerName,_that.score,_that.rank);}
+return $default(_that.id,_that.sessionId,_that.playerName,_that.score);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -187,10 +188,10 @@ return $default(_that.playerName,_that.score,_that.rank);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String playerName,  int score,  int rank)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  int sessionId,  String playerName,  int score)?  $default,) {final _that = this;
 switch (_that) {
 case _PlayerScore() when $default != null:
-return $default(_that.playerName,_that.score,_that.rank);case _:
+return $default(_that.id,_that.sessionId,_that.playerName,_that.score);case _:
   return null;
 
 }
@@ -202,12 +203,13 @@ return $default(_that.playerName,_that.score,_that.rank);case _:
 
 
 class _PlayerScore implements PlayerScore {
-  const _PlayerScore({required this.playerName, required this.score, this.rank = 0});
+  const _PlayerScore({required this.id, required this.sessionId, required this.playerName, required this.score});
   
 
+@override final  int id;
+@override final  int sessionId;
 @override final  String playerName;
 @override final  int score;
-@override@JsonKey() final  int rank;
 
 /// Create a copy of PlayerScore
 /// with the given fields replaced by the non-null parameter values.
@@ -219,16 +221,16 @@ _$PlayerScoreCopyWith<_PlayerScore> get copyWith => __$PlayerScoreCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayerScore&&(identical(other.playerName, playerName) || other.playerName == playerName)&&(identical(other.score, score) || other.score == score)&&(identical(other.rank, rank) || other.rank == rank));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayerScore&&(identical(other.id, id) || other.id == id)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&(identical(other.playerName, playerName) || other.playerName == playerName)&&(identical(other.score, score) || other.score == score));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,playerName,score,rank);
+int get hashCode => Object.hash(runtimeType,id,sessionId,playerName,score);
 
 @override
 String toString() {
-  return 'PlayerScore(playerName: $playerName, score: $score, rank: $rank)';
+  return 'PlayerScore(id: $id, sessionId: $sessionId, playerName: $playerName, score: $score)';
 }
 
 
@@ -239,7 +241,7 @@ abstract mixin class _$PlayerScoreCopyWith<$Res> implements $PlayerScoreCopyWith
   factory _$PlayerScoreCopyWith(_PlayerScore value, $Res Function(_PlayerScore) _then) = __$PlayerScoreCopyWithImpl;
 @override @useResult
 $Res call({
- String playerName, int score, int rank
+ int id, int sessionId, String playerName, int score
 });
 
 
@@ -256,11 +258,12 @@ class __$PlayerScoreCopyWithImpl<$Res>
 
 /// Create a copy of PlayerScore
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? playerName = null,Object? score = null,Object? rank = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? sessionId = null,Object? playerName = null,Object? score = null,}) {
   return _then(_PlayerScore(
-playerName: null == playerName ? _self.playerName : playerName // ignore: cast_nullable_to_non_nullable
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,sessionId: null == sessionId ? _self.sessionId : sessionId // ignore: cast_nullable_to_non_nullable
+as int,playerName: null == playerName ? _self.playerName : playerName // ignore: cast_nullable_to_non_nullable
 as String,score: null == score ? _self.score : score // ignore: cast_nullable_to_non_nullable
-as int,rank: null == rank ? _self.rank : rank // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }

@@ -1,7 +1,7 @@
 import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/presentation/collection/game_list_notifier.dart';
-import 'package:bgmate_flutter/routing/app_routes.dart';
 import 'package:bgmate_flutter/presentation/widgets/game_thumbnail.dart';
+import 'package:bgmate_flutter/routing/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -47,6 +47,9 @@ class GameListScreen extends ConsumerWidget {
                   onDetail: () => context.push(
                     AppRoutes.gameDetailLocation(games[i].bggId),
                   ),
+                  onCreateSession: () => context.push(
+                    AppRoutes.scoreCreateLocation(games[i].bggId),
+                  ),
                   onDelete: () => _confirmDelete(context, ref, games[i]),
                 ),
               ),
@@ -84,11 +87,13 @@ class GameListScreen extends ConsumerWidget {
 class _GameCard extends StatelessWidget {
   final BoardGame game;
   final VoidCallback onDetail;
+  final VoidCallback onCreateSession;
   final VoidCallback onDelete;
 
   const _GameCard({
     required this.game,
     required this.onDetail,
+    required this.onCreateSession,
     required this.onDelete,
   });
 
@@ -108,10 +113,20 @@ class _GameCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: _buildSubtitle(context, game),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete_outline),
-          onPressed: onDelete,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.add_box_outlined),
+              onPressed: onCreateSession,
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              onPressed: onDelete,
+            ),
+          ],
         ),
+
         onTap: onDetail,
       ),
     );
@@ -131,10 +146,7 @@ class _GameCard extends StatelessWidget {
     if (parts.isEmpty) return null;
     return Text(
       parts.join(' · '),
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-      ),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
     );
   }
 }
-

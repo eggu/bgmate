@@ -10,48 +10,23 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import 'game_dao.dart';
+import 'session_dao.dart';
 
 part 'app_database.g.dart';
 
 @DriftDatabase(
   tables: [BoardGames, Players, Sessions, PlayerScores],
-  daos: [GameDao],
+  daos: [GameDao, SessionDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 1;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
-      if (from < 3) {
-        await m.addColumn(boardGames, boardGames.yearPublished);
-
-        await customStatement(
-          'UPDATE ${boardGames.actualTableName} '
-          'SET ${boardGames.yearPublished.$name} = 0 '
-          'WHERE ${boardGames.yearPublished.$name} IS NULL',
-        );
-      }
-
-      if (from < 4) {
-        await m.addColumn(boardGames, boardGames.createdAt);
-
-        await customStatement(
-          'UPDATE ${boardGames.actualTableName} '
-          'SET ${boardGames.createdAt.$name} = '
-          "CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER) "
-          'WHERE ${boardGames.createdAt.$name} IS NULL',
-        );
-      }
-
-      if (from < 6) {
-        await m.createTable(players);
-        await m.createTable(sessions);
-        await m.createTable(playerScores);
-      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');

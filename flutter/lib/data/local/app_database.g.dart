@@ -561,7 +561,8 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
   }
 }
 
-class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
+class $PlayersTable extends Players
+    with TableInfo<$PlayersTable, PlayerRecord> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -610,7 +611,7 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
   static const String $name = 'players';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Player> instance, {
+    Insertable<PlayerRecord> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -638,9 +639,9 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Player map(Map<String, dynamic> data, {String? tablePrefix}) {
+  PlayerRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Player(
+    return PlayerRecord(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -662,11 +663,11 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
   }
 }
 
-class Player extends DataClass implements Insertable<Player> {
+class PlayerRecord extends DataClass implements Insertable<PlayerRecord> {
   final int id;
   final String name;
   final DateTime? createdAt;
-  const Player({required this.id, required this.name, this.createdAt});
+  const PlayerRecord({required this.id, required this.name, this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -688,12 +689,12 @@ class Player extends DataClass implements Insertable<Player> {
     );
   }
 
-  factory Player.fromJson(
+  factory PlayerRecord.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Player(
+    return PlayerRecord(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
@@ -709,17 +710,17 @@ class Player extends DataClass implements Insertable<Player> {
     };
   }
 
-  Player copyWith({
+  PlayerRecord copyWith({
     int? id,
     String? name,
     Value<DateTime?> createdAt = const Value.absent(),
-  }) => Player(
+  }) => PlayerRecord(
     id: id ?? this.id,
     name: name ?? this.name,
     createdAt: createdAt.present ? createdAt.value : this.createdAt,
   );
-  Player copyWithCompanion(PlayersCompanion data) {
-    return Player(
+  PlayerRecord copyWithCompanion(PlayersCompanion data) {
+    return PlayerRecord(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -728,7 +729,7 @@ class Player extends DataClass implements Insertable<Player> {
 
   @override
   String toString() {
-    return (StringBuffer('Player(')
+    return (StringBuffer('PlayerRecord(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('createdAt: $createdAt')
@@ -741,13 +742,13 @@ class Player extends DataClass implements Insertable<Player> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Player &&
+      (other is PlayerRecord &&
           other.id == this.id &&
           other.name == this.name &&
           other.createdAt == this.createdAt);
 }
 
-class PlayersCompanion extends UpdateCompanion<Player> {
+class PlayersCompanion extends UpdateCompanion<PlayerRecord> {
   final Value<int> id;
   final Value<String> name;
   final Value<DateTime?> createdAt;
@@ -761,7 +762,7 @@ class PlayersCompanion extends UpdateCompanion<Player> {
     required String name,
     this.createdAt = const Value.absent(),
   }) : name = Value(name);
-  static Insertable<Player> custom({
+  static Insertable<PlayerRecord> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<DateTime>? createdAt,
@@ -811,7 +812,8 @@ class PlayersCompanion extends UpdateCompanion<Player> {
   }
 }
 
-class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
+class $SessionsTable extends Sessions
+    with TableInfo<$SessionsTable, SessionRecord> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -837,9 +839,7 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES game_table (bgg_id)',
-    ),
+    $customConstraints: 'REFERENCES game_table(bgg_id) ON DELETE CASCADE',
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -862,7 +862,7 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
   static const String $name = 'sessions';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Session> instance, {
+    Insertable<SessionRecord> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -890,9 +890,9 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Session map(Map<String, dynamic> data, {String? tablePrefix}) {
+  SessionRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Session(
+    return SessionRecord(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -914,11 +914,11 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
   }
 }
 
-class Session extends DataClass implements Insertable<Session> {
+class SessionRecord extends DataClass implements Insertable<SessionRecord> {
   final int id;
   final int bggId;
   final DateTime createdAt;
-  const Session({
+  const SessionRecord({
     required this.id,
     required this.bggId,
     required this.createdAt,
@@ -940,12 +940,12 @@ class Session extends DataClass implements Insertable<Session> {
     );
   }
 
-  factory Session.fromJson(
+  factory SessionRecord.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Session(
+    return SessionRecord(
       id: serializer.fromJson<int>(json['id']),
       bggId: serializer.fromJson<int>(json['bggId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -961,13 +961,14 @@ class Session extends DataClass implements Insertable<Session> {
     };
   }
 
-  Session copyWith({int? id, int? bggId, DateTime? createdAt}) => Session(
-    id: id ?? this.id,
-    bggId: bggId ?? this.bggId,
-    createdAt: createdAt ?? this.createdAt,
-  );
-  Session copyWithCompanion(SessionsCompanion data) {
-    return Session(
+  SessionRecord copyWith({int? id, int? bggId, DateTime? createdAt}) =>
+      SessionRecord(
+        id: id ?? this.id,
+        bggId: bggId ?? this.bggId,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  SessionRecord copyWithCompanion(SessionsCompanion data) {
+    return SessionRecord(
       id: data.id.present ? data.id.value : this.id,
       bggId: data.bggId.present ? data.bggId.value : this.bggId,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -976,7 +977,7 @@ class Session extends DataClass implements Insertable<Session> {
 
   @override
   String toString() {
-    return (StringBuffer('Session(')
+    return (StringBuffer('SessionRecord(')
           ..write('id: $id, ')
           ..write('bggId: $bggId, ')
           ..write('createdAt: $createdAt')
@@ -989,13 +990,13 @@ class Session extends DataClass implements Insertable<Session> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Session &&
+      (other is SessionRecord &&
           other.id == this.id &&
           other.bggId == this.bggId &&
           other.createdAt == this.createdAt);
 }
 
-class SessionsCompanion extends UpdateCompanion<Session> {
+class SessionsCompanion extends UpdateCompanion<SessionRecord> {
   final Value<int> id;
   final Value<int> bggId;
   final Value<DateTime> createdAt;
@@ -1009,7 +1010,7 @@ class SessionsCompanion extends UpdateCompanion<Session> {
     required int bggId,
     this.createdAt = const Value.absent(),
   }) : bggId = Value(bggId);
-  static Insertable<Session> custom({
+  static Insertable<SessionRecord> custom({
     Expression<int>? id,
     Expression<int>? bggId,
     Expression<DateTime>? createdAt,
@@ -1060,7 +1061,7 @@ class SessionsCompanion extends UpdateCompanion<Session> {
 }
 
 class $PlayerScoresTable extends PlayerScores
-    with TableInfo<$PlayerScoresTable, PlayerScore> {
+    with TableInfo<$PlayerScoresTable, PlayerScoreRecord> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1088,9 +1089,7 @@ class $PlayerScoresTable extends PlayerScores
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES sessions (id)',
-    ),
+    $customConstraints: 'REFERENCES sessions(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _playerIdMeta = const VerificationMeta(
     'playerId',
@@ -1102,9 +1101,7 @@ class $PlayerScoresTable extends PlayerScores
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES players (id)',
-    ),
+    $customConstraints: 'REFERENCES players(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _scoreMeta = const VerificationMeta('score');
   @override
@@ -1125,7 +1122,7 @@ class $PlayerScoresTable extends PlayerScores
   static const String $name = 'player_scores';
   @override
   VerificationContext validateIntegrity(
-    Insertable<PlayerScore> instance, {
+    Insertable<PlayerScoreRecord> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1161,9 +1158,9 @@ class $PlayerScoresTable extends PlayerScores
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  PlayerScore map(Map<String, dynamic> data, {String? tablePrefix}) {
+  PlayerScoreRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return PlayerScore(
+    return PlayerScoreRecord(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -1189,12 +1186,13 @@ class $PlayerScoresTable extends PlayerScores
   }
 }
 
-class PlayerScore extends DataClass implements Insertable<PlayerScore> {
+class PlayerScoreRecord extends DataClass
+    implements Insertable<PlayerScoreRecord> {
   final int id;
   final int sessionId;
   final int playerId;
   final int score;
-  const PlayerScore({
+  const PlayerScoreRecord({
     required this.id,
     required this.sessionId,
     required this.playerId,
@@ -1219,12 +1217,12 @@ class PlayerScore extends DataClass implements Insertable<PlayerScore> {
     );
   }
 
-  factory PlayerScore.fromJson(
+  factory PlayerScoreRecord.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return PlayerScore(
+    return PlayerScoreRecord(
       id: serializer.fromJson<int>(json['id']),
       sessionId: serializer.fromJson<int>(json['sessionId']),
       playerId: serializer.fromJson<int>(json['playerId']),
@@ -1242,15 +1240,19 @@ class PlayerScore extends DataClass implements Insertable<PlayerScore> {
     };
   }
 
-  PlayerScore copyWith({int? id, int? sessionId, int? playerId, int? score}) =>
-      PlayerScore(
-        id: id ?? this.id,
-        sessionId: sessionId ?? this.sessionId,
-        playerId: playerId ?? this.playerId,
-        score: score ?? this.score,
-      );
-  PlayerScore copyWithCompanion(PlayerScoresCompanion data) {
-    return PlayerScore(
+  PlayerScoreRecord copyWith({
+    int? id,
+    int? sessionId,
+    int? playerId,
+    int? score,
+  }) => PlayerScoreRecord(
+    id: id ?? this.id,
+    sessionId: sessionId ?? this.sessionId,
+    playerId: playerId ?? this.playerId,
+    score: score ?? this.score,
+  );
+  PlayerScoreRecord copyWithCompanion(PlayerScoresCompanion data) {
+    return PlayerScoreRecord(
       id: data.id.present ? data.id.value : this.id,
       sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
       playerId: data.playerId.present ? data.playerId.value : this.playerId,
@@ -1260,7 +1262,7 @@ class PlayerScore extends DataClass implements Insertable<PlayerScore> {
 
   @override
   String toString() {
-    return (StringBuffer('PlayerScore(')
+    return (StringBuffer('PlayerScoreRecord(')
           ..write('id: $id, ')
           ..write('sessionId: $sessionId, ')
           ..write('playerId: $playerId, ')
@@ -1274,14 +1276,14 @@ class PlayerScore extends DataClass implements Insertable<PlayerScore> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is PlayerScore &&
+      (other is PlayerScoreRecord &&
           other.id == this.id &&
           other.sessionId == this.sessionId &&
           other.playerId == this.playerId &&
           other.score == this.score);
 }
 
-class PlayerScoresCompanion extends UpdateCompanion<PlayerScore> {
+class PlayerScoresCompanion extends UpdateCompanion<PlayerScoreRecord> {
   final Value<int> id;
   final Value<int> sessionId;
   final Value<int> playerId;
@@ -1299,7 +1301,7 @@ class PlayerScoresCompanion extends UpdateCompanion<PlayerScore> {
     this.score = const Value.absent(),
   }) : sessionId = Value(sessionId),
        playerId = Value(playerId);
-  static Insertable<PlayerScore> custom({
+  static Insertable<PlayerScoreRecord> custom({
     Expression<int>? id,
     Expression<int>? sessionId,
     Expression<int>? playerId,
@@ -1365,6 +1367,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SessionsTable sessions = $SessionsTable(this);
   late final $PlayerScoresTable playerScores = $PlayerScoresTable(this);
   late final GameDao gameDao = GameDao(this as AppDatabase);
+  late final SessionDao sessionDao = SessionDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1375,6 +1378,30 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     sessions,
     playerScores,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'game_table',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('sessions', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'sessions',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('player_scores', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'players',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('player_scores', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$BoardGamesTableCreateCompanionBuilder =
@@ -1406,9 +1433,8 @@ final class $$BoardGamesTableReferences
     extends BaseReferences<_$AppDatabase, $BoardGamesTable, BoardGameRecord> {
   $$BoardGamesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static MultiTypedResultKey<$SessionsTable, List<Session>> _sessionsRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
+  static MultiTypedResultKey<$SessionsTable, List<SessionRecord>>
+  _sessionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.sessions,
     aliasName: $_aliasNameGenerator(db.boardGames.bggId, db.sessions.bggId),
   );
@@ -1722,7 +1748,7 @@ class $$BoardGamesTableTableManager
                     await $_getPrefetchedData<
                       BoardGameRecord,
                       $BoardGamesTable,
-                      Session
+                      SessionRecord
                     >(
                       currentTable: table,
                       referencedTable: $$BoardGamesTableReferences
@@ -1773,10 +1799,10 @@ typedef $$PlayersTableUpdateCompanionBuilder =
     });
 
 final class $$PlayersTableReferences
-    extends BaseReferences<_$AppDatabase, $PlayersTable, Player> {
+    extends BaseReferences<_$AppDatabase, $PlayersTable, PlayerRecord> {
   $$PlayersTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static MultiTypedResultKey<$PlayerScoresTable, List<PlayerScore>>
+  static MultiTypedResultKey<$PlayerScoresTable, List<PlayerScoreRecord>>
   _playerScoresRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.playerScores,
     aliasName: $_aliasNameGenerator(db.players.id, db.playerScores.playerId),
@@ -1919,14 +1945,14 @@ class $$PlayersTableTableManager
         RootTableManager<
           _$AppDatabase,
           $PlayersTable,
-          Player,
+          PlayerRecord,
           $$PlayersTableFilterComposer,
           $$PlayersTableOrderingComposer,
           $$PlayersTableAnnotationComposer,
           $$PlayersTableCreateCompanionBuilder,
           $$PlayersTableUpdateCompanionBuilder,
-          (Player, $$PlayersTableReferences),
-          Player,
+          (PlayerRecord, $$PlayersTableReferences),
+          PlayerRecord,
           PrefetchHooks Function({bool playerScoresRefs})
         > {
   $$PlayersTableTableManager(_$AppDatabase db, $PlayersTable table)
@@ -1973,9 +1999,9 @@ class $$PlayersTableTableManager
                 return [
                   if (playerScoresRefs)
                     await $_getPrefetchedData<
-                      Player,
+                      PlayerRecord,
                       $PlayersTable,
-                      PlayerScore
+                      PlayerScoreRecord
                     >(
                       currentTable: table,
                       referencedTable: $$PlayersTableReferences
@@ -2001,14 +2027,14 @@ typedef $$PlayersTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $PlayersTable,
-      Player,
+      PlayerRecord,
       $$PlayersTableFilterComposer,
       $$PlayersTableOrderingComposer,
       $$PlayersTableAnnotationComposer,
       $$PlayersTableCreateCompanionBuilder,
       $$PlayersTableUpdateCompanionBuilder,
-      (Player, $$PlayersTableReferences),
-      Player,
+      (PlayerRecord, $$PlayersTableReferences),
+      PlayerRecord,
       PrefetchHooks Function({bool playerScoresRefs})
     >;
 typedef $$SessionsTableCreateCompanionBuilder =
@@ -2025,7 +2051,7 @@ typedef $$SessionsTableUpdateCompanionBuilder =
     });
 
 final class $$SessionsTableReferences
-    extends BaseReferences<_$AppDatabase, $SessionsTable, Session> {
+    extends BaseReferences<_$AppDatabase, $SessionsTable, SessionRecord> {
   $$SessionsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $BoardGamesTable _bggIdTable(_$AppDatabase db) =>
@@ -2047,7 +2073,7 @@ final class $$SessionsTableReferences
     );
   }
 
-  static MultiTypedResultKey<$PlayerScoresTable, List<PlayerScore>>
+  static MultiTypedResultKey<$PlayerScoresTable, List<PlayerScoreRecord>>
   _playerScoresRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.playerScores,
     aliasName: $_aliasNameGenerator(db.sessions.id, db.playerScores.sessionId),
@@ -2246,14 +2272,14 @@ class $$SessionsTableTableManager
         RootTableManager<
           _$AppDatabase,
           $SessionsTable,
-          Session,
+          SessionRecord,
           $$SessionsTableFilterComposer,
           $$SessionsTableOrderingComposer,
           $$SessionsTableAnnotationComposer,
           $$SessionsTableCreateCompanionBuilder,
           $$SessionsTableUpdateCompanionBuilder,
-          (Session, $$SessionsTableReferences),
-          Session,
+          (SessionRecord, $$SessionsTableReferences),
+          SessionRecord,
           PrefetchHooks Function({bool bggId, bool playerScoresRefs})
         > {
   $$SessionsTableTableManager(_$AppDatabase db, $SessionsTable table)
@@ -2332,9 +2358,9 @@ class $$SessionsTableTableManager
                 return [
                   if (playerScoresRefs)
                     await $_getPrefetchedData<
-                      Session,
+                      SessionRecord,
                       $SessionsTable,
-                      PlayerScore
+                      PlayerScoreRecord
                     >(
                       currentTable: table,
                       referencedTable: $$SessionsTableReferences
@@ -2360,14 +2386,14 @@ typedef $$SessionsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $SessionsTable,
-      Session,
+      SessionRecord,
       $$SessionsTableFilterComposer,
       $$SessionsTableOrderingComposer,
       $$SessionsTableAnnotationComposer,
       $$SessionsTableCreateCompanionBuilder,
       $$SessionsTableUpdateCompanionBuilder,
-      (Session, $$SessionsTableReferences),
-      Session,
+      (SessionRecord, $$SessionsTableReferences),
+      SessionRecord,
       PrefetchHooks Function({bool bggId, bool playerScoresRefs})
     >;
 typedef $$PlayerScoresTableCreateCompanionBuilder =
@@ -2386,7 +2412,8 @@ typedef $$PlayerScoresTableUpdateCompanionBuilder =
     });
 
 final class $$PlayerScoresTableReferences
-    extends BaseReferences<_$AppDatabase, $PlayerScoresTable, PlayerScore> {
+    extends
+        BaseReferences<_$AppDatabase, $PlayerScoresTable, PlayerScoreRecord> {
   $$PlayerScoresTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $SessionsTable _sessionIdTable(_$AppDatabase db) =>
@@ -2627,14 +2654,14 @@ class $$PlayerScoresTableTableManager
         RootTableManager<
           _$AppDatabase,
           $PlayerScoresTable,
-          PlayerScore,
+          PlayerScoreRecord,
           $$PlayerScoresTableFilterComposer,
           $$PlayerScoresTableOrderingComposer,
           $$PlayerScoresTableAnnotationComposer,
           $$PlayerScoresTableCreateCompanionBuilder,
           $$PlayerScoresTableUpdateCompanionBuilder,
-          (PlayerScore, $$PlayerScoresTableReferences),
-          PlayerScore,
+          (PlayerScoreRecord, $$PlayerScoresTableReferences),
+          PlayerScoreRecord,
           PrefetchHooks Function({bool sessionId, bool playerId})
         > {
   $$PlayerScoresTableTableManager(_$AppDatabase db, $PlayerScoresTable table)
@@ -2742,14 +2769,14 @@ typedef $$PlayerScoresTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $PlayerScoresTable,
-      PlayerScore,
+      PlayerScoreRecord,
       $$PlayerScoresTableFilterComposer,
       $$PlayerScoresTableOrderingComposer,
       $$PlayerScoresTableAnnotationComposer,
       $$PlayerScoresTableCreateCompanionBuilder,
       $$PlayerScoresTableUpdateCompanionBuilder,
-      (PlayerScore, $$PlayerScoresTableReferences),
-      PlayerScore,
+      (PlayerScoreRecord, $$PlayerScoresTableReferences),
+      PlayerScoreRecord,
       PrefetchHooks Function({bool sessionId, bool playerId})
     >;
 

@@ -3,6 +3,7 @@ import 'package:bgmate_flutter/presentation/collection/game_list_screen.dart';
 import 'package:bgmate_flutter/presentation/collection/game_search_screen.dart';
 import 'package:bgmate_flutter/presentation/recommend/recommend_screen.dart';
 import 'package:bgmate_flutter/presentation/rule_judge/rule_judge_screen.dart';
+import 'package:bgmate_flutter/presentation/score/create_session_screen.dart';
 import 'package:bgmate_flutter/presentation/score_tracker/score_tracker_screen.dart';
 import 'package:bgmate_flutter/presentation/shell/app_shell.dart';
 import 'package:bgmate_flutter/routing/app_routes.dart';
@@ -34,6 +35,15 @@ final _router = GoRouter(
                   state.pathParameters[AppRoutes.bggIdParam]!,
                 );
                 return GameDetailScreen(bggId: bggId);
+              },
+            ),
+            GoRoute(
+              path: AppRoutes.scoreCreatePath,
+              builder: (context, state) {
+                final bggId = int.parse(
+                  state.pathParameters[AppRoutes.bggIdParam]!,
+                );
+                return CreateSessionScreen(bggId: bggId);
               },
             ),
           ],
