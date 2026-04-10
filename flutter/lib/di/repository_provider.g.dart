@@ -96,3 +96,51 @@ final class SessionRepositoryProvider
 }
 
 String _$sessionRepositoryHash() => r'f24db31a1ef6dea8b23b8b7df22832e1cba8b70c';
+
+@ProviderFor(ruleJudgeRepository)
+final ruleJudgeRepositoryProvider = RuleJudgeRepositoryProvider._();
+
+final class RuleJudgeRepositoryProvider
+    extends
+        $FunctionalProvider<
+          RuleJudgeRepository,
+          RuleJudgeRepository,
+          RuleJudgeRepository
+        >
+    with $Provider<RuleJudgeRepository> {
+  RuleJudgeRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ruleJudgeRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ruleJudgeRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<RuleJudgeRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  RuleJudgeRepository create(Ref ref) {
+    return ruleJudgeRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RuleJudgeRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RuleJudgeRepository>(value),
+    );
+  }
+}
+
+String _$ruleJudgeRepositoryHash() =>
+    r'6a45b71b81502fb925e3df38e274f298895ed92b';
