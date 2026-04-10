@@ -4,21 +4,21 @@ import 'package:bgmate_flutter/domain/model/player_score.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'score_tracker_notifier.freezed.dart';
-part 'score_tracker_notifier.g.dart';
+part 'session_tracker_notifier.freezed.dart';
+part 'session_tracker_notifier.g.dart';
 
 @riverpod
-class ScoreTrackerNotifier extends _$ScoreTrackerNotifier {
+class SessionTrackerNotifier extends _$SessionTrackerNotifier {
   @override
-  ScoreTrackerState build(int bggId, List<String> playerNames) {
+  SessionTrackerState build(int bggId, List<String> playerNames) {
     final players = playerNames.map((name) => PlayerScore(name: name)).toList();
     _loadGame(bggId);
-    return ScoreTrackerState(bggId: bggId, players: players);
+    return SessionTrackerState(bggId: bggId, players: players);
   }
 
   Future<void> _loadGame(int bggId) async {
     final repo = ref.read(gameRepositoryProvider);
-    final game = await repo.getGame(bggId); // Day 2에서 구현한 메서드
+    final game = await repo.getGame(bggId);
     state = state.copyWith(game: AsyncValue.data(game));
   }
 
@@ -52,8 +52,8 @@ class ScoreTrackerNotifier extends _$ScoreTrackerNotifier {
     state = state.copyWith(isSaving: true);
     try {
       final repo = ref.read(sessionRepositoryProvider);
-      await repo.saveSession(state.bggId, state.players);
-      state = state.copyWith(isSaving: false, isSaved: true);
+      final sessionId = await repo.saveSession(state.bggId, state.players);
+      state = state.copyWith(isSaving: false, isSaved: true, sessionId: sessionId);
     } catch (e) {
       state = state.copyWith(isSaving: false);
       rethrow;
@@ -62,16 +62,17 @@ class ScoreTrackerNotifier extends _$ScoreTrackerNotifier {
 }
 
 @freezed
-sealed class ScoreTrackerState with _$ScoreTrackerState {
-  const factory ScoreTrackerState({
+sealed class SessionTrackerState with _$SessionTrackerState {
+  const factory SessionTrackerState({
     required int bggId,
     @Default(AsyncValue.loading()) AsyncValue<BoardGame?> game,
     @Default([]) List<PlayerScore> players,
     @Default(false) bool isSaving,
     @Default(false) bool isSaved,
-  }) = _ScoreTrackerState;
+    @Default(0) int sessionId,
+  }) = _SessionTrackerState;
 
-  const ScoreTrackerState._();
+  const SessionTrackerState._();
 
   List<PlayerScore> get rankedPlayers =>
       [...players]..sort((a, b) => b.score.compareTo(a.score));

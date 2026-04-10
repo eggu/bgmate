@@ -69,9 +69,10 @@ class _SessionCard extends StatelessWidget {
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 6,
           children: [
-            Row(
-              spacing: 6,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   session.game.name,
@@ -95,6 +96,7 @@ class _SessionCard extends StatelessWidget {
             ? Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('🏆 ${winner?.name}'),
                   Text(

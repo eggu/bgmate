@@ -26,11 +26,11 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
     await (delete(sessions)..where((t) => t.id.equals(sessionId))).go();
   }
 
-  Future<void> insertSessionWithPlayers(
+  Future<int> insertSessionWithPlayers(
     SessionsCompanion session,
     List<(PlayersCompanion, int, int)> scores, // (player, score, rank)
   ) async {
-    await transaction(() async {
+    return await transaction(() async {
       final sessionId = await insertSession(session);
 
       for (var i = 0; i < scores.length; i++) {
@@ -50,6 +50,8 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
           ),
         );
       }
+
+      return sessionId;
     });
   }
 

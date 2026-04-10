@@ -15,7 +15,7 @@ class SessionRepositoryImpl implements SessionRepository {
   SessionRepositoryImpl(this._sessionDao);
 
   @override
-  Future<void> saveSession(int bggId, List<PlayerScore> scores) async {
+  Future<int> saveSession(int bggId, List<PlayerScore> scores) async {
     final session = SessionsCompanion(bggId: Value(bggId));
     final scoresWithPlayers = scores
         .map((e) => (PlayersCompanion(name: Value(e.name)), e.score, e.rank))

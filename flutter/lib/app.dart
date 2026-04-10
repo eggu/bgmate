@@ -4,7 +4,7 @@ import 'package:bgmate_flutter/presentation/collection/game_search_screen.dart';
 import 'package:bgmate_flutter/presentation/recommend/recommend_screen.dart';
 import 'package:bgmate_flutter/presentation/rule_judge/rule_judge_screen.dart';
 import 'package:bgmate_flutter/presentation/score/create_session_screen.dart';
-import 'package:bgmate_flutter/presentation/score_tracker/score_tracker_screen.dart';
+import 'package:bgmate_flutter/presentation/session_tracker/session_tracker_screen.dart';
 import 'package:bgmate_flutter/presentation/session_history/session_history_detail_screen.dart';
 import 'package:bgmate_flutter/presentation/session_history/session_history_screen.dart';
 import 'package:bgmate_flutter/presentation/shell/app_shell.dart';
@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+final collectionNavigatorKey = GlobalKey<NavigatorState>();
+
 final _router = GoRouter(
   initialLocation: AppRoutes.collection,
   routes: [
@@ -21,6 +23,7 @@ final _router = GoRouter(
       builder: (context, state, shell) => AppShell(shell: shell),
       branches: [
         StatefulShellBranch(
+          navigatorKey: collectionNavigatorKey,
           routes: [
             GoRoute(
               path: AppRoutes.collection,
@@ -55,19 +58,10 @@ final _router = GoRouter(
                   state.pathParameters[AppRoutes.bggIdParam]!,
                 );
                 final playerNames = state.extra as List<String>;
-                return ScoreTrackerScreen(
+                return SessionTrackerScreen(
                   bggId: bggId,
                   playerNames: playerNames,
                 );
-              },
-            ),
-            GoRoute(
-              path: AppRoutes.sessionHistoryPath,
-              builder: (context, state) {
-                final sessionId = int.parse(
-                  state.pathParameters[AppRoutes.sessionIdParam]!,
-                );
-                return SessionHistoryDetailScreen(sessionId: sessionId);
               },
             ),
           ],
@@ -91,8 +85,19 @@ final _router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: AppRoutes.score,
+              path: AppRoutes.session,
               builder: (_, _) => const SessionHistoryScreen(),
+              routes: [
+                GoRoute(
+                  path: AppRoutes.sessionHistoryPath,
+                  builder: (context, state) {
+                    final sessionId = int.parse(
+                      state.pathParameters[AppRoutes.sessionIdParam]!,
+                    );
+                    return SessionHistoryDetailScreen(sessionId: sessionId);
+                  },
+                ),
+              ],
             ),
           ],
         ),
