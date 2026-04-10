@@ -5,19 +5,19 @@ import 'package:bgmate_flutter/data/local/session_dao.dart';
 import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/domain/model/player.dart';
 import 'package:bgmate_flutter/domain/model/session_history.dart';
-import 'package:bgmate_flutter/domain/repository/score_repository.dart';
+import 'package:bgmate_flutter/domain/repository/session_repository.dart';
 import 'package:drift/drift.dart';
 
-class ScoreRepositoryImpl implements ScoreRepository {
+class SessionRepositoryImpl implements SessionRepository {
   final SessionDao _sessionDao;
 
-  ScoreRepositoryImpl(this._sessionDao);
+  SessionRepositoryImpl(this._sessionDao);
 
   @override
-  Future<void> saveSession(BoardGame game, List<(Player, int)> scores) async {
-    final session = SessionsCompanion(bggId: Value(game.bggId));
+  Future<void> saveSession(int bggId, List<(String, int)> scores) async {
+    final session = SessionsCompanion(bggId: Value(bggId));
     final scoresWithPlayers = scores
-        .map((e) => (e.$1.toCompanion(), e.$2))
+        .map((e) => (PlayersCompanion(name: Value(e.$1)), e.$2))
         .toList();
 
     return await _sessionDao.insertSessionWithPlayers(

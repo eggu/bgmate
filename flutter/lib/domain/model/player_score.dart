@@ -5,9 +5,10 @@ part 'player_score.freezed.dart';
 @freezed
 sealed class PlayerScore with _$PlayerScore {
   const factory PlayerScore({
-    required int id,
-    required int sessionId,
-    required String playerName,
-    required int score,
+    @Default(0) int id,
+    @Default(0) int sessionId,
+    required String name,
+    @Default(0) int score,
+    @Default(0) int rank
   }) = _PlayerScore;
 }

@@ -10,9 +10,12 @@ abstract final class AppRoutes {
   static const score = '/score';
   static const scoreCreate = '/score/create';
   static const scoreCreatePath = '$scoreCreate/:$bggIdParam';
-
+  static const scoreTracker = '/score/tracker';
+  static const scoreTrackerPath = '$scoreTracker/:$bggIdParam';
 
   static String gameDetailLocation(int bggId) => '$gameDetail/$bggId';
+
   static String scoreCreateLocation(int bggId) => '$scoreCreate/$bggId';
 
+  static String scoreTrackerLocation(int bggId) => '$scoreTracker/$bggId';
 }

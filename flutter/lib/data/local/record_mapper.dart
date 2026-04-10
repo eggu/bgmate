@@ -51,7 +51,7 @@ extension ScoreWithPlayerMapper on ScoreWithPlayer {
   player_score_model.PlayerScore toDomain() => player_score_model.PlayerScore(
     id: id,
     sessionId: sessionId,
-    playerName: player.name,
+    name: player.name,
     score: score,
   );
 }

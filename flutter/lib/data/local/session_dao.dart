@@ -120,7 +120,8 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
             ]);
 
     return query.watch().map((rows) {
-      final grouped = <int, SessionWithDetails>{};
+      final sessionRecords = <int, ({SessionRecord session, BoardGameRecord game})>{};
+      final scoresBySession = <int, List<ScoreWithPlayer>>{};
 
       for (final row in rows) {
         final session = row.readTable(sessions);
@@ -128,13 +129,11 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
         final player = row.readTableOrNull(players);
         final game = row.readTable(boardGames);
 
-        final entry = grouped.putIfAbsent(
-          session.id,
-          () => SessionWithDetails(session: session, scores: [], game: game),
-        );
+        sessionRecords.putIfAbsent(session.id, () => (session: session, game: game));
+        final scoreList = scoresBySession.putIfAbsent(session.id, () => []);
 
         if (playerScore != null && player != null) {
-          entry.scores.add(
+          scoreList.add(
             ScoreWithPlayer(
               score: playerScore.score,
               player: player,
@@ -145,7 +144,14 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
         }
       }
 
-      return grouped.values.toList();
+      return sessionRecords.entries.map((e) {
+        final record = e.value;
+        return SessionWithDetails(
+          session: record.session,
+          game: record.game,
+          scores: scoresBySession[e.key] ?? [],
+        );
+      }).toList();
     });
   }
 }

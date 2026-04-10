@@ -1,4 +1,5 @@
 import 'package:bgmate_flutter/presentation/score/create_session_notifier.dart';
+import 'package:bgmate_flutter/routing/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -85,9 +86,11 @@ class _CreateSessionScreenState extends ConsumerState<CreateSessionScreen> {
                     title: Text(name),
                     trailing: IconButton(
                       icon: const Icon(Icons.close),
-                      onPressed: () => ref
-                          .read(createSessionProvider(widget.bggId).notifier)
-                          .removePlayer(index),
+                      onPressed: () =>
+                          ref
+                              .read(createSessionProvider(widget.bggId)
+                              .notifier)
+                              .removePlayer(index),
                     ),
                   );
                 },
@@ -100,12 +103,18 @@ class _CreateSessionScreenState extends ConsumerState<CreateSessionScreen> {
           child: FilledButton(
             onPressed: state.canStart
                 ? () async {
-                    final _ = await ref
-                        .read(createSessionProvider(widget.bggId).notifier)
-                        .confirmSession();
-                    // STEP 3에서 점수 트래커 화면 경로로 교체 예정
-                    context.pop();
-                  }
+              // saveSession 호출 → sessionId 반환
+              await ref
+                  .read(createSessionProvider(widget.bggId).notifier)
+                  .confirmSession();
+
+              if (context.mounted) {
+                context.pushReplacement( // pop 후 push — 뒤로가기 시 세션 생성 화면 건너뜀
+                  AppRoutes.scoreTrackerLocation(widget.bggId),
+                  extra: state.playerNames,
+                );
+              }
+            }
                 : null,
             child: const Text('게임 시작'),
           ),
