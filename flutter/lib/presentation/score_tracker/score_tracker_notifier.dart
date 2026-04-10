@@ -52,10 +52,7 @@ class ScoreTrackerNotifier extends _$ScoreTrackerNotifier {
     state = state.copyWith(isSaving: true);
     try {
       final repo = ref.read(sessionRepositoryProvider);
-      await repo.saveSession(
-        state.bggId,
-        state.players.map((e) => (e.name, e.score)).toList(),
-      );
+      await repo.saveSession(state.bggId, state.players);
       state = state.copyWith(isSaving: false, isSaved: true);
     } catch (e) {
       state = state.copyWith(isSaving: false);

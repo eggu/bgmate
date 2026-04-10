@@ -54,7 +54,7 @@ class _SessionHistoryDetailBody extends StatelessWidget {
             ),
           );
         }
-        return _PlayerScoreItemCard(playerScore: players[i - 1], index: i);
+        return _PlayerScoreItemCard(playerScore: players[i - 1]);
       },
       separatorBuilder: (BuildContext context, int index) =>
           const SizedBox(height: 8),
@@ -64,18 +64,13 @@ class _SessionHistoryDetailBody extends StatelessWidget {
 
 class _PlayerScoreItemCard extends StatelessWidget {
   final PlayerScore playerScore;
-  final int index;
 
-  const _PlayerScoreItemCard({
-    super.key,
-    required this.playerScore,
-    required this.index,
-  });
+  const _PlayerScoreItemCard({super.key, required this.playerScore});
 
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    final isWinner = index == 1;
+    final isWinner = playerScore.rank == 1;
 
     return Card(
       color: isWinner
@@ -89,11 +84,17 @@ class _PlayerScoreItemCard extends StatelessWidget {
             SizedBox(
               width: 48,
               child: Text(
-                isWinner ? '🏆' : '$index위',
+                isWinner ? '🏆' : '${playerScore.rank}위',
                 style: themeData.textTheme.titleMedium,
               ),
             ),
-            Text(playerScore.name, style: themeData.textTheme.titleMedium),
+            Expanded(
+              flex: 1,
+              child: Text(
+                playerScore.name,
+                style: themeData.textTheme.titleMedium,
+              ),
+            ),
             Text(
               '${playerScore.score}점',
               style: themeData.textTheme.titleMedium,

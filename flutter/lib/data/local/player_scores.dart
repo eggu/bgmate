@@ -17,4 +17,6 @@ class PlayerScores extends Table {
       )();
 
   IntColumn get score => integer().withDefault(const Constant(0))();
+
+  IntColumn get rank => integer().withDefault(const Constant(0))();
 }

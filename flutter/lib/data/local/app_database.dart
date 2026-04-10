@@ -22,11 +22,23 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.addColumn(playerScores, playerScores.rank);
+        await customStatement('''
+          UPDATE player_scores
+          SET rank = (
+            SELECT COUNT(*) + 1
+            FROM player_scores ps2
+            WHERE ps2.session_id = player_scores.session_id
+              AND ps2.score > player_scores.score
+          )
+        ''');
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');

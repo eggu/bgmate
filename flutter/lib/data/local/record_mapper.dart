@@ -53,5 +53,6 @@ extension ScoreWithPlayerMapper on ScoreWithPlayer {
     sessionId: sessionId,
     name: player.name,
     score: score,
+    rank: rank,
   );
 }

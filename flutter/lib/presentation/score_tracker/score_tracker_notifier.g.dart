@@ -59,7 +59,7 @@ final class ScoreTrackerNotifierProvider
 }
 
 String _$scoreTrackerNotifierHash() =>
-    r'58bb46f48c519edd4bd747939568ec12bfe682b4';
+    r'fd7411b1a563c921adfae740289fd5af34d06f06';
 
 final class ScoreTrackerNotifierFamily extends $Family
     with

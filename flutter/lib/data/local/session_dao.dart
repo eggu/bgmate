@@ -28,7 +28,7 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
 
   Future<void> insertSessionWithPlayers(
     SessionsCompanion session,
-    List<(PlayersCompanion, int)> scores,
+    List<(PlayersCompanion, int, int)> scores, // (player, score, rank)
   ) async {
     await transaction(() async {
       final sessionId = await insertSession(session);
@@ -36,6 +36,7 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
       for (var i = 0; i < scores.length; i++) {
         final player = scores[i].$1;
         final score = scores[i].$2;
+        final rank = scores[i].$3;
 
         await insertPlayerIfNotExists(player);
         final playerId = (await getPlayerByName(player.name.value)).id;
@@ -45,6 +46,7 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
             sessionId: Value(sessionId),
             playerId: Value(playerId),
             score: Value(score),
+            rank: Value(rank),
           ),
         );
       }
@@ -90,6 +92,7 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
             player: player,
             id: playerScore.id,
             sessionId: playerScore.sessionId,
+            rank: playerScore.rank,
           ),
         );
       }
@@ -120,7 +123,8 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
             ]);
 
     return query.watch().map((rows) {
-      final sessionRecords = <int, ({SessionRecord session, BoardGameRecord game})>{};
+      final sessionRecords =
+          <int, ({SessionRecord session, BoardGameRecord game})>{};
       final scoresBySession = <int, List<ScoreWithPlayer>>{};
 
       for (final row in rows) {
@@ -129,7 +133,10 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
         final player = row.readTableOrNull(players);
         final game = row.readTable(boardGames);
 
-        sessionRecords.putIfAbsent(session.id, () => (session: session, game: game));
+        sessionRecords.putIfAbsent(
+          session.id,
+          () => (session: session, game: game),
+        );
         final scoreList = scoresBySession.putIfAbsent(session.id, () => []);
 
         if (playerScore != null && player != null) {
@@ -139,6 +146,7 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
               player: player,
               id: playerScore.id,
               sessionId: session.id,
+              rank: playerScore.rank
             ),
           );
         }

@@ -19,5 +19,6 @@ sealed class ScoreWithPlayer with _$ScoreWithPlayer {
     required int sessionId,
     required int score,
     required PlayerRecord player,
+    required int rank
   }) = _ScoreWithPlayer;
 }

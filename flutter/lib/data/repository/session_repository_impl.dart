@@ -4,6 +4,7 @@ import 'package:bgmate_flutter/data/local/record_mapper.dart';
 import 'package:bgmate_flutter/data/local/session_dao.dart';
 import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/domain/model/player.dart';
+import 'package:bgmate_flutter/domain/model/player_score.dart';
 import 'package:bgmate_flutter/domain/model/session_history.dart';
 import 'package:bgmate_flutter/domain/repository/session_repository.dart';
 import 'package:drift/drift.dart';
@@ -14,10 +15,10 @@ class SessionRepositoryImpl implements SessionRepository {
   SessionRepositoryImpl(this._sessionDao);
 
   @override
-  Future<void> saveSession(int bggId, List<(String, int)> scores) async {
+  Future<void> saveSession(int bggId, List<PlayerScore> scores) async {
     final session = SessionsCompanion(bggId: Value(bggId));
     final scoresWithPlayers = scores
-        .map((e) => (PlayersCompanion(name: Value(e.$1)), e.$2))
+        .map((e) => (PlayersCompanion(name: Value(e.name)), e.score, e.rank))
         .toList();
 
     return await _sessionDao.insertSessionWithPlayers(

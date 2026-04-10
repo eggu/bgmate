@@ -1113,8 +1113,18 @@ class $PlayerScoresTable extends PlayerScores
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _rankMeta = const VerificationMeta('rank');
   @override
-  List<GeneratedColumn> get $columns => [id, sessionId, playerId, score];
+  late final GeneratedColumn<int> rank = GeneratedColumn<int>(
+    'rank',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, sessionId, playerId, score, rank];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1152,6 +1162,12 @@ class $PlayerScoresTable extends PlayerScores
         score.isAcceptableOrUnknown(data['score']!, _scoreMeta),
       );
     }
+    if (data.containsKey('rank')) {
+      context.handle(
+        _rankMeta,
+        rank.isAcceptableOrUnknown(data['rank']!, _rankMeta),
+      );
+    }
     return context;
   }
 
@@ -1177,6 +1193,10 @@ class $PlayerScoresTable extends PlayerScores
         DriftSqlType.int,
         data['${effectivePrefix}score'],
       )!,
+      rank: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rank'],
+      )!,
     );
   }
 
@@ -1192,11 +1212,13 @@ class PlayerScoreRecord extends DataClass
   final int sessionId;
   final int playerId;
   final int score;
+  final int rank;
   const PlayerScoreRecord({
     required this.id,
     required this.sessionId,
     required this.playerId,
     required this.score,
+    required this.rank,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1205,6 +1227,7 @@ class PlayerScoreRecord extends DataClass
     map['session_id'] = Variable<int>(sessionId);
     map['player_id'] = Variable<int>(playerId);
     map['score'] = Variable<int>(score);
+    map['rank'] = Variable<int>(rank);
     return map;
   }
 
@@ -1214,6 +1237,7 @@ class PlayerScoreRecord extends DataClass
       sessionId: Value(sessionId),
       playerId: Value(playerId),
       score: Value(score),
+      rank: Value(rank),
     );
   }
 
@@ -1227,6 +1251,7 @@ class PlayerScoreRecord extends DataClass
       sessionId: serializer.fromJson<int>(json['sessionId']),
       playerId: serializer.fromJson<int>(json['playerId']),
       score: serializer.fromJson<int>(json['score']),
+      rank: serializer.fromJson<int>(json['rank']),
     );
   }
   @override
@@ -1237,6 +1262,7 @@ class PlayerScoreRecord extends DataClass
       'sessionId': serializer.toJson<int>(sessionId),
       'playerId': serializer.toJson<int>(playerId),
       'score': serializer.toJson<int>(score),
+      'rank': serializer.toJson<int>(rank),
     };
   }
 
@@ -1245,11 +1271,13 @@ class PlayerScoreRecord extends DataClass
     int? sessionId,
     int? playerId,
     int? score,
+    int? rank,
   }) => PlayerScoreRecord(
     id: id ?? this.id,
     sessionId: sessionId ?? this.sessionId,
     playerId: playerId ?? this.playerId,
     score: score ?? this.score,
+    rank: rank ?? this.rank,
   );
   PlayerScoreRecord copyWithCompanion(PlayerScoresCompanion data) {
     return PlayerScoreRecord(
@@ -1257,6 +1285,7 @@ class PlayerScoreRecord extends DataClass
       sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
       playerId: data.playerId.present ? data.playerId.value : this.playerId,
       score: data.score.present ? data.score.value : this.score,
+      rank: data.rank.present ? data.rank.value : this.rank,
     );
   }
 
@@ -1266,13 +1295,14 @@ class PlayerScoreRecord extends DataClass
           ..write('id: $id, ')
           ..write('sessionId: $sessionId, ')
           ..write('playerId: $playerId, ')
-          ..write('score: $score')
+          ..write('score: $score, ')
+          ..write('rank: $rank')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, sessionId, playerId, score);
+  int get hashCode => Object.hash(id, sessionId, playerId, score, rank);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1280,7 +1310,8 @@ class PlayerScoreRecord extends DataClass
           other.id == this.id &&
           other.sessionId == this.sessionId &&
           other.playerId == this.playerId &&
-          other.score == this.score);
+          other.score == this.score &&
+          other.rank == this.rank);
 }
 
 class PlayerScoresCompanion extends UpdateCompanion<PlayerScoreRecord> {
@@ -1288,17 +1319,20 @@ class PlayerScoresCompanion extends UpdateCompanion<PlayerScoreRecord> {
   final Value<int> sessionId;
   final Value<int> playerId;
   final Value<int> score;
+  final Value<int> rank;
   const PlayerScoresCompanion({
     this.id = const Value.absent(),
     this.sessionId = const Value.absent(),
     this.playerId = const Value.absent(),
     this.score = const Value.absent(),
+    this.rank = const Value.absent(),
   });
   PlayerScoresCompanion.insert({
     this.id = const Value.absent(),
     required int sessionId,
     required int playerId,
     this.score = const Value.absent(),
+    this.rank = const Value.absent(),
   }) : sessionId = Value(sessionId),
        playerId = Value(playerId);
   static Insertable<PlayerScoreRecord> custom({
@@ -1306,12 +1340,14 @@ class PlayerScoresCompanion extends UpdateCompanion<PlayerScoreRecord> {
     Expression<int>? sessionId,
     Expression<int>? playerId,
     Expression<int>? score,
+    Expression<int>? rank,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (sessionId != null) 'session_id': sessionId,
       if (playerId != null) 'player_id': playerId,
       if (score != null) 'score': score,
+      if (rank != null) 'rank': rank,
     });
   }
 
@@ -1320,12 +1356,14 @@ class PlayerScoresCompanion extends UpdateCompanion<PlayerScoreRecord> {
     Value<int>? sessionId,
     Value<int>? playerId,
     Value<int>? score,
+    Value<int>? rank,
   }) {
     return PlayerScoresCompanion(
       id: id ?? this.id,
       sessionId: sessionId ?? this.sessionId,
       playerId: playerId ?? this.playerId,
       score: score ?? this.score,
+      rank: rank ?? this.rank,
     );
   }
 
@@ -1344,6 +1382,9 @@ class PlayerScoresCompanion extends UpdateCompanion<PlayerScoreRecord> {
     if (score.present) {
       map['score'] = Variable<int>(score.value);
     }
+    if (rank.present) {
+      map['rank'] = Variable<int>(rank.value);
+    }
     return map;
   }
 
@@ -1353,7 +1394,8 @@ class PlayerScoresCompanion extends UpdateCompanion<PlayerScoreRecord> {
           ..write('id: $id, ')
           ..write('sessionId: $sessionId, ')
           ..write('playerId: $playerId, ')
-          ..write('score: $score')
+          ..write('score: $score, ')
+          ..write('rank: $rank')
           ..write(')'))
         .toString();
   }
@@ -2402,6 +2444,7 @@ typedef $$PlayerScoresTableCreateCompanionBuilder =
       required int sessionId,
       required int playerId,
       Value<int> score,
+      Value<int> rank,
     });
 typedef $$PlayerScoresTableUpdateCompanionBuilder =
     PlayerScoresCompanion Function({
@@ -2409,6 +2452,7 @@ typedef $$PlayerScoresTableUpdateCompanionBuilder =
       Value<int> sessionId,
       Value<int> playerId,
       Value<int> score,
+      Value<int> rank,
     });
 
 final class $$PlayerScoresTableReferences
@@ -2471,6 +2515,11 @@ class $$PlayerScoresTableFilterComposer
 
   ColumnFilters<int> get score => $composableBuilder(
     column: $table.score,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get rank => $composableBuilder(
+    column: $table.rank,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2540,6 +2589,11 @@ class $$PlayerScoresTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get rank => $composableBuilder(
+    column: $table.rank,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$SessionsTableOrderingComposer get sessionId {
     final $$SessionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2601,6 +2655,9 @@ class $$PlayerScoresTableAnnotationComposer
 
   GeneratedColumn<int> get score =>
       $composableBuilder(column: $table.score, builder: (column) => column);
+
+  GeneratedColumn<int> get rank =>
+      $composableBuilder(column: $table.rank, builder: (column) => column);
 
   $$SessionsTableAnnotationComposer get sessionId {
     final $$SessionsTableAnnotationComposer composer = $composerBuilder(
@@ -2681,11 +2738,13 @@ class $$PlayerScoresTableTableManager
                 Value<int> sessionId = const Value.absent(),
                 Value<int> playerId = const Value.absent(),
                 Value<int> score = const Value.absent(),
+                Value<int> rank = const Value.absent(),
               }) => PlayerScoresCompanion(
                 id: id,
                 sessionId: sessionId,
                 playerId: playerId,
                 score: score,
+                rank: rank,
               ),
           createCompanionCallback:
               ({
@@ -2693,11 +2752,13 @@ class $$PlayerScoresTableTableManager
                 required int sessionId,
                 required int playerId,
                 Value<int> score = const Value.absent(),
+                Value<int> rank = const Value.absent(),
               }) => PlayerScoresCompanion.insert(
                 id: id,
                 sessionId: sessionId,
                 playerId: playerId,
                 score: score,
+                rank: rank,
               ),
           withReferenceMapper: (p0) => p0
               .map(
