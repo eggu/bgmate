@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' as dev;
 
 import 'package:bgmate_flutter/data/remote/ai/llm_client.dart';
 import 'package:bgmate_flutter/data/remote/ai/llm_request.dart';
@@ -10,6 +11,7 @@ class GeminiLlmClient implements LlmClient {
   final Dio _dio;
   final String _apiKey;
 
+  static const _tag = 'GeminiLlmClient';
   static const _baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash';
   static const _generateContentUrl = '$_baseUrl:generateContent';
@@ -26,33 +28,61 @@ class GeminiLlmClient implements LlmClient {
 
   @override
   Future<LlmResponse> complete(LlmRequest request) async {
-    final response = await _dio.post<Map<String, dynamic>>(
-      _generateContentUrl,
-      data: _buildRequestBody(request),
-      options: Options(
-        headers: {
-          'x-goog-api-key': _apiKey,
-          'content-type': 'application/json',
-        },
-      ),
-    );
+    final body = _buildRequestBody(request);
+    dev.log('→ complete request: ${jsonEncode(body)}', name: _tag);
 
-    return LlmResponse(text: _extractText(response.data ?? {}));
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        _generateContentUrl,
+        data: body,
+        options: Options(
+          headers: {
+            'x-goog-api-key': _apiKey,
+            'content-type': 'application/json',
+          },
+        ),
+      );
+      dev.log('← complete ${response.statusCode}: ${jsonEncode(response.data)}',
+          name: _tag);
+      return LlmResponse(text: _extractText(response.data ?? {}));
+    } on DioException catch (e) {
+      dev.log(
+        '✗ complete error ${e.response?.statusCode}: ${e.response?.data}',
+        name: _tag,
+        error: e,
+      );
+      rethrow;
+    }
   }
 
   @override
   Stream<String> stream(LlmRequest request) async* {
-    final response = await _dio.post<ResponseBody>(
-      _streamGenerateContentUrl,
-      data: _buildRequestBody(request),
-      options: Options(
-        headers: {
-          'x-goog-api-key': _apiKey,
-          'content-type': 'application/json',
-        },
-        responseType: ResponseType.stream,
-      ),
-    );
+    final body = _buildRequestBody(request);
+    dev.log('→ stream request: ${jsonEncode(body)}', name: _tag);
+
+    final Response<ResponseBody> response;
+    try {
+      response = await _retryOnOverload(() => _dio.post<ResponseBody>(
+        _streamGenerateContentUrl,
+        data: body,
+        options: Options(
+          headers: {
+            'x-goog-api-key': _apiKey,
+            'content-type': 'application/json',
+          },
+          responseType: ResponseType.stream,
+        ),
+      ));
+    } on DioException catch (e) {
+      dev.log(
+        '✗ stream error ${e.response?.statusCode}: ${e.response?.data}',
+        name: _tag,
+        error: e,
+      );
+      rethrow;
+    }
+
+    dev.log('← stream connected (status ${response.statusCode})', name: _tag);
 
     final lines = response.data!.stream
         .cast<List<int>>()
@@ -60,12 +90,37 @@ class GeminiLlmClient implements LlmClient {
         .transform(const LineSplitter());
 
     await for (final line in lines) {
+      dev.log('  SSE: $line', name: _tag);
       if (!line.startsWith('data: ')) continue;
 
       final data = line.substring('data: '.length);
       final chunk = _extractTextSafe(data);
       if (chunk.isNotEmpty) yield chunk;
     }
+  }
+
+  /// 503/429 응답 시 지수 백오프로 최대 [maxAttempts]회 재시도합니다.
+  Future<T> _retryOnOverload<T>(
+    Future<T> Function() call, {
+    int maxAttempts = 3,
+  }) async {
+    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await call();
+      } on DioException catch (e) {
+        final status = e.response?.statusCode;
+        final retryable = status == 503 || status == 429;
+        if (!retryable || attempt == maxAttempts) rethrow;
+
+        final delay = Duration(seconds: 1 << (attempt - 1)); // 1s, 2s, 4s
+        dev.log(
+          '↻ attempt $attempt failed ($status), retrying in ${delay.inSeconds}s…',
+          name: _tag,
+        );
+        await Future<void>.delayed(delay);
+      }
+    }
+    throw StateError('unreachable');
   }
 
   Map<String, dynamic> _buildRequestBody(LlmRequest request) {

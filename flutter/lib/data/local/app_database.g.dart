@@ -1401,6 +1401,357 @@ class PlayerScoresCompanion extends UpdateCompanion<PlayerScoreRecord> {
   }
 }
 
+class $JudgeHistoriesTable extends JudgeHistories
+    with TableInfo<$JudgeHistoriesTable, JudgeHistoryRecord> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $JudgeHistoriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _gameNameMeta = const VerificationMeta(
+    'gameName',
+  );
+  @override
+  late final GeneratedColumn<String> gameName = GeneratedColumn<String>(
+    'game_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _questionMeta = const VerificationMeta(
+    'question',
+  );
+  @override
+  late final GeneratedColumn<String> question = GeneratedColumn<String>(
+    'question',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _answerMeta = const VerificationMeta('answer');
+  @override
+  late final GeneratedColumn<String> answer = GeneratedColumn<String>(
+    'answer',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _askedAtMeta = const VerificationMeta(
+    'askedAt',
+  );
+  @override
+  late final GeneratedColumn<int> askedAt = GeneratedColumn<int>(
+    'asked_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    gameName,
+    question,
+    answer,
+    askedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'judge_histories';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<JudgeHistoryRecord> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('game_name')) {
+      context.handle(
+        _gameNameMeta,
+        gameName.isAcceptableOrUnknown(data['game_name']!, _gameNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gameNameMeta);
+    }
+    if (data.containsKey('question')) {
+      context.handle(
+        _questionMeta,
+        question.isAcceptableOrUnknown(data['question']!, _questionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_questionMeta);
+    }
+    if (data.containsKey('answer')) {
+      context.handle(
+        _answerMeta,
+        answer.isAcceptableOrUnknown(data['answer']!, _answerMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_answerMeta);
+    }
+    if (data.containsKey('asked_at')) {
+      context.handle(
+        _askedAtMeta,
+        askedAt.isAcceptableOrUnknown(data['asked_at']!, _askedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_askedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  JudgeHistoryRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return JudgeHistoryRecord(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      gameName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}game_name'],
+      )!,
+      question: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}question'],
+      )!,
+      answer: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}answer'],
+      )!,
+      askedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}asked_at'],
+      )!,
+    );
+  }
+
+  @override
+  $JudgeHistoriesTable createAlias(String alias) {
+    return $JudgeHistoriesTable(attachedDatabase, alias);
+  }
+}
+
+class JudgeHistoryRecord extends DataClass
+    implements Insertable<JudgeHistoryRecord> {
+  final int id;
+  final String gameName;
+  final String question;
+  final String answer;
+  final int askedAt;
+  const JudgeHistoryRecord({
+    required this.id,
+    required this.gameName,
+    required this.question,
+    required this.answer,
+    required this.askedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['game_name'] = Variable<String>(gameName);
+    map['question'] = Variable<String>(question);
+    map['answer'] = Variable<String>(answer);
+    map['asked_at'] = Variable<int>(askedAt);
+    return map;
+  }
+
+  JudgeHistoriesCompanion toCompanion(bool nullToAbsent) {
+    return JudgeHistoriesCompanion(
+      id: Value(id),
+      gameName: Value(gameName),
+      question: Value(question),
+      answer: Value(answer),
+      askedAt: Value(askedAt),
+    );
+  }
+
+  factory JudgeHistoryRecord.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return JudgeHistoryRecord(
+      id: serializer.fromJson<int>(json['id']),
+      gameName: serializer.fromJson<String>(json['gameName']),
+      question: serializer.fromJson<String>(json['question']),
+      answer: serializer.fromJson<String>(json['answer']),
+      askedAt: serializer.fromJson<int>(json['askedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'gameName': serializer.toJson<String>(gameName),
+      'question': serializer.toJson<String>(question),
+      'answer': serializer.toJson<String>(answer),
+      'askedAt': serializer.toJson<int>(askedAt),
+    };
+  }
+
+  JudgeHistoryRecord copyWith({
+    int? id,
+    String? gameName,
+    String? question,
+    String? answer,
+    int? askedAt,
+  }) => JudgeHistoryRecord(
+    id: id ?? this.id,
+    gameName: gameName ?? this.gameName,
+    question: question ?? this.question,
+    answer: answer ?? this.answer,
+    askedAt: askedAt ?? this.askedAt,
+  );
+  JudgeHistoryRecord copyWithCompanion(JudgeHistoriesCompanion data) {
+    return JudgeHistoryRecord(
+      id: data.id.present ? data.id.value : this.id,
+      gameName: data.gameName.present ? data.gameName.value : this.gameName,
+      question: data.question.present ? data.question.value : this.question,
+      answer: data.answer.present ? data.answer.value : this.answer,
+      askedAt: data.askedAt.present ? data.askedAt.value : this.askedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JudgeHistoryRecord(')
+          ..write('id: $id, ')
+          ..write('gameName: $gameName, ')
+          ..write('question: $question, ')
+          ..write('answer: $answer, ')
+          ..write('askedAt: $askedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, gameName, question, answer, askedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is JudgeHistoryRecord &&
+          other.id == this.id &&
+          other.gameName == this.gameName &&
+          other.question == this.question &&
+          other.answer == this.answer &&
+          other.askedAt == this.askedAt);
+}
+
+class JudgeHistoriesCompanion extends UpdateCompanion<JudgeHistoryRecord> {
+  final Value<int> id;
+  final Value<String> gameName;
+  final Value<String> question;
+  final Value<String> answer;
+  final Value<int> askedAt;
+  const JudgeHistoriesCompanion({
+    this.id = const Value.absent(),
+    this.gameName = const Value.absent(),
+    this.question = const Value.absent(),
+    this.answer = const Value.absent(),
+    this.askedAt = const Value.absent(),
+  });
+  JudgeHistoriesCompanion.insert({
+    this.id = const Value.absent(),
+    required String gameName,
+    required String question,
+    required String answer,
+    required int askedAt,
+  }) : gameName = Value(gameName),
+       question = Value(question),
+       answer = Value(answer),
+       askedAt = Value(askedAt);
+  static Insertable<JudgeHistoryRecord> custom({
+    Expression<int>? id,
+    Expression<String>? gameName,
+    Expression<String>? question,
+    Expression<String>? answer,
+    Expression<int>? askedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (gameName != null) 'game_name': gameName,
+      if (question != null) 'question': question,
+      if (answer != null) 'answer': answer,
+      if (askedAt != null) 'asked_at': askedAt,
+    });
+  }
+
+  JudgeHistoriesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? gameName,
+    Value<String>? question,
+    Value<String>? answer,
+    Value<int>? askedAt,
+  }) {
+    return JudgeHistoriesCompanion(
+      id: id ?? this.id,
+      gameName: gameName ?? this.gameName,
+      question: question ?? this.question,
+      answer: answer ?? this.answer,
+      askedAt: askedAt ?? this.askedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (gameName.present) {
+      map['game_name'] = Variable<String>(gameName.value);
+    }
+    if (question.present) {
+      map['question'] = Variable<String>(question.value);
+    }
+    if (answer.present) {
+      map['answer'] = Variable<String>(answer.value);
+    }
+    if (askedAt.present) {
+      map['asked_at'] = Variable<int>(askedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JudgeHistoriesCompanion(')
+          ..write('id: $id, ')
+          ..write('gameName: $gameName, ')
+          ..write('question: $question, ')
+          ..write('answer: $answer, ')
+          ..write('askedAt: $askedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1408,8 +1759,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PlayersTable players = $PlayersTable(this);
   late final $SessionsTable sessions = $SessionsTable(this);
   late final $PlayerScoresTable playerScores = $PlayerScoresTable(this);
+  late final $JudgeHistoriesTable judgeHistories = $JudgeHistoriesTable(this);
   late final GameDao gameDao = GameDao(this as AppDatabase);
   late final SessionDao sessionDao = SessionDao(this as AppDatabase);
+  late final JudgeHistoryDao judgeHistoryDao = JudgeHistoryDao(
+    this as AppDatabase,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1419,6 +1774,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     players,
     sessions,
     playerScores,
+    judgeHistories,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -2840,6 +3196,206 @@ typedef $$PlayerScoresTableProcessedTableManager =
       PlayerScoreRecord,
       PrefetchHooks Function({bool sessionId, bool playerId})
     >;
+typedef $$JudgeHistoriesTableCreateCompanionBuilder =
+    JudgeHistoriesCompanion Function({
+      Value<int> id,
+      required String gameName,
+      required String question,
+      required String answer,
+      required int askedAt,
+    });
+typedef $$JudgeHistoriesTableUpdateCompanionBuilder =
+    JudgeHistoriesCompanion Function({
+      Value<int> id,
+      Value<String> gameName,
+      Value<String> question,
+      Value<String> answer,
+      Value<int> askedAt,
+    });
+
+class $$JudgeHistoriesTableFilterComposer
+    extends Composer<_$AppDatabase, $JudgeHistoriesTable> {
+  $$JudgeHistoriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get gameName => $composableBuilder(
+    column: $table.gameName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get question => $composableBuilder(
+    column: $table.question,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get answer => $composableBuilder(
+    column: $table.answer,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get askedAt => $composableBuilder(
+    column: $table.askedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$JudgeHistoriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $JudgeHistoriesTable> {
+  $$JudgeHistoriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get gameName => $composableBuilder(
+    column: $table.gameName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get question => $composableBuilder(
+    column: $table.question,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get answer => $composableBuilder(
+    column: $table.answer,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get askedAt => $composableBuilder(
+    column: $table.askedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$JudgeHistoriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $JudgeHistoriesTable> {
+  $$JudgeHistoriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get gameName =>
+      $composableBuilder(column: $table.gameName, builder: (column) => column);
+
+  GeneratedColumn<String> get question =>
+      $composableBuilder(column: $table.question, builder: (column) => column);
+
+  GeneratedColumn<String> get answer =>
+      $composableBuilder(column: $table.answer, builder: (column) => column);
+
+  GeneratedColumn<int> get askedAt =>
+      $composableBuilder(column: $table.askedAt, builder: (column) => column);
+}
+
+class $$JudgeHistoriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $JudgeHistoriesTable,
+          JudgeHistoryRecord,
+          $$JudgeHistoriesTableFilterComposer,
+          $$JudgeHistoriesTableOrderingComposer,
+          $$JudgeHistoriesTableAnnotationComposer,
+          $$JudgeHistoriesTableCreateCompanionBuilder,
+          $$JudgeHistoriesTableUpdateCompanionBuilder,
+          (
+            JudgeHistoryRecord,
+            BaseReferences<
+              _$AppDatabase,
+              $JudgeHistoriesTable,
+              JudgeHistoryRecord
+            >,
+          ),
+          JudgeHistoryRecord,
+          PrefetchHooks Function()
+        > {
+  $$JudgeHistoriesTableTableManager(
+    _$AppDatabase db,
+    $JudgeHistoriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$JudgeHistoriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$JudgeHistoriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$JudgeHistoriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> gameName = const Value.absent(),
+                Value<String> question = const Value.absent(),
+                Value<String> answer = const Value.absent(),
+                Value<int> askedAt = const Value.absent(),
+              }) => JudgeHistoriesCompanion(
+                id: id,
+                gameName: gameName,
+                question: question,
+                answer: answer,
+                askedAt: askedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String gameName,
+                required String question,
+                required String answer,
+                required int askedAt,
+              }) => JudgeHistoriesCompanion.insert(
+                id: id,
+                gameName: gameName,
+                question: question,
+                answer: answer,
+                askedAt: askedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$JudgeHistoriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $JudgeHistoriesTable,
+      JudgeHistoryRecord,
+      $$JudgeHistoriesTableFilterComposer,
+      $$JudgeHistoriesTableOrderingComposer,
+      $$JudgeHistoriesTableAnnotationComposer,
+      $$JudgeHistoriesTableCreateCompanionBuilder,
+      $$JudgeHistoriesTableUpdateCompanionBuilder,
+      (
+        JudgeHistoryRecord,
+        BaseReferences<_$AppDatabase, $JudgeHistoriesTable, JudgeHistoryRecord>,
+      ),
+      JudgeHistoryRecord,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2852,4 +3408,6 @@ class $AppDatabaseManager {
       $$SessionsTableTableManager(_db, _db.sessions);
   $$PlayerScoresTableTableManager get playerScores =>
       $$PlayerScoresTableTableManager(_db, _db.playerScores);
+  $$JudgeHistoriesTableTableManager get judgeHistories =>
+      $$JudgeHistoriesTableTableManager(_db, _db.judgeHistories);
 }

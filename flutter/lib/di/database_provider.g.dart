@@ -131,3 +131,45 @@ final class SessionDaoProvider
 }
 
 String _$sessionDaoHash() => r'5b9f815efbadc4a121e39a35b15781d3f61be6c9';
+
+@ProviderFor(judgeHistoryDao)
+final judgeHistoryDaoProvider = JudgeHistoryDaoProvider._();
+
+final class JudgeHistoryDaoProvider
+    extends
+        $FunctionalProvider<JudgeHistoryDao, JudgeHistoryDao, JudgeHistoryDao>
+    with $Provider<JudgeHistoryDao> {
+  JudgeHistoryDaoProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'judgeHistoryDaoProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$judgeHistoryDaoHash();
+
+  @$internal
+  @override
+  $ProviderElement<JudgeHistoryDao> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  JudgeHistoryDao create(Ref ref) {
+    return judgeHistoryDao(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(JudgeHistoryDao value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<JudgeHistoryDao>(value),
+    );
+  }
+}
+
+String _$judgeHistoryDaoHash() => r'ccd51ea300afbbf6a4ddc17a5c8884be4ed388d0';

@@ -143,4 +143,4 @@ final class RuleJudgeRepositoryProvider
 }
 
 String _$ruleJudgeRepositoryHash() =>
-    r'6a45b71b81502fb925e3df38e274f298895ed92b';
+    r'33a8f5e71e3f03c5db8c9d8db482a073e25dccec';

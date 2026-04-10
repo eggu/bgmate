@@ -21,5 +21,7 @@ SessionRepository sessionRepository(Ref ref) =>
     SessionRepositoryImpl(ref.watch(sessionDaoProvider));
 
 @Riverpod(keepAlive: true)
-RuleJudgeRepository ruleJudgeRepository(Ref ref) =>
-    RuleJudgeRepositoryImpl(ref.watch(llmClientProvider));
+RuleJudgeRepository ruleJudgeRepository(Ref ref) => RuleJudgeRepositoryImpl(
+  ref.watch(llmClientProvider),
+  ref.watch(judgeHistoryDaoProvider),
+);

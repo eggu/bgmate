@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:bgmate_flutter/data/local/board_games.dart';
+import 'package:bgmate_flutter/data/local/judge_histories.dart';
+import 'package:bgmate_flutter/data/local/judge_history_dao.dart';
 import 'package:bgmate_flutter/data/local/player_scores.dart';
 import 'package:bgmate_flutter/data/local/players.dart';
 import 'package:bgmate_flutter/data/local/sessions.dart';
@@ -15,14 +17,14 @@ import 'session_dao.dart';
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [BoardGames, Players, Sessions, PlayerScores],
-  daos: [GameDao, SessionDao],
+  tables: [BoardGames, Players, Sessions, PlayerScores, JudgeHistories],
+  daos: [GameDao, SessionDao, JudgeHistoryDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -38,6 +40,9 @@ class AppDatabase extends _$AppDatabase {
               AND ps2.score > player_scores.score
           )
         ''');
+      }
+      if (from < 3) {
+        await m.createTable(judgeHistories);
       }
     },
     beforeOpen: (details) async {

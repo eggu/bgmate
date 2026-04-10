@@ -20,6 +20,9 @@ class RuleJudgeNotifier extends StreamNotifier<List<String>> {
         chunks.add(chunk);
         state = AsyncData([...chunks]);
       }
+      if (chunks.isNotEmpty) {
+        await repo.saveHistory(gameName, question, chunks.join(''));
+      }
     } catch (e, st) {
       state = AsyncError(e, st);
     }
