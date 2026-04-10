@@ -5,6 +5,7 @@ import 'package:bgmate_flutter/presentation/recommend/recommend_screen.dart';
 import 'package:bgmate_flutter/presentation/rule_judge/rule_judge_screen.dart';
 import 'package:bgmate_flutter/presentation/score/create_session_screen.dart';
 import 'package:bgmate_flutter/presentation/score_tracker/score_tracker_screen.dart';
+import 'package:bgmate_flutter/presentation/session_history/session_history_detail_screen.dart';
 import 'package:bgmate_flutter/presentation/session_history/session_history_screen.dart';
 import 'package:bgmate_flutter/presentation/shell/app_shell.dart';
 import 'package:bgmate_flutter/routing/app_routes.dart';
@@ -46,14 +47,27 @@ final _router = GoRouter(
                 );
                 return CreateSessionScreen(bggId: bggId);
               },
-            ),GoRoute(
+            ),
+            GoRoute(
               path: AppRoutes.scoreTrackerPath,
               builder: (context, state) {
                 final bggId = int.parse(
                   state.pathParameters[AppRoutes.bggIdParam]!,
                 );
                 final playerNames = state.extra as List<String>;
-                return ScoreTrackerScreen(bggId: bggId, playerNames: playerNames,);
+                return ScoreTrackerScreen(
+                  bggId: bggId,
+                  playerNames: playerNames,
+                );
+              },
+            ),
+            GoRoute(
+              path: AppRoutes.sessionHistoryPath,
+              builder: (context, state) {
+                final sessionId = int.parse(
+                  state.pathParameters[AppRoutes.sessionIdParam]!,
+                );
+                return SessionHistoryDetailScreen(sessionId: sessionId);
               },
             ),
           ],

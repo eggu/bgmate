@@ -2,8 +2,10 @@ import 'package:bgmate_flutter/domain/model/player_score.dart';
 import 'package:bgmate_flutter/domain/model/session_history.dart';
 import 'package:bgmate_flutter/presentation/session_history/session_history_notifier.dart';
 import 'package:bgmate_flutter/presentation/widgets/game_thumbnail.dart';
+import 'package:bgmate_flutter/routing/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SessionHistoryScreen extends ConsumerWidget {
   const SessionHistoryScreen({super.key});
@@ -21,7 +23,9 @@ class SessionHistoryScreen extends ConsumerWidget {
                 itemCount: sessions.length,
                 itemBuilder: (_, i) => _SessionCard(
                   session: sessions[i],
-                  onDetail: () => {},
+                  onDetail: () => context.push(
+                    AppRoutes.sessionHistoryLocation(sessions[i].id),
+                  ),
                   winner: sessions[i].scores.isEmpty
                       ? null
                       : sessions[i].scores.reduce(
@@ -102,6 +106,7 @@ class _SessionCard extends StatelessWidget {
                 ],
               )
             : null,
+        onTap: onDetail,
       ),
     );
   }
