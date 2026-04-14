@@ -116,10 +116,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _JudgeHistory():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -178,10 +175,7 @@ return $default(_that.id,_that.gameName,_that.question,_that.answer,_that.askedA
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String gameName,  String question,  String answer,  DateTime askedAt)  $default,) {final _that = this;
 switch (_that) {
 case _JudgeHistory():
-return $default(_that.id,_that.gameName,_that.question,_that.answer,_that.askedAt);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.gameName,_that.question,_that.answer,_that.askedAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

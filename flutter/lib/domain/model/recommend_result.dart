@@ -5,8 +5,10 @@ part 'recommend_result.freezed.dart';
 @freezed
 sealed class RecommendResult with _$RecommendResult {
   const factory RecommendResult({
-    required int bggId,
     required String name,
     required String reason,
+    required bool isOwned,
+    @Default(null) double? bggScore,
+    @Default(null) String? difficulty,
   }) = _RecommendResult;
 }

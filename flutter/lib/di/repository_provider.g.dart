@@ -144,3 +144,51 @@ final class RuleJudgeRepositoryProvider
 
 String _$ruleJudgeRepositoryHash() =>
     r'33a8f5e71e3f03c5db8c9d8db482a073e25dccec';
+
+@ProviderFor(recommendRepository)
+final recommendRepositoryProvider = RecommendRepositoryProvider._();
+
+final class RecommendRepositoryProvider
+    extends
+        $FunctionalProvider<
+          RecommendRepository,
+          RecommendRepository,
+          RecommendRepository
+        >
+    with $Provider<RecommendRepository> {
+  RecommendRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'recommendRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$recommendRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<RecommendRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  RecommendRepository create(Ref ref) {
+    return recommendRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RecommendRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RecommendRepository>(value),
+    );
+  }
+}
+
+String _$recommendRepositoryHash() =>
+    r'89bd2ad443c0348f966843cb2d059017ccc21284';
