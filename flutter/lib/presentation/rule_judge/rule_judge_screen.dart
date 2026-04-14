@@ -1,17 +1,11 @@
 import 'package:bgmate_flutter/di/repository_provider.dart';
 import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/domain/model/judge_history.dart';
+import 'package:bgmate_flutter/presentation/rule_judge/judge_history_notifier.dart';
 import 'package:bgmate_flutter/presentation/rule_judge/rule_judge_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'rule_judge_screen.g.dart';
-
-@riverpod
-Stream<List<JudgeHistory>> judgeHistoryStream(Ref ref) =>
-    ref.watch(ruleJudgeRepositoryProvider).watchHistory(5);
 
 class RuleJudgeScreen extends ConsumerStatefulWidget {
   const RuleJudgeScreen({super.key});
@@ -159,7 +153,7 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
   @override
   Widget build(BuildContext context) {
     final judgeState = ref.watch(ruleJudgeProvider);
-    final historyState = ref.watch(judgeHistoryStreamProvider);
+    final historyState = ref.watch(judgeHistoryProvider);
 
     final isLoading = judgeState.isLoading;
     final streamingText = judgeState.value?.join('') ?? '';

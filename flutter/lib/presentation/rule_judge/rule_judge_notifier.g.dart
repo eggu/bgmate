@@ -33,7 +33,7 @@ final class RuleJudgeNotifierProvider
   RuleJudgeNotifier create() => RuleJudgeNotifier();
 }
 
-String _$ruleJudgeNotifierHash() => r'6aea7c2d0bfce6b8b1b41a54ac1df09f53f48cf2';
+String _$ruleJudgeNotifierHash() => r'3029584ede158a3d3c04e9bd35c0375af379895c';
 
 abstract class _$RuleJudgeNotifier extends $StreamNotifier<List<String>> {
   Stream<List<String>> build();

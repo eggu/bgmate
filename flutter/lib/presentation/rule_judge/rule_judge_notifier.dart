@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bgmate_flutter/di/repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -20,11 +22,17 @@ class RuleJudgeNotifier extends StreamNotifier<List<String>> {
         chunks.add(chunk);
         state = AsyncData([...chunks]);
       }
-      if (chunks.isNotEmpty) {
-        await repo.saveHistory(gameName, question, chunks.join(''));
-      }
     } catch (e, st) {
       state = AsyncError(e, st);
+      return;
+    }
+
+    if (chunks.isNotEmpty) {
+      try {
+        await repo.saveHistory(gameName, question, chunks.join(''));
+      } catch (e, st) {
+        log('saveHistory failed: $e', error: e, stackTrace: st);
+      }
     }
   }
 
