@@ -39,7 +39,9 @@ class GameListScreen extends ConsumerWidget {
           ),
         ),
         data: (games) => games.isEmpty
-            ? const Center(child: Text('게임을 추가해보세요'))
+            ? _EmptyCollectionState(
+                onSearch: () => context.push(AppRoutes.gameSearch),
+              )
             : ListView.builder(
                 itemCount: games.length,
                 itemBuilder: (_, i) => _GameCard(
@@ -147,6 +149,59 @@ class _GameCard extends StatelessWidget {
     return Text(
       parts.join(' · '),
       style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+    );
+  }
+}
+
+class _EmptyCollectionState extends StatelessWidget {
+  const _EmptyCollectionState({required this.onSearch});
+
+  final VoidCallback onSearch;
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: cs.primaryContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.library_books_outlined,
+                size: 36,
+                color: cs.onPrimaryContainer,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '컬렉션이 비어있어요',
+              style: tt.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '소유한 보드게임을 추가하고\nAI 추천과 전적 관리를 활용해보세요.',
+              style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 28),
+            FilledButton.icon(
+              onPressed: onSearch,
+              icon: const Icon(Icons.search, size: 18),
+              label: const Text('게임 검색하기'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

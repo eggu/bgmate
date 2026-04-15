@@ -1,4 +1,5 @@
 import 'package:bgmate_flutter/domain/model/player_score.dart';
+import 'package:bgmate_flutter/theme/app_theme.dart';
 import 'package:bgmate_flutter/domain/model/session_history.dart';
 import 'package:bgmate_flutter/presentation/session_history/session_history_notifier.dart';
 import 'package:bgmate_flutter/presentation/widgets/game_thumbnail.dart';
@@ -18,7 +19,7 @@ class SessionHistoryScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('전적 기록')),
       body: sessions.when(
         data: (sessions) => sessions.isEmpty
-            ? const Text('-')
+            ? const _EmptyHistoryState()
             : ListView.builder(
                 itemCount: sessions.length,
                 itemBuilder: (_, i) => _SessionCard(
@@ -102,13 +103,58 @@ class _SessionCard extends StatelessWidget {
                   Text(
                     '${winner?.score}점',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: AppTheme.primaryText(context),
                     ),
                   ),
                 ],
               )
             : null,
         onTap: onDetail,
+      ),
+    );
+  }
+}
+
+class _EmptyHistoryState extends StatelessWidget {
+  const _EmptyHistoryState();
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: cs.primaryContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.scoreboard_outlined,
+                size: 36,
+                color: cs.onPrimaryContainer,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '아직 전적이 없어요',
+              style: tt.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '게임을 플레이하고 점수를 기록하면\n여기에 전적이 차곡차곡 쌓여요.',
+              style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

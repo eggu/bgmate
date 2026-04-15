@@ -15,7 +15,7 @@ class _RecommendScreenState extends ConsumerState<RecommendScreen> {
   int? _selectedPlayerCount;
   PlayTime? _selectedPlayTime;
   final Set<Mood> _selectedMoods = {};
-  bool _includeNew = false;
+  bool _includeNew = true;
   bool _hasRequested = false;
 
   final _resultKey = GlobalKey();
@@ -171,9 +171,35 @@ class _HeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
-    return Text(
-      '함께할 인원, 원하는 플레이 시간, 분위기를 고르면 조건에 맞는 보드게임을 추천해드릴게요.',
-      style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cs.primaryContainer.withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: cs.primary.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: cs.primaryContainer,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(Icons.auto_awesome, size: 18, color: cs.onPrimaryContainer),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              '함께할 인원, 원하는 플레이 시간, 분위기를 고르면 조건에 맞는 보드게임을 추천해드릴게요.',
+              style: tt.bodyMedium?.copyWith(color: cs.onSurface),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

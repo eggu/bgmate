@@ -1,4 +1,5 @@
 import 'package:bgmate_flutter/di/repository_provider.dart';
+import 'package:bgmate_flutter/theme/app_theme.dart';
 import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/domain/model/judge_history.dart';
 import 'package:bgmate_flutter/presentation/rule_judge/judge_history_notifier.dart';
@@ -119,7 +120,7 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
               Text(
                 '질문',
                 style: Theme.of(ctx).textTheme.labelMedium?.copyWith(
-                  color: Theme.of(ctx).colorScheme.primary,
+                  color: AppTheme.primaryText(ctx),
                 ),
               ),
               const SizedBox(height: 4),
@@ -128,7 +129,7 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
               Text(
                 '판정',
                 style: Theme.of(ctx).textTheme.labelMedium?.copyWith(
-                  color: Theme.of(ctx).colorScheme.primary,
+                  color: AppTheme.primaryText(ctx),
                 ),
               ),
               const SizedBox(height: 4),
@@ -173,9 +174,7 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
           style: Theme.of(context).textTheme.headlineSmall,
         ),
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
+      body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -299,15 +298,6 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
               ],
             ),
           ),
-          if (isLoading)
-            const Positioned.fill(
-              child: ColoredBox(
-                color: Colors.black26,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ),
-        ],
-      ),
     );
   }
 }

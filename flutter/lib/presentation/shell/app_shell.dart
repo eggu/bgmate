@@ -24,7 +24,7 @@ class AppShell extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.gavel_outlined),
             selectedIcon: Icon(Icons.gavel),
-            label: '규칙 판정관',
+            label: '규칙 판정',
           ),
           NavigationDestination(
             icon: Icon(Icons.recommend_outlined),

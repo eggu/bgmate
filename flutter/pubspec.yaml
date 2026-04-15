@@ -57,6 +57,9 @@ dependencies:
   path_provider: ^2.1.5
   sqlite3_flutter_libs: ^0.5.39
 
+  # 폰트
+  google_fonts: ^6.2.1
+
   # 유틸
   freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
