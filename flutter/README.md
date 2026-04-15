@@ -15,7 +15,7 @@
 
 |                                   게임 컬렉션                                    |                                    AI 규칙 판정관                                    |                                     점수 트래커                                      |                                     AI 게임 추천                                      |
 |:---------------------------------------------------------------------------:|:-------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------:|
-| <img alt="컬렉션 화면" src="./docs/screenshots/01.png" title="컬렉션" width="250"/> | <img alt="규칙 판정 화면" src="./docs/screenshots/02.png" title="규칙 판정" width="250"/> | <img alt="전적 관리 화면" src="./docs/screenshots/01.png" title="전적 관리" width="250"/> | <img alt="게임 추전 화면" src="./docs/screenshots/03-1.png" title="게임 추천" width="250"/> |
+| <img alt="컬렉션 화면" src="./docs/screenshots/01.png" title="컬렉션" width="250"/> | <img alt="규칙 판정 화면" src="./docs/screenshots/02.png" title="규칙 판정" width="250"/> | <img alt="전적 관리 화면" src="./docs/screenshots/04.png" title="전적 관리" width="250"/> | <img alt="게임 추전 화면" src="./docs/screenshots/03-1.png" title="게임 추천" width="250"/> |
 
 ---
 
