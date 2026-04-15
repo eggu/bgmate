@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bgmate_flutter/data/repository/recommend_repository_impl.dart';
 import 'package:bgmate_flutter/domain/model/recommend_condition.dart';
 import 'package:bgmate_flutter/domain/model/recommend_result.dart';
 import 'package:bgmate_flutter/presentation/recommend/recommend_notifier.dart';
@@ -46,6 +47,26 @@ class _LoadingRecommendNotifier extends RecommendNotifier {
     bool includeNew,
   ) async {
     state = const AsyncLoading();
+  }
+}
+
+/// recommend() 호출 시 에러 상태를 만드는 Notifier.
+class _ErrorRecommendNotifier extends RecommendNotifier {
+  final Object _error;
+
+  _ErrorRecommendNotifier(this._error);
+
+  @override
+  FutureOr<List<RecommendResult>> build() => [];
+
+  @override
+  Future<void> recommend(
+    int playerCount,
+    PlayTime playTime,
+    Set<Mood> moods,
+    bool includeNew,
+  ) async {
+    state = AsyncError(_error, StackTrace.current);
   }
 }
 
@@ -407,6 +428,27 @@ void main() {
 
         expect(find.text('추천 결과'), findsOneWidget);
         expect(find.textContaining('추천 결과가 없어요'), findsOneWidget);
+      });
+    });
+
+    group('에러 결과', () {
+      testWidgets('503 에러면 잠시 후 다시 시도 메시지가 표시된다', (tester) async {
+        await tester.pumpWidget(
+          _buildScreen(
+            () => _ErrorRecommendNotifier(
+              const RecommendTemporaryUnavailableException(),
+            ),
+          ),
+        );
+
+        await _selectAllConditions(tester);
+        await _tapRecommendButton(tester);
+
+        expect(find.text('추천 결과'), findsOneWidget);
+        expect(
+          find.text('요청이 많아 추천 서버가 잠시 불안정해요. 잠시 후 다시 시도해 주세요.'),
+          findsWidgets,
+        );
       });
     });
 

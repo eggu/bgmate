@@ -5,14 +5,15 @@ import 'package:bgmate_flutter/data/remote/ai/llm_request.dart';
 import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/domain/model/recommend_condition.dart';
 import 'package:bgmate_flutter/domain/model/recommend_result.dart';
-import 'package:bgmate_flutter/domain/repository/game_repository.dart';
 import 'package:bgmate_flutter/domain/repository/recommend_repository.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 
 class RecommendRepositoryImpl implements RecommendRepository {
   final LlmClient llmClient;
   String? _systemPromptOwned;
   String? _systemPromptAll;
+  late final Future<void> _promptLoadFuture;
 
   RecommendRepositoryImpl({
     required this.llmClient,
@@ -20,9 +21,9 @@ class RecommendRepositoryImpl implements RecommendRepository {
     String? systemPromptAll,
   })  : _systemPromptOwned = systemPromptOwned,
         _systemPromptAll = systemPromptAll {
-    if (_systemPromptOwned == null || _systemPromptAll == null) {
-      _loadPrompt();
-    }
+    _promptLoadFuture = (_systemPromptOwned == null || _systemPromptAll == null)
+        ? _loadPrompt()
+        : Future.value();
   }
 
   Future<void> _loadPrompt() async {
@@ -40,13 +41,21 @@ class RecommendRepositoryImpl implements RecommendRepository {
     required bool includeNew,
     required List<BoardGame> ownedGames,
   }) async {
+    await _promptLoadFuture;
     final prompt = buildPrompt(condition, ownedGames, includeNew);
     final request = LlmRequest(
       messages: [LlmMessage(role: 'user', content: prompt)],
       maxTokens: 8192,
     );
-    final response = await llmClient.complete(request);
-    return parseRecommendResponse(response.text);
+    try {
+      final response = await llmClient.complete(request);
+      return parseRecommendResponse(response.text);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 503) {
+        throw const RecommendTemporaryUnavailableException();
+      }
+      rethrow;
+    }
   }
 
   String buildPrompt(
@@ -96,4 +105,8 @@ class RecommendRepositoryImpl implements RecommendRepository {
       return [];
     }
   }
+}
+
+class RecommendTemporaryUnavailableException implements Exception {
+  const RecommendTemporaryUnavailableException();
 }

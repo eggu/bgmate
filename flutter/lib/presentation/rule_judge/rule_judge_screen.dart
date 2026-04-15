@@ -159,7 +159,7 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
     final isLoading = judgeState.isLoading;
     final streamingText = judgeState.value?.join('') ?? '';
     final isComplete = judgeState is AsyncData && streamingText.isNotEmpty;
-    final errorMessage = judgeState.error?.toString();
+    final errorMessage = _buildErrorMessage(judgeState.error);
     final history = historyState.value ?? [];
 
     final canJudge =
@@ -299,6 +299,14 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
             ),
           ),
     );
+  }
+
+  String? _buildErrorMessage(Object? error) {
+    if (error is RuleJudgeTemporaryUnavailableException) {
+      return '요청이 많아 규칙 판정 서버가 잠시 불안정해요. 잠시 후 다시 시도해 주세요.';
+    }
+    if (error == null) return null;
+    return '규칙 판정을 불러오는 중 문제가 발생했어요. 잠시 후 다시 시도해 주세요.';
   }
 }
 

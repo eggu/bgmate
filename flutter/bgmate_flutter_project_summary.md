@@ -1,6 +1,6 @@
 # BGMate Flutter — Claude Code 가이드
 
-보드게임 동반자 앱 (컬렉션 관리, 점수 기록, AI 규칙 판정).
+보드게임 동반자 앱 (컬렉션 관리, 점수 기록, AI 규칙 판정, AI 게임 추천).
 
 ---
 
@@ -31,11 +31,14 @@ lib/
 ├── domain/
 │   ├── model/                       # @freezed sealed class — 모든 도메인 모델
 │   │   ├── board_game.dart          # bggId, name, yearPublished, thumbnail, players, playingTime, isInCollection
+│   │   ├── recommend_condition.dart # playerCount, playTimeMinutes, moods
+│   │   ├── recommend_result.dart    # name, reason, isOwned, bggScore, difficulty
 │   │   ├── player_score.dart        # id, sessionId, name, score, rank
 │   │   ├── session_history.dart     # id, game(BoardGame), scores[], playedAt
 │   │   └── judge_history.dart       # id, gameName, question, answer, askedAt
 │   └── repository/                  # abstract interface class
 │       ├── game_repository.dart
+│       ├── recommend_repository.dart
 │       ├── session_repository.dart
 │       └── rule_judge_repository.dart
 
@@ -57,11 +60,13 @@ lib/
 │   │       ├── llm_request.dart     # @freezed: systemPrompt, messages[], maxTokens
 │   │       └── gemini_llm_client.dart  # Gemini 구현, SSE, 503/429 재시도(지수 백오프)
 │   └── repository/                  # 인터페이스 구현체
+│       ├── recommend_repository_impl.dart   # 프롬프트 로딩 + complete 호출 + 결과 파싱
+│       └── rule_judge_repository_impl.dart  # 프롬프트 로딩 + stream 호출 + history 저장
 
 ├── di/
 │   ├── database_provider.dart       # appDatabase, gameDao, sessionDao, judgeHistoryDao
 │   ├── remote_provider.dart         # dio, bggRemoteDataSource, llmClient
-│   └── repository_provider.dart     # gameRepository, sessionRepository, ruleJudgeRepository
+│   └── repository_provider.dart     # gameRepository, recommendRepository, sessionRepository, ruleJudgeRepository
 
 └── presentation/
     ├── collection/                  # 게임 컬렉션 탭
@@ -75,9 +80,12 @@ lib/
     ├── session_history/             # 전적 탭
     │   ├── session_history_screen.dart
     │   └── session_history_detail_screen.dart
-    └── rule_judge/                  # AI 규칙 판정 탭
-        ├── rule_judge_screen.dart   # 스트리밍 응답, 이전 판정 목록
-        └── rule_judge_notifier.dart # StreamNotifier<List<String>>
+    ├── rule_judge/                  # AI 규칙 판정 탭
+    │   ├── rule_judge_screen.dart   # 스트리밍 응답, 이전 판정 목록, 503 친화 메시지 처리
+    │   └── rule_judge_notifier.dart # StreamNotifier<List<String>>, 503 예외 매핑
+    └── recommend/                   # AI 추천 탭
+        ├── recommend_screen.dart    # 조건 선택 + 결과 카드/에러/로딩
+        └── recommend_notifier.dart  # AsyncNotifier<List<RecommendResult>>
 ```
 
 ---
@@ -110,6 +118,7 @@ llmClientProvider           → GeminiLlmClient (GEMINI_API_KEY 환경변수 필
 
 // repository_provider.dart
 gameRepositoryProvider      → GameRepositoryImpl (keepAlive)
+recommendRepositoryProvider → RecommendRepositoryImpl (keepAlive)
 sessionRepositoryProvider   → SessionRepositoryImpl (keepAlive)
 ruleJudgeRepositoryProvider → RuleJudgeRepositoryImpl (keepAlive)
 ```
@@ -192,6 +201,9 @@ class MyDao extends DatabaseAccessor<AppDatabase> with _$MyDaoMixin {
 - 인증: `x-goog-api-key` 헤더, `String.fromEnvironment('GEMINI_API_KEY')`
 - 503/429 발생 시 지수 백오프 재시도 (1s→2s→4s, 최대 3회)
 - thinking 파트 (`thought: true`) 자동 필터링
+- UI 503 처리:
+  - 추천: `요청이 많아 추천 서버가 잠시 불안정해요. 잠시 후 다시 시도해 주세요.`
+  - 규칙 판정: `요청이 많아 규칙 판정 서버가 잠시 불안정해요. 잠시 후 다시 시도해 주세요.`
 
 ---
 
@@ -206,6 +218,12 @@ flutter run --dart-define=GEMINI_API_KEY=<키>
 
 # 정적 분석
 flutter analyze
+
+# 핵심 테스트
+flutter test test/data/repository/recommend_repository_test.dart
+flutter test test/presentation/recommend/recommend_screen_test.dart
+flutter test test/presentation/rule_judge/rule_judge_notifier_test.dart
+flutter test test/presentation/rule_judge/rule_judge_screen_test.dart
 ```
 
 ---

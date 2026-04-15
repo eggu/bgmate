@@ -1,4 +1,9 @@
-# bgmate_flutter
+# BGMate
+<img alt="컬렉션 화면" src="./screenshots/01.png" title="컬렉션" width="300"/>\
+<img alt="규칙 판정 화면" src="./screenshots/02.png" title="규칙 판정" width="300"/>
+<img alt="게임 추전 화면" src="./screenshots/03-1.png" title="게임 추천" width="300"/>
+<img alt="게임 추천 결과 화면" src="./screenshots/03-2.png" title="게임 추천 결과" width="300"/>
+<img alt="전적 관리 화면" src="./screenshots/01.png" title="전적 관리" width="300"/>
 
 A new Flutter project.
 

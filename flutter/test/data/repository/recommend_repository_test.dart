@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:bgmate_flutter/data/remote/ai/llm_client.dart';
+import 'package:bgmate_flutter/data/remote/ai/llm_request.dart';
+import 'package:bgmate_flutter/data/remote/ai/llm_response.dart';
 import 'package:bgmate_flutter/data/repository/recommend_repository_impl.dart';
+import 'package:bgmate_flutter/domain/model/recommend_condition.dart';
 import 'package:bgmate_flutter/domain/repository/game_repository.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -10,17 +17,109 @@ import 'recommend_repository_test.mocks.dart';
 @GenerateMocks([LlmClient, GameRepository])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  const ownedPromptAsset = 'assets/prompts/recommend_prompt_owned.txt';
+  const allPromptAsset = 'assets/prompts/recommend_prompt_all.txt';
+
   late RecommendRepositoryImpl repository;
+  late MockLlmClient mockLlmClient;
+
+  setUpAll(() {
+    provideDummy(const LlmResponse(text: ''));
+  });
 
   setUp(() {
-    // Note: In a real test, you might want to mock rootBundle or 
-    // provide a way to skip _loadPrompt in constructor for unit testing.
-    // For this example, we'll focus on the parseRecommendResponse logic.
+    mockLlmClient = MockLlmClient();
     repository = RecommendRepositoryImpl(
-      llmClient: MockLlmClient(),
+      llmClient: mockLlmClient,
       systemPromptOwned: 'dummy',
       systemPromptAll: 'dummy',
     );
+  });
+
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMessageHandler('flutter/assets', null);
+  });
+
+  group('recommend', () {
+    test('첫 호출에서도 비동기 프롬프트 로딩 완료 후 추천을 수행한다', () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMessageHandler('flutter/assets', (message) async {
+        final key = const StringCodec().decodeMessage(message);
+        if (key == ownedPromptAsset) {
+          return ByteData.view(
+            Uint8List.fromList(
+              utf8.encode(
+                '[OWNED] players={playerCount}, playTime={playTime}, moods={moods}, games={gameList}',
+              ),
+            ).buffer,
+          );
+        }
+        if (key == allPromptAsset) {
+          return ByteData.view(
+            Uint8List.fromList(
+              utf8.encode(
+                '[ALL] players={playerCount}, playTime={playTime}, moods={moods}, games={gameList}',
+              ),
+            ).buffer,
+          );
+        }
+        return null;
+      });
+
+      final repo = RecommendRepositoryImpl(llmClient: mockLlmClient);
+      when(mockLlmClient.complete(any)).thenAnswer(
+        (_) async => const LlmResponse(text: '[]'),
+      );
+
+      final result = await repo.recommend(
+        condition: const RecommendCondition(
+          playerCount: 4,
+          playTimeMinutes: PlayTime.medium,
+          moods: {Mood.strategy},
+        ),
+        includeNew: true,
+        ownedGames: const [],
+      );
+
+      expect(result, isEmpty);
+      final captured = verify(mockLlmClient.complete(captureAny)).captured.single
+          as LlmRequest;
+      final prompt = captured.messages.first.content;
+      expect(prompt, contains('[ALL] players=4'));
+      expect(prompt, contains('playTime=30~60분'));
+      expect(prompt, contains('moods=전략'));
+      expect(prompt, contains('games=없음'));
+    });
+
+    test('Gemini 503 응답이면 RecommendTemporaryUnavailableException 으로 변환한다',
+        () async {
+      final requestOptions = RequestOptions(path: '/v1beta/models/gemini');
+      final dio503 = DioException(
+        requestOptions: requestOptions,
+        response: Response(
+          requestOptions: requestOptions,
+          statusCode: 503,
+          data: {'error': 'Service Unavailable'},
+        ),
+        type: DioExceptionType.badResponse,
+      );
+
+      when(mockLlmClient.complete(any)).thenThrow(dio503);
+
+      expect(
+        repository.recommend(
+          condition: const RecommendCondition(
+            playerCount: 4,
+            playTimeMinutes: PlayTime.medium,
+            moods: {Mood.strategy},
+          ),
+          includeNew: true,
+          ownedGames: const [],
+        ),
+        throwsA(isA<RecommendTemporaryUnavailableException>()),
+      );
+    });
   });
 
   group('parseRecommendResponse', () {

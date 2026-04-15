@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bgmate_flutter/di/repository_provider.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -23,7 +24,11 @@ class RuleJudgeNotifier extends StreamNotifier<List<String>> {
         state = AsyncData([...chunks]);
       }
     } catch (e, st) {
-      state = AsyncError(e, st);
+      if (e is DioException && e.response?.statusCode == 503) {
+        state = AsyncError(const RuleJudgeTemporaryUnavailableException(), st);
+      } else {
+        state = AsyncError(e, st);
+      }
       return;
     }
 
@@ -39,4 +44,8 @@ class RuleJudgeNotifier extends StreamNotifier<List<String>> {
   void reset() {
     state = const AsyncData([]);
   }
+}
+
+class RuleJudgeTemporaryUnavailableException implements Exception {
+  const RuleJudgeTemporaryUnavailableException();
 }

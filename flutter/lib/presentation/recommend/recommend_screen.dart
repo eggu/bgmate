@@ -1,3 +1,4 @@
+import 'package:bgmate_flutter/data/repository/recommend_repository_impl.dart';
 import 'package:bgmate_flutter/domain/model/recommend_condition.dart';
 import 'package:bgmate_flutter/domain/model/recommend_result.dart';
 import 'package:bgmate_flutter/presentation/recommend/recommend_notifier.dart';
@@ -53,6 +54,7 @@ class _RecommendScreenState extends ConsumerState<RecommendScreen> {
     final asyncState = ref.watch(recommendProvider);
     final isLoading = asyncState.isLoading;
     final results = asyncState.value ?? [];
+    final errorMessage = _buildErrorMessage(asyncState.error);
 
     return Scaffold(
       appBar: AppBar(title: const Text('AI 게임 추천')),
@@ -151,12 +153,21 @@ class _RecommendScreenState extends ConsumerState<RecommendScreen> {
                 results: results,
                 hasRequested: _hasRequested,
                 isLoading: isLoading,
+                errorMessage: errorMessage,
               ),
             ],
           ],
         ),
       ),
     );
+  }
+
+  String? _buildErrorMessage(Object? error) {
+    if (error is RecommendTemporaryUnavailableException) {
+      return '요청이 많아 추천 서버가 잠시 불안정해요. 잠시 후 다시 시도해 주세요.';
+    }
+    if (error == null) return null;
+    return '추천을 불러오는 중 문제가 발생했어요. 잠시 후 다시 시도해 주세요.';
   }
 }
 
@@ -280,11 +291,13 @@ class _RecommendResultSection extends StatelessWidget {
     required this.results,
     required this.hasRequested,
     required this.isLoading,
+    required this.errorMessage,
   });
 
   final List<RecommendResult> results;
   final bool hasRequested;
   final bool isLoading;
+  final String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -293,6 +306,7 @@ class _RecommendResultSection extends StatelessWidget {
 
     final description = switch (true) {
       _ when isLoading => '조건에 맞는 게임을 정리하고 있어요.',
+      _ when errorMessage != null => errorMessage!,
       _ when results.isEmpty => '조건에 딱 맞는 추천을 찾지 못했어요. 분위기나 플레이 시간을 조금 넓혀보세요.',
       _ => '선택한 조건을 바탕으로 잘 맞는 게임을 골라봤어요.',
     };
@@ -306,6 +320,8 @@ class _RecommendResultSection extends StatelessWidget {
         const SizedBox(height: 12),
         if (isLoading)
           const _LoadingResultCard()
+        else if (errorMessage != null)
+          _ErrorResultCard(message: errorMessage!)
         else if (results.isEmpty)
           const _EmptyResultCard()
         else
@@ -519,6 +535,28 @@ class _EmptyResultCard extends StatelessWidget {
         child: Text(
           '추천 결과가 없어요. 선택한 분위기 수를 줄이거나 플레이 시간 조건을 바꿔서 다시 시도해 보세요.',
           style: tt.bodyMedium,
+        ),
+      ),
+    );
+  }
+}
+
+class _ErrorResultCard extends StatelessWidget {
+  const _ErrorResultCard({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    return Card(
+      color: cs.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Text(
+          message,
+          style: tt.bodyMedium?.copyWith(color: cs.onErrorContainer),
         ),
       ),
     );

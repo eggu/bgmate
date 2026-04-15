@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bgmate_flutter/di/repository_provider.dart';
 import 'package:bgmate_flutter/domain/repository/rule_judge_repository.dart';
 import 'package:bgmate_flutter/presentation/rule_judge/rule_judge_notifier.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -127,6 +128,32 @@ void main() {
       final state = container.read(ruleJudgeProvider);
       expect(state, isA<AsyncError<List<String>>>());
       expect((state as AsyncError).error, error);
+      verifyNever(mockRepo.saveHistory(any, any, any));
+    });
+
+    test('503 에러는 RuleJudgeTemporaryUnavailableException 으로 매핑된다', () async {
+      final requestOptions = RequestOptions(path: '/v1beta/models/gemini');
+      final dio503 = DioException(
+        requestOptions: requestOptions,
+        response: Response(
+          requestOptions: requestOptions,
+          statusCode: 503,
+          data: {'error': 'Service Unavailable'},
+        ),
+        type: DioExceptionType.badResponse,
+      );
+
+      when(mockRepo.judge(any, any)).thenAnswer((_) => Stream.error(dio503));
+
+      listen();
+      await container.read(ruleJudgeProvider.notifier).judge('게임', '질문');
+
+      final state = container.read(ruleJudgeProvider);
+      expect(state, isA<AsyncError<List<String>>>());
+      expect(
+        (state as AsyncError<List<String>>).error,
+        isA<RuleJudgeTemporaryUnavailableException>(),
+      );
       verifyNever(mockRepo.saveHistory(any, any, any));
     });
   });
