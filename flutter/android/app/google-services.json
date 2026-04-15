@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "143467389014",
+    "project_id": "bgmate-23c64",
+    "storage_bucket": "bgmate-23c64.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:143467389014:android:9d9872c927478bc9da5bf7",
+        "android_client_info": {
+          "package_name": "com.kurt.bgmate_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPagMDpkWRzV7uTx-tjQ59QYFI8Mfm41M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:bgmate_flutter/data/local/board_games.dart';
 import 'package:bgmate_flutter/data/local/judge_histories.dart';
 import 'package:bgmate_flutter/data/local/judge_history_dao.dart';
@@ -7,9 +5,9 @@ import 'package:bgmate_flutter/data/local/player_scores.dart';
 import 'package:bgmate_flutter/data/local/players.dart';
 import 'package:bgmate_flutter/data/local/sessions.dart';
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+
+import 'connection/native_connection.dart'
+    if (dart.library.html) 'connection/web_connection.dart';
 
 import 'game_dao.dart';
 import 'session_dao.dart';
@@ -107,10 +105,4 @@ class AppDatabase extends _$AppDatabase {
   );
 }
 
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dir.path, 'bgmate.sqlite'));
-    return NativeDatabase.createInBackground(file);
-  });
-}
+DatabaseConnection _openConnection() => openConnection();

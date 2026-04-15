@@ -52,10 +52,14 @@ dependencies:
   # 이미지 로딩
   cached_network_image: ^3.4.1
 
+  # Firebase (향후 사용 예정 — flutterfire configure로 web/macOS 추가 필요)
+  firebase_core: ^3.14.0
+
   path: ^1.9.1
   drift: 2.31.0
   path_provider: ^2.1.5
   sqlite3_flutter_libs: ^0.5.39
+  sqlite3: ^2.5.0
 
   # 폰트
   google_fonts: ^6.2.1
@@ -80,6 +84,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.13.1
   drift_dev: 2.31.0
+  build_web_compilers: any
   riverpod_generator: ^4.0.3
   freezed: ^3.2.5
   json_serializable: ^6.8.0
