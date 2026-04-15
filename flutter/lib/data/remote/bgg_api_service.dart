@@ -16,7 +16,7 @@ class BggApiService {
     if (_token.isEmpty) {
       throw StateError(
         'BGG_API_TOKEN is missing. '
-        'Use .env.local with --dart-define-from-file or pass '
+        'Use dart_define.json with --dart-define-from-file or pass '
         '--dart-define=BGG_API_TOKEN=...',
       );
     }

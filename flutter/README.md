@@ -8,10 +8,17 @@ A new Flutter project.
 project provides a wrapper script so every Flutter command can reuse the same
 local env file.
 
-Create a Git-ignored `.env.local` file in the project root:
+Copy `dart_define.json.example` to `dart_define.json` in the project root and fill in your values (the file is Git-ignored):
 
-```env
-BGG_API_TOKEN=your_token_here
+```bash
+cp dart_define.json.example dart_define.json
+```
+
+```json
+{
+  "BGG_API_TOKEN": "your_token_here",
+  "GEMINI_API_KEY": "your_key_here"
+}
 ```
 
 Then run Flutter through the helper script:
@@ -22,13 +29,13 @@ Then run Flutter through the helper script:
 ./tool/flutter_with_env.sh build apk
 ```
 
-The script automatically adds `--dart-define-from-file=.env.local` when the
+The script automatically adds `--dart-define-from-file=dart_define.json` when the
 file exists, so the same setup works for Android, iOS, macOS, web, and tests.
 
 If you need to call Flutter directly, you can still pass the file yourself:
 
 ```bash
-flutter test --dart-define-from-file=.env.local
+flutter test --dart-define-from-file=dart_define.json
 ```
 
 ## Getting Started
