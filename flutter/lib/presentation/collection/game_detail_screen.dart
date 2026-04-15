@@ -1,3 +1,4 @@
+import 'package:bgmate_flutter/core/image/image_url_resolver.dart';
 import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/presentation/collection/game_detail_notifier.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,7 @@ class _GameDetailBody extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.network(
-              game.thumbnail,
+              resolveImageUrl(game.thumbnail),
               height: 200,
               width: double.infinity,
               fit: BoxFit.contain,

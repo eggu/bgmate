@@ -1,3 +1,4 @@
+import 'package:bgmate_flutter/core/image/image_url_resolver.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class GameThumbnail extends StatelessWidget {
       borderRadius: BorderRadius.circular(6),
       child: url.isNotEmpty
           ? CachedNetworkImage(
-              imageUrl: url,
+              imageUrl: resolveImageUrl(url),
               fit: BoxFit.cover,
               placeholder: (context, url) =>
                   const GameThumbnailLoadingPlaceholder(),
