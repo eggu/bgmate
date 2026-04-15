@@ -175,8 +175,8 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
         ),
       ),
       body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
+        padding: const EdgeInsets.all(16),
+        child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(

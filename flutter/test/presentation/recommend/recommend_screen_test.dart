@@ -414,23 +414,26 @@ void main() {
       testWidgets('Switch 탭 시 설명 텍스트가 변경된다', (tester) async {
         await tester.pumpWidget(_buildScreen(_FakeRecommendNotifier.new));
 
-        expect(find.text('내 컬렉션 안에서만 추천'), findsOneWidget);
+        // 기본값 true → '보유 게임 우선, 더 잘 맞는 게임도 추천'
+        expect(find.text('보유 게임 우선, 더 잘 맞는 게임도 추천'), findsOneWidget);
 
         await tester.tap(find.byType(Switch));
         await tester.pump();
 
-        expect(find.text('보유 게임 우선, 더 잘 맞는 게임도 추천'), findsOneWidget);
+        // 탭 후 false → '내 컬렉션 안에서만 추천'
+        expect(find.text('내 컬렉션 안에서만 추천'), findsOneWidget);
       });
 
       testWidgets('Switch 재탭 시 원래 텍스트로 복원된다', (tester) async {
         await tester.pumpWidget(_buildScreen(_FakeRecommendNotifier.new));
 
-        await tester.tap(find.byType(Switch));
+        await tester.tap(find.byType(Switch)); // true → false
         await tester.pump();
-        await tester.tap(find.byType(Switch));
+        await tester.tap(find.byType(Switch)); // false → true (원래 상태 복원)
         await tester.pump();
 
-        expect(find.text('내 컬렉션 안에서만 추천'), findsOneWidget);
+        // 두 번 탭 후 true 복원 → '보유 게임 우선, 더 잘 맞는 게임도 추천'
+        expect(find.text('보유 게임 우선, 더 잘 맞는 게임도 추천'), findsOneWidget);
       });
     });
   });

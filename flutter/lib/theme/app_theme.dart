@@ -60,6 +60,20 @@ class AppTheme {
 
   // ── 타이포그래피 ─────────────────────────────────────────────────────────
   // Noto Serif KR (디스플레이/헤드라인) + Noto Sans KR (바디/레이블)
+  // 캐싱: light()/dark() 호출마다 GoogleFonts 객체를 재생성하지 않도록 지연 초기화
+  static TextTheme? _cachedLightTextTheme;
+  static TextTheme? _cachedDarkTextTheme;
+
+  static TextTheme _getTextTheme({required Brightness brightness}) {
+    if (brightness == Brightness.light) {
+      return _cachedLightTextTheme ??=
+          _buildTextTheme(brightness: Brightness.light);
+    } else {
+      return _cachedDarkTextTheme ??=
+          _buildTextTheme(brightness: Brightness.dark);
+    }
+  }
+
   static TextTheme _buildTextTheme({required Brightness brightness}) {
     final Color text = brightness == Brightness.light
         ? const Color(0xFF1A1410)
@@ -92,7 +106,7 @@ class AppTheme {
   // ── 라이트 테마 ──────────────────────────────────────────────────────────
   static ThemeData light() {
     const cs = _lightColorScheme;
-    final tt = _buildTextTheme(brightness: Brightness.light);
+    final tt = _getTextTheme(brightness: Brightness.light);
 
     return ThemeData(
       useMaterial3: true,
@@ -202,7 +216,7 @@ class AppTheme {
   // ── 다크 테마 ────────────────────────────────────────────────────────────
   static ThemeData dark() {
     const cs = _darkColorScheme;
-    final tt = _buildTextTheme(brightness: Brightness.dark);
+    final tt = _getTextTheme(brightness: Brightness.dark);
 
     return ThemeData(
       useMaterial3: true,
