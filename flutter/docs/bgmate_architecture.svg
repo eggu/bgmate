@@ -1,0 +1,96 @@
+<svg width="100%" viewBox="0 0 680 580" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>BGMate Architecture</title>
+<style>
+  text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill: #1a1a1a; }
+  .th { font-size: 14px; font-weight: 600; }
+  .ts { font-size: 12px; font-weight: 400; fill: #555; }
+  .c-purple rect { fill: #EEEDFE; stroke: #534AB7; }
+  .c-purple .th { fill: #3C3489; }
+  .c-purple .ts { fill: #534AB7; }
+  .c-teal rect { fill: #E1F5EE; stroke: #0F6E56; }
+  .c-teal .th { fill: #085041; }
+  .c-teal .ts { fill: #0F6E56; }
+  .c-amber rect { fill: #FAEEDA; stroke: #854F0B; }
+  .c-amber .th { fill: #633806; }
+  .c-amber .ts { fill: #854F0B; }
+  .c-gray rect { fill: #F1EFE8; stroke: #5F5E5A; }
+  .c-gray .th { fill: #444441; }
+  .c-gray .ts { fill: #5F5E5A; }
+  .c-blue rect { fill: #E6F1FB; stroke: #185FA5; }
+  .c-blue .th { fill: #0C447C; }
+  .c-blue .ts { fill: #185FA5; }
+  .c-coral rect { fill: #FAECE7; stroke: #993C1D; }
+  .c-coral .th { fill: #712B13; }
+  .c-coral .ts { fill: #993C1D; }
+  .c-green rect { fill: #EAF3DE; stroke: #3B6D11; }
+  .c-green .th { fill: #27500A; }
+  .c-green .ts { fill: #3B6D11; }
+  line.arr { stroke: #888; stroke-width: 1.2; fill: none; }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<text class="th" x="340" y="28" text-anchor="middle">BGMate — Clean Architecture</text>
+
+<text class="ts" x="176" y="54" text-anchor="middle">Android (Kotlin)</text>
+<g class="c-purple"><rect x="40" y="64" width="272" height="54" rx="8" stroke-width="0.5"/>
+  <text class="th" x="176" y="85" text-anchor="middle">Presentation</text>
+  <text class="ts" x="176" y="103" text-anchor="middle">Jetpack Compose · ViewModel · StateFlow</text></g>
+<g class="c-teal"><rect x="40" y="136" width="272" height="54" rx="8" stroke-width="0.5"/>
+  <text class="th" x="176" y="157" text-anchor="middle">Domain</text>
+  <text class="ts" x="176" y="175" text-anchor="middle">Model · Repository Interface</text></g>
+<g class="c-amber"><rect x="40" y="208" width="272" height="54" rx="8" stroke-width="0.5"/>
+  <text class="th" x="176" y="229" text-anchor="middle">Data</text>
+  <text class="ts" x="176" y="247" text-anchor="middle">Room · Retrofit · AiClient</text></g>
+<g class="c-gray"><rect x="40" y="280" width="272" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="176" y="305" text-anchor="middle">DI — Hilt</text></g>
+<line x1="176" y1="118" x2="176" y2="134" class="arr" marker-end="url(#arrow)"/>
+<line x1="176" y1="190" x2="176" y2="206" class="arr" marker-end="url(#arrow)"/>
+<line x1="176" y1="262" x2="176" y2="278" class="arr" marker-end="url(#arrow)"/>
+
+<text class="ts" x="504" y="54" text-anchor="middle">Flutter (Dart)</text>
+<g class="c-purple"><rect x="368" y="64" width="272" height="54" rx="8" stroke-width="0.5"/>
+  <text class="th" x="504" y="85" text-anchor="middle">Presentation</text>
+  <text class="ts" x="504" y="103" text-anchor="middle">Widget · AsyncNotifier · Riverpod 3</text></g>
+<g class="c-teal"><rect x="368" y="136" width="272" height="54" rx="8" stroke-width="0.5"/>
+  <text class="th" x="504" y="157" text-anchor="middle">Domain</text>
+  <text class="ts" x="504" y="175" text-anchor="middle">freezed Model · Repository Interface</text></g>
+<g class="c-amber"><rect x="368" y="208" width="272" height="54" rx="8" stroke-width="0.5"/>
+  <text class="th" x="504" y="229" text-anchor="middle">Data</text>
+  <text class="ts" x="504" y="247" text-anchor="middle">drift · Dio · LlmClient</text></g>
+<g class="c-gray"><rect x="368" y="280" width="272" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="504" y="305" text-anchor="middle">DI — Riverpod Provider</text></g>
+<line x1="504" y1="118" x2="504" y2="134" class="arr" marker-end="url(#arrow)"/>
+<line x1="504" y1="190" x2="504" y2="206" class="arr" marker-end="url(#arrow)"/>
+<line x1="504" y1="262" x2="504" y2="278" class="arr" marker-end="url(#arrow)"/>
+
+<line x1="340" y1="50" x2="340" y2="330" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+
+<text class="ts" x="340" y="362" text-anchor="middle">External Services</text>
+<g class="c-blue"><rect x="40" y="374" width="168" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="124" y="392" text-anchor="middle">BGG XML API</text>
+  <text class="ts" x="124" y="410" text-anchor="middle">Game search · Enrichment</text></g>
+<g class="c-coral"><rect x="228" y="374" width="168" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="312" y="392" text-anchor="middle">Claude API (Android)</text>
+  <text class="ts" x="312" y="410" text-anchor="middle">SSE streaming · Rules judge</text></g>
+<g class="c-green"><rect x="416" y="374" width="224" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="528" y="392" text-anchor="middle">Gemini API (Flutter)</text>
+  <text class="ts" x="528" y="410" text-anchor="middle">SSE streaming · Recommend</text></g>
+
+<line x1="124" y1="374" x2="140" y2="264" class="arr" marker-end="url(#arrow)" stroke="#aaa"/>
+<line x1="312" y1="374" x2="210" y2="264" class="arr" marker-end="url(#arrow)" stroke="#aaa"/>
+<line x1="528" y1="374" x2="504" y2="264" class="arr" marker-end="url(#arrow)" stroke="#aaa"/>
+
+<text class="ts" x="340" y="450" text-anchor="middle">Test Strategy</text>
+<g class="c-gray"><rect x="40" y="462" width="272" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="176" y="481" text-anchor="middle">Android Unit Tests</text>
+  <text class="ts" x="176" y="499" text-anchor="middle">Fake* · ViewModel · Mapper</text>
+  <text class="ts" x="176" y="513" text-anchor="middle">Instrumented: BGG API integration</text></g>
+<g class="c-gray"><rect x="368" y="462" width="272" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="504" y="481" text-anchor="middle">Flutter Unit Tests</text>
+  <text class="ts" x="504" y="499" text-anchor="middle">ProviderContainer · FakeRepository</text>
+  <text class="ts" x="504" y="513" text-anchor="middle">SearchNotifier · GameListNotifier</text></g>
+</svg>
