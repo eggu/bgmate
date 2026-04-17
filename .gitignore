@@ -157,3 +157,5 @@ playground.xcworkspace
 
 # Swift Package Manager
 # Package.resolved
+# Firebase local config
+flutter/lib/firebase_options.dart
