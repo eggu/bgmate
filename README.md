@@ -3,9 +3,9 @@
 > **Android (Jetpack Compose) + Flutter 크로스플랫폼**  
 > AI 규칙 판정 · AI 게임 추천 · 점수 트래커 · 게임 컬렉션 관리
 
-[![Android](https://img.shields.io/badge/Android-Kotlin-green?logo=android)](https://play.google.com/store/apps/details?id=com.kurt.bgmate)
-[![Flutter](https://img.shields.io/badge/Flutter-Dart-blue?logo=flutter)](https://flutter.dev)
-[![Play Store](https://img.shields.io/badge/Play%20Store-배포완료-brightgreen)](https://play.google.com/store/apps/details?id=com.kurt.bgmate)
+<!-- [![Android](https://img.shields.io/badge/Android-Kotlin-green?logo=android)](https://play.google.com/store/apps/details?id=com.kurt.bgmate) -->
+<!-- [![Flutter](https://img.shields.io/badge/Flutter-Dart-blue?logo=flutter)](https://flutter.dev) -->
+<!-- [![Play Store](https://img.shields.io/badge/Play%20Store-배포완료-brightgreen)](https://play.google.com/store/apps/details?id=com.kurt.bgmate) -->
 
 ---
 
@@ -13,9 +13,9 @@
 
 ### Flutter
 
-|                                   게임 컬렉션                                    |                                    AI 규칙 판정관                                    |                                     점수 트래커                                      |                                     AI 게임 추천                                      |
-|:---------------------------------------------------------------------------:|:-------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------:|
-| <img alt="컬렉션 화면" src="./docs/screenshots/01.png" title="컬렉션" width="250"/> | <img alt="규칙 판정 화면" src="./docs/screenshots/02.png" title="규칙 판정" width="250"/> | <img alt="전적 관리 화면" src="./docs/screenshots/04.png" title="전적 관리" width="250"/> | <img alt="게임 추전 화면" src="./docs/screenshots/03-1.png" title="게임 추천" width="250"/> |
+|                                       게임 컬렉션                                        |                                        AI 규칙 판정관                                        |                                         점수 트래커                                          |                                         AI 게임 추천                                          |
+|:-----------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|
+| <img alt="컬렉션 화면" src="./docs/screenshots/flutter/01.png" title="컬렉션" width="250"/> | <img alt="규칙 판정 화면" src="./docs/screenshots/flutter/02.png" title="규칙 판정" width="250"/> | <img alt="전적 관리 화면" src="./docs/screenshots/flutter/04.png" title="전적 관리" width="250"/> | <img alt="게임 추전 화면" src="./docs/screenshots/flutter/03-1.png" title="게임 추천" width="250"/> |
 
 ---
 
