@@ -37,7 +37,7 @@
 Android와 Flutter 모두 **Clean Architecture** 3계층 구조를 따릅니다. 의존성은 단방향으로 흐릅니다.
 
 ```
-Presentation → Domain ← Data
+Presentation → Domain → Data
 ```
 
 ### Android
@@ -46,7 +46,7 @@ Presentation → Domain ← Data
 |---|---|
 | Presentation | Jetpack Compose · MVVM · StateFlow · collectAsStateWithLifecycle |
 | Domain | 순수 Kotlin data class · Repository interface |
-| Data | Room (로컬) · Retrofit + OkHttp (BGG API) · AiClient 추상화 |
+| Data | Room (로컬) · Retrofit + OkHttp (BGG API) · LlmClient 추상화 |
 | DI | Hilt |
 
 ### Flutter
@@ -69,7 +69,7 @@ Kotlin · Jetpack Compose · Material3
 MVVM · Clean Architecture · Hilt
 Room · Retrofit2 · OkHttp · Coil3
 Coroutines · Flow · StateFlow
-Claude API (SSE 스트리밍)
+Gemini API (SSE 스트리밍, Claude 롤백 가능)
 BGG XML API v2
 ```
 
@@ -87,19 +87,24 @@ BGG XML API v2
 
 ## 주요 설계 결정
 
-### AiClient / LlmClient 인터페이스 추상화
+### LlmClient 인터페이스 추상화
 
 AI 제공자를 인터페이스로 격리해 코드 변경 없이 교체 가능한 구조를 설계했습니다.
 
-- Android: `AiClient` (Claude API SSE 스트리밍 구현 · Claude vs Gemini 직접 비교 후 채택)
+- Android: `LlmClient` (Gemini SSE 스트리밍 기본 활성 · Claude 롤백 가능)
 - Flutter: `LlmClient` (Gemini 2.5 Flash SSE 스트리밍 · 503/429 지수 백오프 재시도)
 
 ### 시스템 프롬프트 assets 분리
 
-AI 프롬프트를 코드가 아닌 `assets/prompts/` 파일로 관리합니다. 코드 수정 없이 프롬프트만 교체 가능한 구조입니다.
+AI 프롬프트를 코드가 아닌 assets 파일로 관리합니다. 코드 수정 없이 프롬프트만 교체 가능한 구조입니다.
 
 ```
-assets/prompts/
+Android: assets/
+├── rule_judge_prompt.txt
+├── recommend_prompt_owned.txt
+└── recommend_prompt_all.txt
+
+Flutter: assets/prompts/
 ├── rule_judge_prompt.txt
 ├── recommend_prompt_owned.txt
 └── recommend_prompt_all.txt
@@ -108,14 +113,6 @@ assets/prompts/
 ### PlayerEntity 신원 테이블 분리
 
 점수 기록에서 플레이어 이름 중복을 DB 레벨에서 관리합니다. 이름 변경 시 과거 전적까지 일관성 있게 유지됩니다.
-
-### saveHistory 에러 격리 패턴
-
-AI 스트리밍 완료 후 이력 저장 실패가 UI 상태에 영향을 주지 않도록 에러 경계를 명시적으로 분리했습니다. 사용자 경험 레이어와 데이터 영속성 레이어를 독립적으로 처리합니다.
-
-### 타이밍 이슈 수정 (Flutter)
-
-E2E 검증 중 프롬프트 비동기 로딩 완료 전 추천 요청으로 발생하는 빈 결과 문제를 발견하고 수정했습니다. `_loadPrompt()` 완료를 추천 실행 전에 반드시 대기하도록 변경했습니다.
 
 ---
 
@@ -180,7 +177,7 @@ com.kurt.bgmate
 lib/
 ├── domain/
 │   ├── model/          # @freezed BoardGame · PlayerScore · SessionHistory · JudgeHistory
-│   └── repository/     # GameRepository · SessionRepository · RuleJudgeRepository
+│   └── repository/     # GameRepository · SessionRepository · RuleJudgeRepository · RecommendRepository
 ├── data/
 │   ├── local/          # AppDatabase (drift) · DAO · Mapper
 │   ├── remote/         # BggApiService · LlmClient · GeminiLlmClient
@@ -215,7 +212,7 @@ lib/
 dart run build_runner build --delete-conflicting-outputs
 
 # 앱 실행
-flutter run --dart-define=GEMINI_API_KEY=<키>
+flutter run --dart-define-file=dart_define.json
 ```
 
 ---
@@ -234,54 +231,3 @@ flutter run --dart-define=GEMINI_API_KEY=<키>
 ## License
 
 MIT
-A new Flutter project.
-
-## BGG API Token
-
-`BggApiService` reads the BGG auth token from `BGG_API_TOKEN`, and this
-project provides a wrapper script so every Flutter command can reuse the same
-local env file.
-
-Copy `dart_define.json.example` to `dart_define.json` in the project root and fill in your values (the file is Git-ignored):
-
-```bash
-cp dart_define.json.example dart_define.json
-```
-
-```json
-{
-  "BGG_API_TOKEN": "your_token_here",
-  "GEMINI_API_KEY": "your_key_here"
-}
-```
-
-Then run Flutter through the helper script:
-
-```bash
-./tool/flutter_with_env.sh run
-./tool/flutter_with_env.sh test
-./tool/flutter_with_env.sh build apk
-```
-
-The script automatically adds `--dart-define-from-file=dart_define.json` when the
-file exists, so the same setup works for Android, iOS, macOS, web, and tests.
-
-If you need to call Flutter directly, you can still pass the file yourself:
-
-```bash
-flutter test --dart-define-from-file=dart_define.json
-```
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
