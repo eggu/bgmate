@@ -4,6 +4,7 @@ import 'package:bgmate_flutter/di/repository_provider.dart';
 import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/domain/model/recommend_condition.dart';
 import 'package:bgmate_flutter/domain/model/recommend_result.dart';
+import 'package:bgmate_flutter/domain/repository/game_repository.dart';
 import 'package:bgmate_flutter/domain/repository/recommend_repository.dart';
 import 'package:bgmate_flutter/presentation/recommend/recommend_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,14 +43,53 @@ class _FakeRecommendRepository implements RecommendRepository {
   }
 }
 
+class _FakeGameRepository implements GameRepository {
+  List<BoardGame> collection = [];
+
+  @override
+  Future<List<BoardGame>> getCollection() async => collection;
+
+  @override
+  Stream<List<BoardGame>> watchGames() => Stream.value(collection);
+
+  @override
+  Future<List<BoardGame>> searchBgg(String query) async => [];
+
+  @override
+  Future<List<BoardGame>> enrichWithDetails(List<BoardGame> games) async => games;
+
+  @override
+  Future<BoardGame?> getGame(int id) async => null;
+
+  @override
+  Future<void> addToCollection(BoardGame game) async {}
+
+  @override
+  Future<void> updateGame(BoardGame game) async {}
+
+  @override
+  Future<void> removeFromCollection(BoardGame game) async {}
+
+  @override
+  Future<void> upsertGames(List<BoardGame> games) async {}
+
+  @override
+  Future<void> removeSyncedGames() async {}
+}
+
 void main() {
   late _FakeRecommendRepository repo;
+  late _FakeGameRepository gameRepo;
   late ProviderContainer container;
 
   setUp(() {
     repo = _FakeRecommendRepository();
+    gameRepo = _FakeGameRepository();
     container = ProviderContainer(
-      overrides: [recommendRepositoryProvider.overrideWithValue(repo)],
+      overrides: [
+        recommendRepositoryProvider.overrideWithValue(repo),
+        gameRepositoryProvider.overrideWithValue(gameRepo),
+      ],
     );
     addTearDown(container.dispose);
   });

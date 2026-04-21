@@ -4,6 +4,7 @@ import 'package:bgmate_flutter/data/remote/ai/llm_client.dart';
 import 'package:bgmate_flutter/data/remote/ai/llm_request.dart';
 import 'package:bgmate_flutter/data/remote/ai/llm_response.dart';
 import 'package:bgmate_flutter/data/repository/recommend_repository_impl.dart';
+import 'package:bgmate_flutter/domain/model/board_game.dart';
 import 'package:bgmate_flutter/domain/model/recommend_condition.dart';
 import 'package:bgmate_flutter/domain/repository/game_repository.dart';
 import 'package:dio/dio.dart';
@@ -31,8 +32,8 @@ void main() {
     mockLlmClient = MockLlmClient();
     repository = RecommendRepositoryImpl(
       llmClient: mockLlmClient,
-      systemPromptOwned: 'dummy',
-      systemPromptAll: 'dummy',
+      systemPromptOwned: 'players={playerCount} time={playTime} moods={moods} games={gameList}',
+      systemPromptAll: 'players={playerCount} time={playTime} moods={moods} games={gameList}',
     );
   });
 
@@ -119,6 +120,82 @@ void main() {
         ),
         throwsA(isA<RecommendTemporaryUnavailableException>()),
       );
+    });
+  });
+
+  group('buildPrompt - 인원수 기반 필터링', () {
+    const condition4p = RecommendCondition(
+      playerCount: 4,
+      playTimeMinutes: PlayTime.medium,
+      moods: {Mood.strategy},
+    );
+
+    BoardGame makeGame(int id, {int min = 2, int max = 4}) => BoardGame(
+          bggId: id,
+          name: 'Game$id',
+          yearPublished: 2020,
+          minPlayers: min,
+          maxPlayers: max,
+        );
+
+    test('maxPlayers < playerCount 게임은 프롬프트에 포함되지 않음', () {
+      final games = [
+        makeGame(1, max: 2), // 2인 max → 4인 불가
+        makeGame(2, max: 4), // 4인 max → 포함
+        makeGame(3, max: 6), // 6인 max → 포함
+      ];
+      final prompt = repository.buildPrompt(condition4p, games, false);
+
+      expect(prompt, isNot(contains('Game1')));
+      expect(prompt, contains('Game2'));
+      expect(prompt, contains('Game3'));
+    });
+
+    test('maxPlayers >= playerCount 게임만 포함됨', () {
+      final games = List.generate(5, (i) => makeGame(i, max: i + 2));
+      // max: 2,3,4,5,6 → playerCount=4이면 max>=4인 id=2,3,4 포함
+      final prompt = repository.buildPrompt(condition4p, games, false);
+
+      expect(prompt, isNot(contains('Game0'))); // max=2
+      expect(prompt, isNot(contains('Game1'))); // max=3
+      expect(prompt, contains('Game2'));         // max=4
+      expect(prompt, contains('Game3'));         // max=5
+      expect(prompt, contains('Game4'));         // max=6
+    });
+
+    test('30개 초과 후보는 최대 30개만 포함됨', () {
+      final games = List.generate(50, (i) => makeGame(i, max: 6));
+      final prompt = repository.buildPrompt(condition4p, games, false);
+
+      final count = '\n- '.allMatches(prompt).length + (prompt.contains('- ') ? 1 : 0);
+      expect(count, lessThanOrEqualTo(30));
+    });
+
+    test('maxPlayers==0 (미enrichment) 게임은 후보에서 제외됨', () {
+      final games = [
+        makeGame(1, min: 0, max: 0), // 미enrichment
+        makeGame(2, max: 4),
+      ];
+      final prompt = repository.buildPrompt(condition4p, games, false);
+
+      expect(prompt, isNot(contains('Game1')));
+      expect(prompt, contains('Game2'));
+    });
+
+    test('모든 게임이 미enrichment(maxPlayers==0)이면 폴백으로 전체 포함', () {
+      final games = [
+        makeGame(1, min: 0, max: 0),
+        makeGame(2, min: 0, max: 0),
+      ];
+      final prompt = repository.buildPrompt(condition4p, games, false);
+
+      expect(prompt, contains('Game1'));
+      expect(prompt, contains('Game2'));
+    });
+
+    test('게임이 없으면 "없음" 표시', () {
+      final prompt = repository.buildPrompt(condition4p, [], false);
+      expect(prompt, contains('없음'));
     });
   });
 

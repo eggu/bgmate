@@ -64,9 +64,16 @@ class RecommendRepositoryImpl implements RecommendRepository {
     bool includeNew,
   ) {
     final moodText = condition.moods.map((e) => e.label).join(', ');
-    final gameListText = ownedGames.isEmpty
+    final eligible = ownedGames
+        .where((g) => g.maxPlayers >= condition.playerCount)
+        .toList()
+      ..shuffle();
+    final candidates = eligible.isEmpty
+        ? (ownedGames.toList()..shuffle())
+        : eligible;
+    final gameListText = candidates.isEmpty
         ? '없음'
-        : ownedGames.take(30).map((e) => '- ${e.name}').join('\n');
+        : candidates.take(30).map((e) => '- ${e.name}').join('\n');
     final template = includeNew ? _systemPromptAll : _systemPromptOwned;
     if (template == null) throw ArgumentError('Prompt is null');
     return template
