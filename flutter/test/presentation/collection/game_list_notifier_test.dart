@@ -61,6 +61,15 @@ class _FakeGameRepository implements GameRepository {
   @override
   Future<void> removeFromCollection(BoardGame game) async {}
 
+  @override
+  Future<void> updateGame(BoardGame game) async {}
+
+  @override
+  Future<void> upsertGames(List<BoardGame> games) async {}
+
+  @override
+  Future<void> removeSyncedGames() async {}
+
   Future<void> dispose() => gamesController.close();
 }
 
@@ -68,7 +77,6 @@ BoardGame _game(
   int id, {
   int minPlayers = 0,
   int maxPlayers = 0,
-  bool isInCollection = false,
 }) =>
     BoardGame(
       bggId: id,
@@ -76,7 +84,6 @@ BoardGame _game(
       yearPublished: 2000 + id,
       minPlayers: minPlayers,
       maxPlayers: maxPlayers,
-      isInCollection: isInCollection,
     );
 
 void main() {
@@ -118,7 +125,7 @@ void main() {
       expect(state.value, updated);
     });
 
-    test('stale 게임 21개는 20/1 배치로 보강되고 저장 시 isInCollection=true로 강제된다', () async {
+    test('stale 게임 21개는 20/1 배치로 보강된다', () async {
       final sub = container.listen(gameListProvider, (_, __) {});
       addTearDown(sub.close);
 
@@ -138,7 +145,6 @@ void main() {
       expect(repo.enrichInputs[0], hasLength(20));
       expect(repo.enrichInputs[1], hasLength(1));
       expect(repo.addedGames, hasLength(21));
-      expect(repo.addedGames.every((g) => g.isInCollection), isTrue);
     });
 
     test('보강 중 한 배치 실패해도 다음 배치는 계속 처리한다', () async {

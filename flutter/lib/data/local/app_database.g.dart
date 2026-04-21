@@ -98,6 +98,49 @@ class $BoardGamesTable extends BoardGames
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
+  static const VerificationMeta _statusesMeta = const VerificationMeta(
+    'statuses',
+  );
+  @override
+  late final GeneratedColumn<String> statuses = GeneratedColumn<String>(
+    'statuses',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('owned'),
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('manualSearch'),
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _userRatingMeta = const VerificationMeta(
+    'userRating',
+  );
+  @override
+  late final GeneratedColumn<int> userRating = GeneratedColumn<int>(
+    'user_rating',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -120,6 +163,10 @@ class $BoardGamesTable extends BoardGames
     maxPlayers,
     playingTime,
     description,
+    statuses,
+    source,
+    notes,
+    userRating,
     createdAt,
   ];
   @override
@@ -195,6 +242,30 @@ class $BoardGamesTable extends BoardGames
         ),
       );
     }
+    if (data.containsKey('statuses')) {
+      context.handle(
+        _statusesMeta,
+        statuses.isAcceptableOrUnknown(data['statuses']!, _statusesMeta),
+      );
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('user_rating')) {
+      context.handle(
+        _userRatingMeta,
+        userRating.isAcceptableOrUnknown(data['user_rating']!, _userRatingMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -242,6 +313,22 @@ class $BoardGamesTable extends BoardGames
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       )!,
+      statuses: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}statuses'],
+      )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      )!,
+      userRating: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}user_rating'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -264,6 +351,10 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
   final int maxPlayers;
   final int playingTime;
   final String description;
+  final String statuses;
+  final String source;
+  final String notes;
+  final int? userRating;
   final DateTime? createdAt;
   const BoardGameRecord({
     required this.bggId,
@@ -274,6 +365,10 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
     required this.maxPlayers,
     required this.playingTime,
     required this.description,
+    required this.statuses,
+    required this.source,
+    required this.notes,
+    this.userRating,
     this.createdAt,
   });
   @override
@@ -287,6 +382,12 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
     map['max_players'] = Variable<int>(maxPlayers);
     map['playing_time'] = Variable<int>(playingTime);
     map['description'] = Variable<String>(description);
+    map['statuses'] = Variable<String>(statuses);
+    map['source'] = Variable<String>(source);
+    map['notes'] = Variable<String>(notes);
+    if (!nullToAbsent || userRating != null) {
+      map['user_rating'] = Variable<int>(userRating);
+    }
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<DateTime>(createdAt);
     }
@@ -303,6 +404,12 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
       maxPlayers: Value(maxPlayers),
       playingTime: Value(playingTime),
       description: Value(description),
+      statuses: Value(statuses),
+      source: Value(source),
+      notes: Value(notes),
+      userRating: userRating == null && nullToAbsent
+          ? const Value.absent()
+          : Value(userRating),
       createdAt: createdAt == null && nullToAbsent
           ? const Value.absent()
           : Value(createdAt),
@@ -323,6 +430,10 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
       maxPlayers: serializer.fromJson<int>(json['maxPlayers']),
       playingTime: serializer.fromJson<int>(json['playingTime']),
       description: serializer.fromJson<String>(json['description']),
+      statuses: serializer.fromJson<String>(json['statuses']),
+      source: serializer.fromJson<String>(json['source']),
+      notes: serializer.fromJson<String>(json['notes']),
+      userRating: serializer.fromJson<int?>(json['userRating']),
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
     );
   }
@@ -338,6 +449,10 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
       'maxPlayers': serializer.toJson<int>(maxPlayers),
       'playingTime': serializer.toJson<int>(playingTime),
       'description': serializer.toJson<String>(description),
+      'statuses': serializer.toJson<String>(statuses),
+      'source': serializer.toJson<String>(source),
+      'notes': serializer.toJson<String>(notes),
+      'userRating': serializer.toJson<int?>(userRating),
       'createdAt': serializer.toJson<DateTime?>(createdAt),
     };
   }
@@ -351,6 +466,10 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
     int? maxPlayers,
     int? playingTime,
     String? description,
+    String? statuses,
+    String? source,
+    String? notes,
+    Value<int?> userRating = const Value.absent(),
     Value<DateTime?> createdAt = const Value.absent(),
   }) => BoardGameRecord(
     bggId: bggId ?? this.bggId,
@@ -361,6 +480,10 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
     maxPlayers: maxPlayers ?? this.maxPlayers,
     playingTime: playingTime ?? this.playingTime,
     description: description ?? this.description,
+    statuses: statuses ?? this.statuses,
+    source: source ?? this.source,
+    notes: notes ?? this.notes,
+    userRating: userRating.present ? userRating.value : this.userRating,
     createdAt: createdAt.present ? createdAt.value : this.createdAt,
   );
   BoardGameRecord copyWithCompanion(BoardGamesCompanion data) {
@@ -383,6 +506,12 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
       description: data.description.present
           ? data.description.value
           : this.description,
+      statuses: data.statuses.present ? data.statuses.value : this.statuses,
+      source: data.source.present ? data.source.value : this.source,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      userRating: data.userRating.present
+          ? data.userRating.value
+          : this.userRating,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -398,6 +527,10 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
           ..write('maxPlayers: $maxPlayers, ')
           ..write('playingTime: $playingTime, ')
           ..write('description: $description, ')
+          ..write('statuses: $statuses, ')
+          ..write('source: $source, ')
+          ..write('notes: $notes, ')
+          ..write('userRating: $userRating, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -413,6 +546,10 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
     maxPlayers,
     playingTime,
     description,
+    statuses,
+    source,
+    notes,
+    userRating,
     createdAt,
   );
   @override
@@ -427,6 +564,10 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
           other.maxPlayers == this.maxPlayers &&
           other.playingTime == this.playingTime &&
           other.description == this.description &&
+          other.statuses == this.statuses &&
+          other.source == this.source &&
+          other.notes == this.notes &&
+          other.userRating == this.userRating &&
           other.createdAt == this.createdAt);
 }
 
@@ -439,6 +580,10 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
   final Value<int> maxPlayers;
   final Value<int> playingTime;
   final Value<String> description;
+  final Value<String> statuses;
+  final Value<String> source;
+  final Value<String> notes;
+  final Value<int?> userRating;
   final Value<DateTime?> createdAt;
   const BoardGamesCompanion({
     this.bggId = const Value.absent(),
@@ -449,6 +594,10 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
     this.maxPlayers = const Value.absent(),
     this.playingTime = const Value.absent(),
     this.description = const Value.absent(),
+    this.statuses = const Value.absent(),
+    this.source = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.userRating = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   BoardGamesCompanion.insert({
@@ -460,6 +609,10 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
     this.maxPlayers = const Value.absent(),
     this.playingTime = const Value.absent(),
     this.description = const Value.absent(),
+    this.statuses = const Value.absent(),
+    this.source = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.userRating = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : name = Value(name),
        yearPublished = Value(yearPublished);
@@ -472,6 +625,10 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
     Expression<int>? maxPlayers,
     Expression<int>? playingTime,
     Expression<String>? description,
+    Expression<String>? statuses,
+    Expression<String>? source,
+    Expression<String>? notes,
+    Expression<int>? userRating,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
@@ -483,6 +640,10 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
       if (maxPlayers != null) 'max_players': maxPlayers,
       if (playingTime != null) 'playing_time': playingTime,
       if (description != null) 'description': description,
+      if (statuses != null) 'statuses': statuses,
+      if (source != null) 'source': source,
+      if (notes != null) 'notes': notes,
+      if (userRating != null) 'user_rating': userRating,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -496,6 +657,10 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
     Value<int>? maxPlayers,
     Value<int>? playingTime,
     Value<String>? description,
+    Value<String>? statuses,
+    Value<String>? source,
+    Value<String>? notes,
+    Value<int?>? userRating,
     Value<DateTime?>? createdAt,
   }) {
     return BoardGamesCompanion(
@@ -507,6 +672,10 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
       maxPlayers: maxPlayers ?? this.maxPlayers,
       playingTime: playingTime ?? this.playingTime,
       description: description ?? this.description,
+      statuses: statuses ?? this.statuses,
+      source: source ?? this.source,
+      notes: notes ?? this.notes,
+      userRating: userRating ?? this.userRating,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -538,6 +707,18 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
+    if (statuses.present) {
+      map['statuses'] = Variable<String>(statuses.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (userRating.present) {
+      map['user_rating'] = Variable<int>(userRating.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -555,6 +736,10 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
           ..write('maxPlayers: $maxPlayers, ')
           ..write('playingTime: $playingTime, ')
           ..write('description: $description, ')
+          ..write('statuses: $statuses, ')
+          ..write('source: $source, ')
+          ..write('notes: $notes, ')
+          ..write('userRating: $userRating, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -1812,6 +1997,10 @@ typedef $$BoardGamesTableCreateCompanionBuilder =
       Value<int> maxPlayers,
       Value<int> playingTime,
       Value<String> description,
+      Value<String> statuses,
+      Value<String> source,
+      Value<String> notes,
+      Value<int?> userRating,
       Value<DateTime?> createdAt,
     });
 typedef $$BoardGamesTableUpdateCompanionBuilder =
@@ -1824,6 +2013,10 @@ typedef $$BoardGamesTableUpdateCompanionBuilder =
       Value<int> maxPlayers,
       Value<int> playingTime,
       Value<String> description,
+      Value<String> statuses,
+      Value<String> source,
+      Value<String> notes,
+      Value<int?> userRating,
       Value<DateTime?> createdAt,
     });
 
@@ -1896,6 +2089,26 @@ class $$BoardGamesTableFilterComposer
 
   ColumnFilters<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get statuses => $composableBuilder(
+    column: $table.statuses,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get userRating => $composableBuilder(
+    column: $table.userRating,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1979,6 +2192,26 @@ class $$BoardGamesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get statuses => $composableBuilder(
+    column: $table.statuses,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get userRating => $composableBuilder(
+    column: $table.userRating,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -2025,6 +2258,20 @@ class $$BoardGamesTableAnnotationComposer
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get statuses =>
+      $composableBuilder(column: $table.statuses, builder: (column) => column);
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<int> get userRating => $composableBuilder(
+    column: $table.userRating,
     builder: (column) => column,
   );
 
@@ -2093,6 +2340,10 @@ class $$BoardGamesTableTableManager
                 Value<int> maxPlayers = const Value.absent(),
                 Value<int> playingTime = const Value.absent(),
                 Value<String> description = const Value.absent(),
+                Value<String> statuses = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<String> notes = const Value.absent(),
+                Value<int?> userRating = const Value.absent(),
                 Value<DateTime?> createdAt = const Value.absent(),
               }) => BoardGamesCompanion(
                 bggId: bggId,
@@ -2103,6 +2354,10 @@ class $$BoardGamesTableTableManager
                 maxPlayers: maxPlayers,
                 playingTime: playingTime,
                 description: description,
+                statuses: statuses,
+                source: source,
+                notes: notes,
+                userRating: userRating,
                 createdAt: createdAt,
               ),
           createCompanionCallback:
@@ -2115,6 +2370,10 @@ class $$BoardGamesTableTableManager
                 Value<int> maxPlayers = const Value.absent(),
                 Value<int> playingTime = const Value.absent(),
                 Value<String> description = const Value.absent(),
+                Value<String> statuses = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<String> notes = const Value.absent(),
+                Value<int?> userRating = const Value.absent(),
                 Value<DateTime?> createdAt = const Value.absent(),
               }) => BoardGamesCompanion.insert(
                 bggId: bggId,
@@ -2125,6 +2384,10 @@ class $$BoardGamesTableTableManager
                 maxPlayers: maxPlayers,
                 playingTime: playingTime,
                 description: description,
+                statuses: statuses,
+                source: source,
+                notes: notes,
+                userRating: userRating,
                 createdAt: createdAt,
               ),
           withReferenceMapper: (p0) => p0

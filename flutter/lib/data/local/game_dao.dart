@@ -28,10 +28,25 @@ class GameDao extends DatabaseAccessor<AppDatabase> with _$GameDaoMixin {
   Future<void> upsert(BoardGamesCompanion entry) =>
       into(boardGames).insertOnConflictUpdate(entry);
 
+  Future<void> updateStatusesOnly(int bggId, String serializedStatuses) =>
+      (update(boardGames)..where((t) => t.bggId.equals(bggId))).write(
+        BoardGamesCompanion(statuses: Value(serializedStatuses)),
+      );
+
   Future<void> deleteByBggId(int bggId) =>
       (delete(boardGames)..where((t) => t.bggId.equals(bggId))).go();
 
+  Future<void> deleteBySyncSource() =>
+      (delete(boardGames)
+            ..where((t) => t.source.equals('bggSync')))
+          .go();
+
+  Future<void> deleteAll() => delete(boardGames).go();
+
   Future<BoardGameRecord?> getGame(int id) async {
-    return (select(boardGames)..where((t) => t.bggId.equals(id))).getSingle();
+    return (select(boardGames)..where((t) => t.bggId.equals(id))).getSingleOrNull();
   }
+
+  Future<void> upsertAll(List<BoardGamesCompanion> entries) =>
+      batch((b) => b.insertAllOnConflictUpdate(boardGames, entries));
 }

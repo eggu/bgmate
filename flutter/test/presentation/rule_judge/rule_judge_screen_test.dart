@@ -28,6 +28,15 @@ class _FakeGameRepository implements GameRepository {
   Future<void> removeFromCollection(BoardGame game) async {}
 
   @override
+  Future<void> updateGame(BoardGame game) async {}
+
+  @override
+  Future<void> upsertGames(List<BoardGame> games) async {}
+
+  @override
+  Future<void> removeSyncedGames() async {}
+
+  @override
   Future<List<BoardGame>> searchBgg(String query) async => [];
 
   @override

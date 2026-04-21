@@ -1,3 +1,5 @@
+import 'package:bgmate_flutter/domain/model/collection_status.dart';
+import 'package:bgmate_flutter/domain/model/game_source.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'board_game.freezed.dart';
@@ -13,6 +15,9 @@ sealed class BoardGame with _$BoardGame {
     @Default(0) int maxPlayers,
     @Default(0) int playingTime,
     @Default('') String description,
-    @Default(false) bool isInCollection,
+    @Default({CollectionStatus.owned}) Set<CollectionStatus> statuses,
+    @Default(GameSource.manualSearch) GameSource source,
+    @Default('') String notes,
+    int? userRating,
   }) = _BoardGame;
 }

@@ -3,6 +3,7 @@ abstract final class AppRoutes {
   static const sessionIdParam = 'sessionId';
 
   static const collection = '/collection';
+  static const accountSettings = '$collection/account';
   static const gameSearch = '$collection/search';
   static const gameDetail = '$collection/detail';
   static const gameDetailPath = '$gameDetail/:$bggIdParam';

@@ -14,5 +14,11 @@ abstract interface class GameRepository {
 
   Future<void> addToCollection(BoardGame game);
 
+  Future<void> updateGame(BoardGame game);
+
   Future<void> removeFromCollection(BoardGame game);
+
+  Future<void> upsertGames(List<BoardGame> games);
+
+  Future<void> removeSyncedGames();
 }

@@ -1,3 +1,4 @@
+import 'package:bgmate_flutter/presentation/account/account_screen.dart';
 import 'package:bgmate_flutter/presentation/collection/game_detail_screen.dart';
 import 'package:bgmate_flutter/presentation/collection/game_list_screen.dart';
 import 'package:bgmate_flutter/presentation/collection/game_search_screen.dart';
@@ -28,6 +29,10 @@ final _router = GoRouter(
             GoRoute(
               path: AppRoutes.collection,
               builder: (_, _) => const GameListScreen(),
+            ),
+            GoRoute(
+              path: AppRoutes.accountSettings,
+              builder: (_, _) => const AccountScreen(),
             ),
             GoRoute(
               path: AppRoutes.gameSearch,

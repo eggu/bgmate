@@ -124,9 +124,36 @@ class MockGameRepository extends _i1.Mock implements _i7.GameRepository {
           as _i3.Future<void>);
 
   @override
+  _i3.Future<void> updateGame(_i8.BoardGame? game) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateGame, [game]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
   _i3.Future<void> removeFromCollection(_i8.BoardGame? game) =>
       (super.noSuchMethod(
             Invocation.method(#removeFromCollection, [game]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> upsertGames(List<_i8.BoardGame>? games) =>
+      (super.noSuchMethod(
+            Invocation.method(#upsertGames, [games]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> removeSyncedGames() =>
+      (super.noSuchMethod(
+            Invocation.method(#removeSyncedGames, []),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )

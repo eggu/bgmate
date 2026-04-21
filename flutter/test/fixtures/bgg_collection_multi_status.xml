@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items totalitems="1" termsofuse="https://boardgamegeek.com/xmlapi/termsofuse" pubdate="Mon, 21 Apr 2025 00:00:00 +0000">
+  <item objecttype="thing" objectid="224517" subtype="boardgame" collid="12345678">
+    <name sortindex="1">Brass: Birmingham</name>
+    <yearpublished>2018</yearpublished>
+    <image>//cf.geekdo-images.com/brass-birmingham.jpg</image>
+    <thumbnail>//cf.geekdo-images.com/brass-birmingham-thumb.jpg</thumbnail>
+    <stats minplayers="2" maxplayers="4" minplaytime="60" maxplaytime="120" playingtime="120" numowned="77000">
+      <rating value="8.5">
+        <usersrated value="50000"/>
+        <average value="8.5"/>
+      </rating>
+    </stats>
+    <status own="1" prevowned="0" fortrade="0" want="0" wanttoplay="1" wanttobuy="0" wishlist="0" preordered="0" lastmodified="2024-01-01 00:00:00"/>
+    <numplays>5</numplays>
+  </item>
+</items>

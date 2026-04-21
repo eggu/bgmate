@@ -22,6 +22,37 @@ class BggApiService {
     }
   }
 
+  /// BGG 컬렉션을 가져옵니다. 202 응답 시 최대 [maxRetries]회 재시도합니다.
+  Future<String> fetchCollection(
+    String username, {
+    int maxRetries = 5,
+    Duration retryDelay = const Duration(seconds: 3),
+  }) async {
+    for (var attempt = 0; attempt <= maxRetries; attempt++) {
+      final response = await _dio.get<String>(
+        '/collection',
+        queryParameters: {'username': username, 'stats': 1},
+        options: Options(
+          responseType: ResponseType.plain,
+          validateStatus: (status) => status != null && status < 500,
+        ),
+      );
+
+      if (response.statusCode == 200) return response.data ?? '';
+
+      if (response.statusCode == 202 && attempt < maxRetries) {
+        await Future.delayed(retryDelay);
+        continue;
+      }
+
+      throw Exception(
+        'BGG collection fetch failed (status ${response.statusCode}) '
+        'after ${attempt + 1} attempt(s)',
+      );
+    }
+    throw Exception('BGG collection not ready after $maxRetries retries');
+  }
+
   Future<String> fetchThingDetails(List<int> ids) async {
     // ids를 리터럴 콤마로 연결 — queryParameters 사용 시 %2C로 인코딩되므로 URL 직접 구성
     final idParam = ids.join(',');

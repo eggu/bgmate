@@ -54,6 +54,21 @@ class _FakeGameRepository implements GameRepository {
   Stream<List<BoardGame>> watchGames() {
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> updateGame(BoardGame game) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> upsertGames(List<BoardGame> games) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeSyncedGames() {
+    throw UnimplementedError();
+  }
 }
 
 BoardGame _game(int id) => BoardGame(

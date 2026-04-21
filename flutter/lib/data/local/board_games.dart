@@ -18,7 +18,19 @@ class BoardGames extends Table {
 
   TextColumn get description => text().withDefault(const Constant(''))();
 
-  DateTimeColumn get createdAt => dateTime().nullable().clientDefault(() => DateTime.now())();
+  // v4: statuses replaces isInCollection. Serialized as comma-separated enum names.
+  TextColumn get statuses => text().withDefault(const Constant('owned'))();
+
+  // v4: tracks whether game was added via search or BGG account sync
+  TextColumn get source => text().withDefault(const Constant('manualSearch'))();
+
+  // v4: user notes and rating
+  TextColumn get notes => text().withDefault(const Constant(''))();
+
+  IntColumn get userRating => integer().nullable()();
+
+  DateTimeColumn get createdAt =>
+      dateTime().nullable().clientDefault(() => DateTime.now())();
 
   @override
   String get tableName => 'game_table';

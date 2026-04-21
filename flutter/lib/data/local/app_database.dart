@@ -22,7 +22,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -41,6 +41,16 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 3) {
         await m.createTable(judgeHistories);
+      }
+      if (from < 4) {
+        await m.addColumn(boardGames, boardGames.statuses);
+        await m.addColumn(boardGames, boardGames.source);
+        await m.addColumn(boardGames, boardGames.notes);
+        await m.addColumn(boardGames, boardGames.userRating);
+        // Existing games are all owned (isInCollection was always true in collection)
+        await customStatement(
+          "UPDATE ${boardGames.actualTableName} SET statuses = 'owned'",
+        );
       }
     },
     beforeOpen: (details) async {

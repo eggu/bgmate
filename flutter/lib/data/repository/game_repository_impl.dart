@@ -44,9 +44,23 @@ class GameRepositoryImpl implements GameRepository {
   }
 
   @override
+  Future<void> updateGame(BoardGame game) async {
+    return _gameDao.upsert(game.toCompanion());
+  }
+
+  @override
   Future<void> removeFromCollection(BoardGame game) async {
     return _gameDao.deleteByBggId(game.bggId);
   }
+
+  @override
+  Future<void> upsertGames(List<BoardGame> games) async {
+    final companions = games.map((g) => g.toCompanion()).toList();
+    return _gameDao.upsertAll(companions);
+  }
+
+  @override
+  Future<void> removeSyncedGames() => _gameDao.deleteBySyncSource();
 
   @override
   Stream<List<BoardGame>> watchGames() {

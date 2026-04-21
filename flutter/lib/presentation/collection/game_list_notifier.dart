@@ -37,7 +37,7 @@ class GameListNotifier extends _$GameListNotifier {
       try {
         final enriched = await repo.enrichWithDetails(batch);
         for (final game in enriched) {
-          await repo.addToCollection(game.copyWith(isInCollection: true));
+          await repo.addToCollection(game);
         }
       } catch (_) {
         // 배치 실패 시 다음 배치 계속 진행

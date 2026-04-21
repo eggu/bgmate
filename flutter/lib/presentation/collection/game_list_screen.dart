@@ -21,6 +21,10 @@ class GameListScreen extends ConsumerWidget {
             onPressed: () => context.push(AppRoutes.gameSearch),
             icon: const Icon(Icons.search),
           ),
+          IconButton(
+            onPressed: () => context.push(AppRoutes.accountSettings),
+            icon: const Icon(Icons.settings_outlined),
+          ),
         ],
       ),
       body: gameAsync.when(
