@@ -127,7 +127,7 @@ final class CollectionSyncNotifierProvider
 }
 
 String _$collectionSyncNotifierHash() =>
-    r'c0506928bf29ba24e8fb50770fd9bdaf7268f836';
+    r'eacfa4f9a65afcca0aa17ea30e56117d0da8681b';
 
 abstract class _$CollectionSyncNotifier
     extends $Notifier<AsyncValue<SyncStep?>> {
