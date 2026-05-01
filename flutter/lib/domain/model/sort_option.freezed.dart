@@ -113,10 +113,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SortOption():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -175,10 +172,7 @@ return $default(_that.field,_that.order);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SortField field,  SortOrder order)  $default,) {final _that = this;
 switch (_that) {
 case _SortOption():
-return $default(_that.field,_that.order);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.field,_that.order);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -206,8 +200,8 @@ return $default(_that.field,_that.order);case _:
 /// @nodoc
 
 
-class _SortOption extends SortOption {
-  const _SortOption({this.field = SortField.addedAt, this.order = SortOrder.desc}): super._();
+class _SortOption implements SortOption {
+  const _SortOption({this.field = SortField.addedAt, this.order = SortOrder.desc});
   
 
 @override@JsonKey() final  SortField field;
