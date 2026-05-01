@@ -163,7 +163,7 @@ class _SortChipsRow extends ConsumerWidget {
   }
 }
 
-class _SortChip extends StatelessWidget {
+class _SortChip extends StatefulWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -175,28 +175,67 @@ class _SortChip extends StatelessWidget {
   });
 
   @override
+  State<_SortChip> createState() => _SortChipState();
+}
+
+class _SortChipState extends State<_SortChip>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _progress;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+      value: widget.selected ? 1.0 : 0.0,
+    );
+    _progress = CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut);
+  }
+
+  @override
+  void didUpdateWidget(_SortChip oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selected != oldWidget.selected) {
+      widget.selected ? _ctrl.forward() : _ctrl.reverse();
+    }
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: selected ? cs.primaryContainer : Colors.transparent,
+    return AnimatedBuilder(
+      animation: _progress,
+      builder: (context, _) {
+        final t = _progress.value;
+        return InkWell(
+          onTap: widget.onTap,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: selected ? Colors.transparent : cs.outline,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Color.lerp(Colors.transparent, cs.primaryContainer, t),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Color.lerp(cs.outline, Colors.transparent, t)!,
+              ),
+            ),
+            child: Text(
+              widget.label,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Color.lerp(cs.onSurfaceVariant, cs.onPrimaryContainer, t),
+              ),
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: selected ? cs.onPrimaryContainer : cs.onSurfaceVariant,
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
