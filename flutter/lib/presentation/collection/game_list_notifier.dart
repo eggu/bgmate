@@ -17,15 +17,16 @@ class GameListNotifier extends _$GameListNotifier {
 
     final sub = repository.watchGames().listen((games) {
       final sortOpt =
-          ref.read(gameListSortOptionProvider).valueOrNull ?? const SortOption();
+          ref.read(gameListSortOptionProvider).value ?? const SortOption();
       state = AsyncData(_applySorted(games, sortOpt));
     });
     ref.onDispose(sub.cancel);
 
     ref.listen(gameListSortOptionProvider, (prev, next) {
       if (state case AsyncData(:final value)) {
-        if (next case AsyncData(:final sortOption)) {
-          state = AsyncData(_applySorted(value, sortOption));
+        final games = value;
+        if (next case AsyncData(:final value)) {
+          state = AsyncData(_applySorted(games, value));
         }
       }
     });
@@ -108,7 +109,7 @@ class GameListSortOption extends _$GameListSortOption {
   }
 
   Future<void> setField(SortField field) async {
-    final current = state.valueOrNull ?? const SortOption();
+    final current = state.value ?? const SortOption();
     final updated = current.field == field
         ? current.toggleOrder()
         : current.copyWith(field: field);
@@ -117,7 +118,7 @@ class GameListSortOption extends _$GameListSortOption {
   }
 
   Future<void> toggleOrder() async {
-    final current = state.valueOrNull ?? const SortOption();
+    final current = state.value ?? const SortOption();
     final updated = current.toggleOrder();
     state = AsyncData(updated);
     await _save(updated);
