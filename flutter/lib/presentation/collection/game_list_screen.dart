@@ -198,7 +198,11 @@ class _SortChipState extends State<_SortChip>
   void didUpdateWidget(_SortChip oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.selected != oldWidget.selected) {
-      widget.selected ? _ctrl.forward() : _ctrl.reverse();
+      if (widget.selected) {
+        _ctrl.forward();
+      } else {
+        _ctrl.value = 0.0;
+      }
     }
   }
 
