@@ -179,6 +179,7 @@ class _SortChip extends StatelessWidget {
     return ChoiceChip(
       label: Text(label),
       selected: selected,
+      showCheckmark: false,
       selectedColor: Theme.of(context).colorScheme.primaryContainer,
       onSelected: (_) => onTap(),
     );
