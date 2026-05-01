@@ -23,69 +23,111 @@
 
 ```
 lib/
-├── main.dart                        # ProviderScope + runApp
-├── app.dart                         # MaterialApp.router + GoRouter 설정 + collectionNavigatorKey
-├── theme/app_theme.dart             # Material3 ColorScheme (gold/red)
-├── routing/app_routes.dart          # 경로 상수 및 path builder
+├── main.dart                          # ProviderScope + runApp
+├── app.dart                           # MaterialApp.router + GoRouter 설정 + collectionNavigatorKey
+├── theme/app_theme.dart               # Material3 ColorScheme (gold/red)
+├── routing/app_routes.dart            # 경로 상수 및 path builder
 
 ├── domain/
-│   ├── model/                       # @freezed sealed class — 모든 도메인 모델
-│   │   ├── board_game.dart          # bggId, name, yearPublished, thumbnail, players, playingTime, isInCollection
-│   │   ├── recommend_condition.dart # playerCount, playTimeMinutes, moods
-│   │   ├── recommend_result.dart    # name, reason, isOwned, bggScore, difficulty
-│   │   ├── player_score.dart        # id, sessionId, name, score, rank
-│   │   ├── session_history.dart     # id, game(BoardGame), scores[], playedAt
-│   │   └── judge_history.dart       # id, gameName, question, answer, askedAt
-│   └── repository/                  # abstract interface class
+│   ├── model/                         # @freezed sealed class — 모든 도메인 모델
+│   │   ├── board_game.dart            # bggId, name, yearPublished, thumbnail, players, playingTime
+│   │   ├── session.dart               # id, bggId, playedAt
+│   │   ├── session_history.dart       # id, game(BoardGame), scores[], playedAt
+│   │   ├── player.dart                # id, name
+│   │   ├── player_score.dart          # id, sessionId, name, score, rank
+│   │   ├── judge_history.dart         # id, gameName, question, answer, askedAt
+│   │   ├── judge_result.dart          # answer (thinking part 포함)
+│   │   ├── recommend_condition.dart   # playerCount, playTimeMinutes, moods
+│   │   ├── recommend_result.dart      # name, reason, isOwned, bggScore, difficulty
+│   │   ├── bgg_account.dart           # username, countryName
+│   │   ├── collection_status.dart     # Enum: synced/syncing/error/notStarted
+│   │   ├── game_source.dart           # Enum: owned/wish
+│   │   └── sort_option.dart           # sealed class: SortField(addedAt/name/yearPublished) + SortOrder(asc/desc)
+│   └── repository/                    # abstract interface class
 │       ├── game_repository.dart
-│       ├── recommend_repository.dart
 │       ├── session_repository.dart
-│       └── rule_judge_repository.dart
+│       ├── recommend_repository.dart
+│       ├── rule_judge_repository.dart
+│       └── account_repository.dart
 
 ├── data/
-│   ├── local/                       # Drift ORM
-│   │   ├── app_database.dart        # @DriftDatabase, schemaVersion=3
-│   │   ├── board_games.dart         # 테이블: bggId PK, name, yearPublished, thumbnail...
-│   │   ├── sessions.dart            # 테이블: id auto, bggId FK→board_games
-│   │   ├── players.dart             # 테이블: id auto, name UNIQUE
-│   │   ├── player_scores.dart       # 테이블: id auto, sessionId FK, playerId FK, score, rank
-│   │   ├── judge_histories.dart     # 테이블: id auto, gameName, question, answer, askedAt(ms)
+│   ├── local/                         # Drift ORM
+│   │   ├── app_database.dart          # @DriftDatabase, schemaVersion=3
+│   │   ├── board_games.dart           # 테이블: bggId PK, name, yearPublished, thumbnail...
+│   │   ├── sessions.dart              # 테이블: id auto, bggId FK→board_games
+│   │   ├── players.dart               # 테이블: id auto, name UNIQUE
+│   │   ├── player_scores.dart         # 테이블: id auto, sessionId FK, playerId FK, score, rank
+│   │   ├── judge_histories.dart       # 테이블: id auto, gameName, question, answer, askedAt(ms)
+│   │   ├── connection/
+│   │   │   ├── native_connection.dart # 네이티브(Android/iOS/macOS) SQLite 연결
+│   │   │   └── web_connection.dart    # Web SQLite3 연결
 │   │   ├── game_dao.dart
 │   │   ├── session_dao.dart
-│   │   └── judge_history_dao.dart
+│   │   ├── player_dao.dart
+│   │   ├── judge_history_dao.dart
+│   │   ├── session_with_details.dart  # @freezed: UI용 composed model
+│   │   ├── record_mapper.dart         # DB record → domain model 변환
+│   │   └── game_table_mapper.dart     # board_game DB record → domain 변환
 │   ├── remote/
-│   │   ├── bgg_api_service.dart     # BGG XML API v2
+│   │   ├── bgg_remote_data_source.dart      # abstract interface
+│   │   ├── bgg_api_remote_data_source.dart  # BGG XML API v2 구현체
+│   │   ├── bgg_api_service.dart             # Dio HTTP client wrapper
+│   │   ├── bgg_xml_parser.dart              # XML 파싱 로직
 │   │   └── ai/
-│   │       ├── llm_client.dart      # abstract: complete(), stream()
-│   │       ├── llm_request.dart     # @freezed: systemPrompt, messages[], maxTokens
-│   │       └── gemini_llm_client.dart  # Gemini 구현, SSE, 503/429 재시도(지수 백오프)
-│   └── repository/                  # 인터페이스 구현체
-│       ├── recommend_repository_impl.dart   # 프롬프트 로딩 + complete 호출 + 결과 파싱
-│       └── rule_judge_repository_impl.dart  # 프롬프트 로딩 + stream 호출 + history 저장
+│   │       ├── llm_client.dart        # abstract: complete(), stream()
+│   │       ├── llm_request.dart       # @freezed: systemPrompt, messages[], maxTokens
+│   │       ├── llm_response.dart      # AI 응답 모델
+│   │       └── gemini_llm_client.dart # Gemini 구현, SSE, 503/429 지수 백오프 재시도
+│   ├── repository/                    # 인터페이스 구현체
+│   │   ├── game_repository_impl.dart
+│   │   ├── session_repository_impl.dart
+│   │   ├── recommend_repository_impl.dart   # 프롬프트 로딩 + complete 호출 + 결과 파싱
+│   │   ├── rule_judge_repository_impl.dart  # 프롬프트 로딩 + stream 호출 + history 저장
+│   │   └── account_repository_impl.dart
+│   └── service/
+│       └── collection_sync_service.dart     # BGG 컬렉션 동기화 로직
 
 ├── di/
-│   ├── database_provider.dart       # appDatabase, gameDao, sessionDao, judgeHistoryDao
-│   ├── remote_provider.dart         # dio, bggRemoteDataSource, llmClient
-│   └── repository_provider.dart     # gameRepository, recommendRepository, sessionRepository, ruleJudgeRepository
+│   ├── database_provider.dart         # appDatabase, gameDao, sessionDao, playerDao, judgeHistoryDao
+│   ├── remote_provider.dart           # dio, bggRemoteDataSource, llmClient
+│   ├── repository_provider.dart       # gameRepository, recommendRepository, sessionRepository, ruleJudgeRepository
+│   └── account_provider.dart          # accountRepository, bggAccount
 
 └── presentation/
-    ├── collection/                  # 게임 컬렉션 탭
-    │   ├── game_list_screen.dart    # 컬렉션 목록, BGG 상세 lazy 로딩
-    │   ├── game_detail_screen.dart
-    │   └── game_search_screen.dart
+    ├── shell/
+    │   └── app_shell.dart             # StatefulShellRoute shell widget (4탭 BottomNavigationBar)
+    ├── collection/                    # 게임 컬렉션 탭 (Tab 0)
+    │   ├── game_list_screen.dart      # 컬렉션 목록, 정렬 칩(이름/연도/평점), 필터 버튼
+    │   ├── game_list_notifier.dart    # AsyncNotifier: 게임 목록 + 정렬/필터 상태
+    │   ├── game_detail_screen.dart    # 게임 상세
+    │   ├── game_detail_notifier.dart  # AsyncNotifier: BGG 상세 lazy 로딩
+    │   ├── game_search_screen.dart    # BGG 검색
+    │   ├── search_notifier.dart       # AsyncNotifier: 검색 결과
+    │   └── search_debouncer.dart      # 검색 입력 debounce
     ├── score/
-    │   └── create_session_screen.dart  # 세션 생성 (플레이어 입력)
-    ├── session_tracker/             # 게임 중 점수 입력
-    │   └── session_tracker_screen.dart
-    ├── session_history/             # 전적 탭
+    │   ├── create_session_screen.dart     # 세션 생성 (플레이어 입력)
+    │   ├── create_session_notifier.dart   # AsyncNotifier: 세션 저장
+    │   └── create_session_state.dart      # @freezed: 폼 상태
+    ├── session_tracker/               # 게임 중 점수 입력
+    │   ├── session_tracker_screen.dart
+    │   ├── session_tracker_notifier.dart  # AsyncNotifier: 점수 업데이트
+    │   └── player_score_card.dart     # 개별 플레이어 점수 입력 위젯
+    ├── session_history/               # 전적 탭 (Tab 3)
     │   ├── session_history_screen.dart
-    │   └── session_history_detail_screen.dart
-    ├── rule_judge/                  # AI 규칙 판정 탭
-    │   ├── rule_judge_screen.dart   # 스트리밍 응답, 이전 판정 목록, 503 친화 메시지 처리
-    │   └── rule_judge_notifier.dart # StreamNotifier<List<String>>, 503 예외 매핑
-    └── recommend/                   # AI 추천 탭
-        ├── recommend_screen.dart    # 조건 선택 + 결과 카드/에러/로딩
-        └── recommend_notifier.dart  # AsyncNotifier<List<RecommendResult>>
+    │   ├── session_history_notifier.dart
+    │   ├── session_history_detail_screen.dart
+    │   └── session_history_detail_notifier.dart
+    ├── rule_judge/                    # AI 규칙 판정 탭 (Tab 1)
+    │   ├── rule_judge_screen.dart     # 스트리밍 응답, 이전 판정 목록, 503 친화 메시지
+    │   ├── rule_judge_notifier.dart   # StreamNotifier<List<String>>: 스트리밍 응답
+    │   └── judge_history_notifier.dart # AsyncNotifier: 이전 판정 기록 로딩
+    ├── recommend/                     # AI 추천 탭 (Tab 2)
+    │   ├── recommend_screen.dart      # 조건 선택 + 결과 카드/에러/로딩
+    │   └── recommend_notifier.dart    # AsyncNotifier<List<RecommendResult>>
+    ├── account/
+    │   └── account_screen.dart        # BGG 계정 정보, 컬렉션 동기화 상태
+    └── widgets/
+        └── game_thumbnail.dart        # 재사용 가능한 게임 이미지 위젯
 ```
 
 ---
@@ -98,7 +140,7 @@ lib/
 | 2 | player_scores.rank 컬럼 추가 + 기존 데이터 rank 계산 |
 | 3 | judge_histories 테이블 추가 |
 
-마이그레이션은 `app_database.dart`의 `MigrationStrategy.onUpgrade` 에서 관리.
+마이그레이션은 `app_database.dart`의 `MigrationStrategy.onUpgrade`에서 관리.
 
 ---
 
@@ -109,6 +151,7 @@ lib/
 appDatabaseProvider         → AppDatabase (keepAlive)
 gameDaoProvider             → GameDao
 sessionDaoProvider          → SessionDao
+playerDaoProvider           → PlayerDao
 judgeHistoryDaoProvider     → JudgeHistoryDao
 
 // remote_provider.dart
@@ -121,6 +164,10 @@ gameRepositoryProvider      → GameRepositoryImpl (keepAlive)
 recommendRepositoryProvider → RecommendRepositoryImpl (keepAlive)
 sessionRepositoryProvider   → SessionRepositoryImpl (keepAlive)
 ruleJudgeRepositoryProvider → RuleJudgeRepositoryImpl (keepAlive)
+
+// account_provider.dart
+accountRepositoryProvider   → AccountRepositoryImpl (keepAlive)
+bggAccountProvider          → AsyncNotifier<BggAccount?>
 ```
 
 ---
@@ -183,6 +230,72 @@ class MyDao extends DatabaseAccessor<AppDatabase> with _$MyDaoMixin {
 }
 ```
 
+### 정렬 옵션 (SortOption)
+```dart
+// sealed class + enum 조합
+enum SortField { addedAt, name, yearPublished }
+enum SortOrder { asc, desc }
+
+@freezed
+sealed class SortOption with _$SortOption {
+  const factory SortOption({
+    @Default(SortField.addedAt) SortField field,
+    @Default(SortOrder.desc) SortOrder order,
+  }) = _SortOption;
+}
+
+// toggleOrder extension
+extension SortOptionX on SortOption {
+  SortOption toggleOrder() => copyWith(
+        order: order == SortOrder.asc ? SortOrder.desc : SortOrder.asc,
+      );
+}
+
+// SortField별 비교 로직
+extension SortFieldComparator on SortField {
+  int compare(BoardGame a, BoardGame b) => switch (this) {
+        SortField.name => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        SortField.yearPublished => a.yearPublished.compareTo(b.yearPublished),
+        SortField.addedAt => 0,
+      };
+}
+```
+
+---
+
+## 테스트 목록
+
+```
+test/
+├── core/image/
+│   └── image_url_resolver_test.dart
+├── data/remote/
+│   ├── bgg_xml_parser_test.dart
+│   └── bgg_xml_parser_collection_test.dart
+├── data/repository/
+│   ├── account_repository_impl_test.dart
+│   ├── recommend_repository_test.dart
+│   └── recommend_repository_test.mocks.dart
+├── data/service/
+│   ├── collection_sync_service_test.dart
+│   └── collection_sync_service_test.mocks.dart
+├── domain/model/
+│   └── collection_status_test.dart
+└── presentation/
+    ├── collection/
+    │   ├── game_list_notifier_test.dart
+    │   └── search_notifier_test.dart
+    ├── recommend/
+    │   ├── recommend_notifier_test.dart
+    │   └── recommend_screen_test.dart
+    └── rule_judge/
+        ├── judge_history_notifier_test.dart
+        ├── judge_history_notifier_test.mocks.dart
+        ├── rule_judge_notifier_test.dart
+        ├── rule_judge_notifier_test.mocks.dart
+        └── rule_judge_screen_test.dart
+```
+
 ---
 
 ## 외부 API
@@ -191,6 +304,7 @@ class MyDao extends DatabaseAccessor<AppDatabase> with _$MyDaoMixin {
 - 기본 URL: `https://boardgamegeek.com/xmlapi2`
 - `/search?query=<name>&type=boardgame` — 검색
 - `/thing?id=<id1,id2,...>&type=boardgame` — 상세 (최대 20개 배치)
+- `/collection?username=<user>` — 유저 컬렉션 동기화
 - 인증: `String.fromEnvironment('BGG_API_TOKEN')` (선택)
 - 응답: XML → `bgg_xml_parser.dart`에서 파싱
 
@@ -213,8 +327,8 @@ class MyDao extends DatabaseAccessor<AppDatabase> with _$MyDaoMixin {
 # 코드 생성 (Riverpod, Freezed, Drift 전체)
 dart run build_runner build --delete-conflicting-outputs
 
-# 앱 실행 (API 키 포함)
-flutter run --dart-define=GEMINI_API_KEY=<키>
+# 앱 실행 (dart_define.json 사용)
+flutter run --dart-define-from-file=dart_define.json
 
 # 정적 분석
 flutter analyze
@@ -224,6 +338,7 @@ flutter test test/data/repository/recommend_repository_test.dart
 flutter test test/presentation/recommend/recommend_screen_test.dart
 flutter test test/presentation/rule_judge/rule_judge_notifier_test.dart
 flutter test test/presentation/rule_judge/rule_judge_screen_test.dart
+flutter test test/presentation/collection/game_list_notifier_test.dart
 ```
 
 ---
@@ -235,3 +350,5 @@ flutter test test/presentation/rule_judge/rule_judge_screen_test.dart
 - Repository 인터페이스는 `domain/repository/`에, 구현체는 `data/repository/`에
 - Riverpod provider는 해당 feature의 notifier 파일 또는 `di/` 폴더에 위치
 - `.g.dart` / `.freezed.dart` 파일은 직접 편집하지 않음
+- `SortOption`은 sealed class + enum 조합 — 정렬 필드와 순서를 분리해서 관리, `toggleOrder()`로 순서 전환
+- 새 정렬 기준 추가 시 `SortField` enum + `SortFieldComparator.compare()` switch 케이스 모두 업데이트
