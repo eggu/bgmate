@@ -115,7 +115,8 @@ class _SortChipsRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sortOption = ref.watch(gameListSortOptionProvider);
+    final sortOption =
+        ref.watch(gameListSortOptionProvider).valueOrNull ?? const SortOption();
     final notifier = ref.read(gameListSortOptionProvider.notifier);
 
     return Padding(

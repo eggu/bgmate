@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:bgmate_flutter/di/repository_provider.dart';
 import 'package:bgmate_flutter/domain/model/sort_option.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/model/board_game.dart';
 
@@ -15,13 +16,17 @@ class GameListNotifier extends _$GameListNotifier {
     final repository = ref.watch(gameRepositoryProvider);
 
     final sub = repository.watchGames().listen((games) {
-      state = AsyncData(_applySorted(games, ref.read(gameListSortOptionProvider)));
+      final sortOpt =
+          ref.read(gameListSortOptionProvider).valueOrNull ?? const SortOption();
+      state = AsyncData(_applySorted(games, sortOpt));
     });
     ref.onDispose(sub.cancel);
 
     ref.listen(gameListSortOptionProvider, (prev, next) {
       if (state case AsyncData(:final value)) {
-        state = AsyncData(_applySorted(value, ref.read(gameListSortOptionProvider)));
+        if (next case AsyncData(:final sortOption)) {
+          state = AsyncData(_applySorted(value, sortOption));
+        }
       }
     });
 
@@ -30,7 +35,9 @@ class GameListNotifier extends _$GameListNotifier {
     // 정보가 없는 게임을 백그라운드에서 갱신 — stream이 자동으로 UI 업데이트
     _enrichStaleGames(initialGames);
 
-    return _applySorted(initialGames, ref.read(gameListSortOptionProvider));
+    // 저장된 정렬 옵션이 로드될 때까지 대기한 뒤 초기 목록 반환
+    final sortOption = await ref.read(gameListSortOptionProvider.future);
+    return _applySorted(initialGames, sortOption);
   }
 
   List<BoardGame> _applySorted(List<BoardGame> games, SortOption option) {
@@ -84,20 +91,41 @@ class GameListNotifier extends _$GameListNotifier {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class GameListSortOption extends _$GameListSortOption {
-  @override
-  SortOption build() => const SortOption();
+  static const _fieldKey = 'sort_field';
+  static const _orderKey = 'sort_order';
 
-  void setField(SortField field) {
-    if (state.field == field) {
-      state = state.toggleOrder();
-    } else {
-      state = state.copyWith(field: field);
-    }
+  @override
+  Future<SortOption> build() async {
+    final prefs = await SharedPreferences.getInstance();
+    final fieldIndex = prefs.getInt(_fieldKey) ?? SortField.addedAt.index;
+    final orderIndex = prefs.getInt(_orderKey) ?? SortOrder.desc.index;
+    return SortOption(
+      field: SortField.values[fieldIndex],
+      order: SortOrder.values[orderIndex],
+    );
   }
 
-  void toggleOrder() {
-    state = state.toggleOrder();
+  Future<void> setField(SortField field) async {
+    final current = state.valueOrNull ?? const SortOption();
+    final updated = current.field == field
+        ? current.toggleOrder()
+        : current.copyWith(field: field);
+    state = AsyncData(updated);
+    await _save(updated);
+  }
+
+  Future<void> toggleOrder() async {
+    final current = state.valueOrNull ?? const SortOption();
+    final updated = current.toggleOrder();
+    state = AsyncData(updated);
+    await _save(updated);
+  }
+
+  Future<void> _save(SortOption option) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_fieldKey, option.field.index);
+    await prefs.setInt(_orderKey, option.order.index);
   }
 }

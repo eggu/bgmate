@@ -33,7 +33,7 @@ final class GameListNotifierProvider
   GameListNotifier create() => GameListNotifier();
 }
 
-String _$gameListNotifierHash() => r'c9360e92903da60cb690a00b0875141640b71d17';
+String _$gameListNotifierHash() => r'2f2468c7a2f19f162c5eafa1f20f4c9502145ee5';
 
 abstract class _$GameListNotifier extends $AsyncNotifier<List<BoardGame>> {
   FutureOr<List<BoardGame>> build();
@@ -57,14 +57,14 @@ abstract class _$GameListNotifier extends $AsyncNotifier<List<BoardGame>> {
 final gameListSortOptionProvider = GameListSortOptionProvider._();
 
 final class GameListSortOptionProvider
-    extends $NotifierProvider<GameListSortOption, SortOption> {
+    extends $AsyncNotifierProvider<GameListSortOption, SortOption> {
   GameListSortOptionProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'gameListSortOptionProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -75,30 +75,22 @@ final class GameListSortOptionProvider
   @$internal
   @override
   GameListSortOption create() => GameListSortOption();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SortOption value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SortOption>(value),
-    );
-  }
 }
 
 String _$gameListSortOptionHash() =>
-    r'bb98e58905bae2760a1d5a9a2fa9abe010320181';
+    r'9d59de9ed879b723e36fceec6610e417d01d1fdf';
 
-abstract class _$GameListSortOption extends $Notifier<SortOption> {
-  SortOption build();
+abstract class _$GameListSortOption extends $AsyncNotifier<SortOption> {
+  FutureOr<SortOption> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<SortOption, SortOption>;
+    final ref = this.ref as $Ref<AsyncValue<SortOption>, SortOption>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<SortOption, SortOption>,
-              SortOption,
+              AnyNotifier<AsyncValue<SortOption>, SortOption>,
+              AsyncValue<SortOption>,
               Object?,
               Object?
             >;
