@@ -16,13 +16,14 @@ extension SortFieldComparator on SortField {
 }
 
 @freezed
-class SortOption with _$SortOption {
-  const SortOption._();
+sealed class SortOption with _$SortOption {
   const factory SortOption({
     @Default(SortField.addedAt) SortField field,
     @Default(SortOrder.desc) SortOrder order,
   }) = _SortOption;
+}
 
+extension SortOptionX on SortOption {
   SortOption toggleOrder() => copyWith(
         order: order == SortOrder.asc ? SortOrder.desc : SortOrder.asc,
       );
