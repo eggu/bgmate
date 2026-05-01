@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:bgmate_flutter/di/repository_provider.dart';
+import 'package:bgmate_flutter/domain/model/sort_option.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/model/board_game.dart';
@@ -14,16 +15,31 @@ class GameListNotifier extends _$GameListNotifier {
     final repository = ref.watch(gameRepositoryProvider);
 
     final sub = repository.watchGames().listen((games) {
-      state = AsyncData(games);
+      state = AsyncData(_applySorted(games, ref.read(gameListSortOptionProvider)));
     });
     ref.onDispose(sub.cancel);
+
+    ref.listen(gameListSortOptionProvider, (prev, next) {
+      if (state case AsyncData(:final value)) {
+        state = AsyncData(_applySorted(value, ref.read(gameListSortOptionProvider)));
+      }
+    });
 
     final initialGames = await repository.watchGames().first;
 
     // 정보가 없는 게임을 백그라운드에서 갱신 — stream이 자동으로 UI 업데이트
     _enrichStaleGames(initialGames);
 
-    return initialGames;
+    return _applySorted(initialGames, ref.read(gameListSortOptionProvider));
+  }
+
+  List<BoardGame> _applySorted(List<BoardGame> games, SortOption option) {
+    final sorted = [...games];
+    sorted.sort((a, b) {
+      final cmp = option.field.compare(a, b);
+      return option.order == SortOrder.asc ? cmp : -cmp;
+    });
+    return sorted;
   }
 
   /// thumbnail이 비어 있는 게임을 20개씩 /thing API로 갱신 후 DB에 저장
@@ -65,5 +81,23 @@ class GameListNotifier extends _$GameListNotifier {
   Future<void> removeGame(BoardGame game) async {
     await ref.read(gameRepositoryProvider).removeFromCollection(game);
     ref.invalidateSelf();
+  }
+}
+
+@riverpod
+class GameListSortOption extends _$GameListSortOption {
+  @override
+  SortOption build() => const SortOption();
+
+  void setField(SortField field) {
+    if (state.field == field) {
+      state = state.toggleOrder();
+    } else {
+      state = state.copyWith(field: field);
+    }
+  }
+
+  void toggleOrder() {
+    state = state.toggleOrder();
   }
 }
