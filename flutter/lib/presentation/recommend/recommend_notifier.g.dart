@@ -33,7 +33,7 @@ final class RecommendNotifierProvider
   RecommendNotifier create() => RecommendNotifier();
 }
 
-String _$recommendNotifierHash() => r'aa9cdbcf864bca21dff1f517fb83b8e04a2a2b07';
+String _$recommendNotifierHash() => r'69bdb500e5a0da3b87839c20c4a901c423208cd9';
 
 abstract class _$RecommendNotifier
     extends $AsyncNotifier<List<RecommendResult>> {

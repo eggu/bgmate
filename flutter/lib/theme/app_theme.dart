@@ -11,51 +11,67 @@ class AppTheme {
   static const Color _darkOnSurfaceVariant = Color(0xFF9E9585);
 
   // ── 라이트 컬러 스킴 ─────────────────────────────────────────────────────
-  // 콘셉트: 양피지 크림 배경 위에 깊은 호박색 골드
   static const ColorScheme _lightColorScheme = ColorScheme(
     brightness: Brightness.light,
-    primary: Color(0xFF8B6800),         // 딥 앰버 — WCAG AA ~5.1:1
+    primary: Color(0xFF2563EB),
     onPrimary: Color(0xFFFFFFFF),
-    primaryContainer: Color(0xFFFFF0B8),// 골든 글로우 컨테이너
-    onPrimaryContainer: Color(0xFF3D2D00),
-    secondary: Color(0xFFB83226),       // 보드게임 레드
+    primaryContainer: Color(0xFFDDE7FF),
+    onPrimaryContainer: Color(0xFF0B1B4D),
+    secondary: Color(0xFFE11D48),
     onSecondary: Color(0xFFFFFFFF),
-    secondaryContainer: Color(0xFFFFDAD5),
-    onSecondaryContainer: Color(0xFF7A1810),
+    secondaryContainer: Color(0xFFFFD9E2),
+    onSecondaryContainer: Color(0xFF5A061B),
+    tertiary: Color(0xFF047857),
+    onTertiary: Color(0xFFFFFFFF),
+    tertiaryContainer: Color(0xFFBFF4DC),
+    onTertiaryContainer: Color(0xFF033926),
     error: Color(0xFFB3261E),
     onError: Color(0xFFFFFFFF),
-    surface: Color(0xFFFAF7F0),         // 따뜻한 양피지
-    onSurface: Color(0xFF1A1410),       // 웜 니어-블랙
-    outline: Color(0xFFCFC0A5),         // 웜 탠 테두리
+    errorContainer: Color(0xFFFFDAD6),
+    onErrorContainer: Color(0xFF410002),
+    surface: Color(0xFFFBFCFF),
+    onSurface: Color(0xFF151821),
+    surfaceContainerHighest: Color(0xFFECEFF7),
+    onSurfaceVariant: Color(0xFF596173),
+    outline: Color(0xFFC7CDDA),
+    outlineVariant: Color(0xFFDDE2ED),
     shadow: Colors.black,
-    inverseSurface: Color(0xFF2E2A24),
-    onInverseSurface: Color(0xFFF5EFE0),
-    inversePrimary: Color(0xFFFFD54F),
-    surfaceTint: Color(0xFF8B6800),
+    inverseSurface: Color(0xFF2A2F3A),
+    onInverseSurface: Color(0xFFF1F3FA),
+    inversePrimary: Color(0xFFB7C7FF),
+    surfaceTint: Color(0xFF2563EB),
   );
 
   // ── 다크 컬러 스킴 ──────────────────────────────────────────────────────
-  // 콘셉트: 딥 네이비-슬레이트 배경 위에 따뜻한 골드 강조
   static const ColorScheme _darkColorScheme = ColorScheme(
     brightness: Brightness.dark,
-    primary: Color(0xFFFFD54F),         // 워밍 골드
-    onPrimary: Color(0xFF1A1410),
-    primaryContainer: Color(0xFF3D2D00),
-    onPrimaryContainer: Color(0xFFFFD54F),
-    secondary: Color(0xFFFF7B78),
-    onSecondary: Color(0xFF1A0A08),
-    secondaryContainer: Color(0xFF4A100E),
-    onSecondaryContainer: Color(0xFFFFAB8A),
-    error: Color(0xFFF2B8B5),
-    onError: Color(0xFF601410),
-    surface: Color(0xFF1C1E2A),         // 딥 네이비-슬레이트
-    onSurface: Color(0xFFF0E8D8),       // 워밍 화이트
-    outline: Color(0xFF3D3730),         // 웜 다크 테두리
+    primary: Color(0xFFB7C7FF),
+    onPrimary: Color(0xFF06215F),
+    primaryContainer: Color(0xFF173A91),
+    onPrimaryContainer: Color(0xFFDDE7FF),
+    secondary: Color(0xFFFFB2C2),
+    onSecondary: Color(0xFF65051F),
+    secondaryContainer: Color(0xFF94143A),
+    onSecondaryContainer: Color(0xFFFFD9E2),
+    tertiary: Color(0xFF76D9B1),
+    onTertiary: Color(0xFF003824),
+    tertiaryContainer: Color(0xFF006B49),
+    onTertiaryContainer: Color(0xFFBFF4DC),
+    error: Color(0xFFFFB4AB),
+    onError: Color(0xFF690005),
+    errorContainer: Color(0xFF93000A),
+    onErrorContainer: Color(0xFFFFDAD6),
+    surface: Color(0xFF11141B),
+    onSurface: Color(0xFFE8EBF2),
+    surfaceContainerHighest: Color(0xFF272D3A),
+    onSurfaceVariant: Color(0xFFC1C7D3),
+    outline: Color(0xFF8B93A3),
+    outlineVariant: Color(0xFF3E4656),
     shadow: Colors.black,
-    inverseSurface: Color(0xFFF0E8D8),
-    onInverseSurface: Color(0xFF1C1E2A),
-    inversePrimary: Color(0xFF6B5000),
-    surfaceTint: Color(0xFFFFD54F),
+    inverseSurface: Color(0xFFE8EBF2),
+    onInverseSurface: Color(0xFF11141B),
+    inversePrimary: Color(0xFF2563EB),
+    surfaceTint: Color(0xFFB7C7FF),
   );
 
   // ── 타이포그래피 ─────────────────────────────────────────────────────────
@@ -115,7 +131,6 @@ class AppTheme {
       scaffoldBackgroundColor: cs.surface,
       canvasColor: cs.surface,
       dividerColor: cs.outline,
-      cardColor: _lightSurfaceVariant,
 
       // 앱바: 서피스 배경 + Noto Serif KR 타이틀
       appBarTheme: AppBarTheme(
@@ -130,12 +145,11 @@ class AppTheme {
         ),
       ),
 
-      // 카드: 웜 크림 배경, 테두리 없음, 둥근 모서리
+      // 카드: 기본 서피스 색상, 테두리 없음, 둥근 모서리
       cardTheme: const CardThemeData(
-        color: _lightSurfaceVariant,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
         margin: EdgeInsets.zero,
       ),
@@ -225,7 +239,6 @@ class AppTheme {
       scaffoldBackgroundColor: cs.surface,
       canvasColor: cs.surface,
       dividerColor: cs.outline,
-      cardColor: _darkSurfaceVariant,
 
       appBarTheme: AppBarTheme(
         backgroundColor: cs.surface,
@@ -240,10 +253,9 @@ class AppTheme {
       ),
 
       cardTheme: const CardThemeData(
-        color: _darkSurfaceVariant,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
         margin: EdgeInsets.zero,
       ),

@@ -27,13 +27,12 @@ class RecommendNotifier extends AsyncNotifier<List<RecommendResult>> {
     );
 
     try {
-      final ownedGames = await ref.read(gameRepositoryProvider).getCollection();
       final result = await ref
           .read(recommendRepositoryProvider)
           .recommend(
             condition: condition,
             includeNew: includeNew,
-            ownedGames: ownedGames,
+            ownedGames: [],
           );
       state = AsyncData(result);
     } catch (e, st) {

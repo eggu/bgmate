@@ -28,15 +28,6 @@ class _FakeGameRepository implements GameRepository {
   Future<void> removeFromCollection(BoardGame game) async {}
 
   @override
-  Future<void> updateGame(BoardGame game) async {}
-
-  @override
-  Future<void> upsertGames(List<BoardGame> games) async {}
-
-  @override
-  Future<void> removeSyncedGames() async {}
-
-  @override
   Future<List<BoardGame>> searchBgg(String query) async => [];
 
   @override
@@ -61,19 +52,37 @@ class _ErrorRuleJudgeNotifier extends RuleJudgeNotifier {
   }
 }
 
-Widget _buildScreen() {
+Widget _buildScreen({String? initialGameName}) {
   return ProviderScope(
     overrides: [
       gameRepositoryProvider.overrideWithValue(_FakeGameRepository()),
       judgeHistoryProvider.overrideWith(_FakeJudgeHistoryNotifier.new),
       ruleJudgeProvider.overrideWith(_ErrorRuleJudgeNotifier.new),
     ],
-    child: const MaterialApp(home: RuleJudgeScreen()),
+    child: MaterialApp(home: RuleJudgeScreen(initialGameName: initialGameName)),
   );
 }
 
 void main() {
   group('RuleJudgeScreen', () {
+    testWidgets('초기 게임 이름이 있으면 게임 이름 입력란에 채운다', (tester) async {
+      await tester.pumpWidget(_buildScreen(initialGameName: 'Catan'));
+      await tester.pump();
+
+      expect(find.text('Catan'), findsOneWidget);
+    });
+
+    testWidgets('초기 게임 이름이 바뀌면 입력란도 갱신한다', (tester) async {
+      await tester.pumpWidget(_buildScreen(initialGameName: 'Catan'));
+      await tester.pump();
+
+      await tester.pumpWidget(_buildScreen(initialGameName: 'Azul'));
+      await tester.pump();
+
+      expect(find.text('Azul'), findsOneWidget);
+      expect(find.text('Catan'), findsNothing);
+    });
+
     testWidgets('503 에러면 잠시 후 다시 시도 메시지가 표시된다', (tester) async {
       await tester.pumpWidget(_buildScreen());
       await tester.pump();

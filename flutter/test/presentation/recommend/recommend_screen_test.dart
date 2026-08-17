@@ -107,7 +107,8 @@ void main() {
       testWidgets('헤더 텍스트가 표시된다', (tester) async {
         await tester.pumpWidget(_buildScreen(_FakeRecommendNotifier.new));
 
-        expect(find.text('AI 게임 추천'), findsOneWidget);
+        expect(find.text('추천'), findsOneWidget);
+        expect(find.text('인원, 시간, 분위기를 고르면 오늘 맞는 게임을 골라드릴게요.'), findsOneWidget);
       });
 
       testWidgets('인원수 칩 1~8이 표시된다', (tester) async {

@@ -1,4 +1,8 @@
+import 'package:bgmate_flutter/data/local/app_settings.dart';
+import 'package:bgmate_flutter/data/local/app_settings_dao.dart';
 import 'package:bgmate_flutter/data/local/board_games.dart';
+import 'package:bgmate_flutter/data/local/game_play_stats_dao.dart';
+import 'package:bgmate_flutter/data/local/game_play_stats_table.dart';
 import 'package:bgmate_flutter/data/local/judge_histories.dart';
 import 'package:bgmate_flutter/data/local/judge_history_dao.dart';
 import 'package:bgmate_flutter/data/local/player_scores.dart';
@@ -15,14 +19,30 @@ import 'session_dao.dart';
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [BoardGames, Players, Sessions, PlayerScores, JudgeHistories],
-  daos: [GameDao, SessionDao, JudgeHistoryDao],
+  tables: [
+    BoardGames,
+    Players,
+    Sessions,
+    PlayerScores,
+    JudgeHistories,
+    GamePlayStatsTable,
+    AppSettings,
+  ],
+  daos: [
+    GameDao,
+    SessionDao,
+    JudgeHistoryDao,
+    GamePlayStatsDao,
+    AppSettingsDao,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  AppDatabase.forTesting(super.executor);
+
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -43,14 +63,19 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(judgeHistories);
       }
       if (from < 4) {
-        await m.addColumn(boardGames, boardGames.statuses);
-        await m.addColumn(boardGames, boardGames.source);
-        await m.addColumn(boardGames, boardGames.notes);
-        await m.addColumn(boardGames, boardGames.userRating);
-        // Existing games are all owned (isInCollection was always true in collection)
-        await customStatement(
-          "UPDATE ${boardGames.actualTableName} SET statuses = 'owned'",
+        await m.createTable(gamePlayStatsTable);
+      }
+      if (from >= 4 && from < 5) {
+        await m.addColumn(
+          gamePlayStatsTable,
+          gamePlayStatsTable.bggIsExpansion,
         );
+      }
+      if (from < 5) {
+        await m.createTable(appSettings);
+      }
+      if (from < 6) {
+        await m.addColumn(sessions, sessions.bggPlayId);
       }
     },
     beforeOpen: (details) async {

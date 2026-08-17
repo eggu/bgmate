@@ -27,9 +27,7 @@ class GameRepositoryImpl implements GameRepository {
     final ids = games.map((g) => g.bggId).toList();
     final details = await _bggRemoteDataSource.getThingDetails(ids);
     final detailMap = {for (final d in details) d.bggId: d};
-    return games
-        .map((g) => detailMap[g.bggId] ?? g)
-        .toList();
+    return games.map((g) => detailMap[g.bggId] ?? g).toList();
   }
 
   @override
@@ -40,12 +38,11 @@ class GameRepositoryImpl implements GameRepository {
 
   @override
   Future<void> addToCollection(BoardGame game) async {
-    return await _gameDao.upsert(game.toCompanion());
-  }
-
-  @override
-  Future<void> updateGame(BoardGame game) async {
-    return _gameDao.upsert(game.toCompanion());
+    final existing = await getGame(game.bggId);
+    final merged = game.copyWith(
+      name: _preferredGameName(existing?.name, game.name),
+    );
+    return _gameDao.upsert(merged.toCompanion());
   }
 
   @override
@@ -54,18 +51,18 @@ class GameRepositoryImpl implements GameRepository {
   }
 
   @override
-  Future<void> upsertGames(List<BoardGame> games) async {
-    final companions = games.map((g) => g.toCompanion()).toList();
-    return _gameDao.upsertAll(companions);
-  }
-
-  @override
-  Future<void> removeSyncedGames() => _gameDao.deleteBySyncSource();
-
-  @override
   Stream<List<BoardGame>> watchGames() {
     return _gameDao.watchAll().map(
       (entities) => entities.map((e) => e.toDomain()).toList(),
     );
   }
 }
+
+String _preferredGameName(String? existingName, String incomingName) {
+  if (_hasKorean(incomingName)) return incomingName;
+  final existing = existingName?.trim();
+  if (existing != null && _hasKorean(existing)) return existingName!;
+  return incomingName;
+}
+
+bool _hasKorean(String value) => RegExp(r'[가-힣ㄱ-ㅎㅏ-ㅣ]').hasMatch(value);

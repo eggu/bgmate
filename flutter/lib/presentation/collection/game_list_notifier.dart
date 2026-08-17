@@ -1,9 +1,7 @@
 import 'dart:math';
 
 import 'package:bgmate_flutter/di/repository_provider.dart';
-import 'package:bgmate_flutter/domain/model/sort_option.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/model/board_game.dart';
 
@@ -16,38 +14,16 @@ class GameListNotifier extends _$GameListNotifier {
     final repository = ref.watch(gameRepositoryProvider);
 
     final sub = repository.watchGames().listen((games) {
-      final sortOpt =
-          ref.read(gameListSortOptionProvider).value ?? const SortOption();
-      state = AsyncData(_applySorted(games, sortOpt));
+      state = AsyncData(games);
     });
     ref.onDispose(sub.cancel);
-
-    ref.listen(gameListSortOptionProvider, (prev, next) {
-      if (state case AsyncData(:final value)) {
-        final games = value;
-        if (next case AsyncData(:final value)) {
-          state = AsyncData(_applySorted(games, value));
-        }
-      }
-    });
 
     final initialGames = await repository.watchGames().first;
 
     // 정보가 없는 게임을 백그라운드에서 갱신 — stream이 자동으로 UI 업데이트
     _enrichStaleGames(initialGames);
 
-    // 저장된 정렬 옵션이 로드될 때까지 대기한 뒤 초기 목록 반환
-    final sortOption = await ref.read(gameListSortOptionProvider.future);
-    return _applySorted(initialGames, sortOption);
-  }
-
-  List<BoardGame> _applySorted(List<BoardGame> games, SortOption option) {
-    final sorted = [...games];
-    sorted.sort((a, b) {
-      final cmp = option.field.compare(a, b);
-      return option.order == SortOrder.asc ? cmp : -cmp;
-    });
-    return sorted;
+    return initialGames;
   }
 
   /// thumbnail이 비어 있는 게임을 20개씩 /thing API로 갱신 후 DB에 저장
@@ -61,7 +37,7 @@ class GameListNotifier extends _$GameListNotifier {
       try {
         final enriched = await repo.enrichWithDetails(batch);
         for (final game in enriched) {
-          await repo.addToCollection(game);
+          await repo.addToCollection(game.copyWith(isInCollection: true));
         }
       } catch (_) {
         // 배치 실패 시 다음 배치 계속 진행
@@ -89,44 +65,5 @@ class GameListNotifier extends _$GameListNotifier {
   Future<void> removeGame(BoardGame game) async {
     await ref.read(gameRepositoryProvider).removeFromCollection(game);
     ref.invalidateSelf();
-  }
-}
-
-@Riverpod(keepAlive: true)
-class GameListSortOption extends _$GameListSortOption {
-  static const _fieldKey = 'sort_field';
-  static const _orderKey = 'sort_order';
-
-  @override
-  Future<SortOption> build() async {
-    final prefs = await SharedPreferences.getInstance();
-    final fieldIndex = prefs.getInt(_fieldKey) ?? SortField.addedAt.index;
-    final orderIndex = prefs.getInt(_orderKey) ?? SortOrder.desc.index;
-    return SortOption(
-      field: SortField.values[fieldIndex],
-      order: SortOrder.values[orderIndex],
-    );
-  }
-
-  Future<void> setField(SortField field) async {
-    final current = state.value ?? const SortOption();
-    final updated = current.field == field
-        ? current.toggleOrder()
-        : current.copyWith(field: field);
-    state = AsyncData(updated);
-    await _save(updated);
-  }
-
-  Future<void> toggleOrder() async {
-    final current = state.value ?? const SortOption();
-    final updated = current.toggleOrder();
-    state = AsyncData(updated);
-    await _save(updated);
-  }
-
-  Future<void> _save(SortOption option) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_fieldKey, option.field.index);
-    await prefs.setInt(_orderKey, option.order.index);
   }
 }

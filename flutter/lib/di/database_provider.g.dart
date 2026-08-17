@@ -173,3 +173,90 @@ final class JudgeHistoryDaoProvider
 }
 
 String _$judgeHistoryDaoHash() => r'ccd51ea300afbbf6a4ddc17a5c8884be4ed388d0';
+
+@ProviderFor(gamePlayStatsDao)
+final gamePlayStatsDaoProvider = GamePlayStatsDaoProvider._();
+
+final class GamePlayStatsDaoProvider
+    extends
+        $FunctionalProvider<
+          GamePlayStatsDao,
+          GamePlayStatsDao,
+          GamePlayStatsDao
+        >
+    with $Provider<GamePlayStatsDao> {
+  GamePlayStatsDaoProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'gamePlayStatsDaoProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$gamePlayStatsDaoHash();
+
+  @$internal
+  @override
+  $ProviderElement<GamePlayStatsDao> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GamePlayStatsDao create(Ref ref) {
+    return gamePlayStatsDao(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GamePlayStatsDao value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GamePlayStatsDao>(value),
+    );
+  }
+}
+
+String _$gamePlayStatsDaoHash() => r'01fda34cbfa7fc82fbee037aa23d8b7860656ade';
+
+@ProviderFor(appSettingsDao)
+final appSettingsDaoProvider = AppSettingsDaoProvider._();
+
+final class AppSettingsDaoProvider
+    extends $FunctionalProvider<AppSettingsDao, AppSettingsDao, AppSettingsDao>
+    with $Provider<AppSettingsDao> {
+  AppSettingsDaoProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'appSettingsDaoProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$appSettingsDaoHash();
+
+  @$internal
+  @override
+  $ProviderElement<AppSettingsDao> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  AppSettingsDao create(Ref ref) {
+    return appSettingsDao(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AppSettingsDao value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AppSettingsDao>(value),
+    );
+  }
+}
+
+String _$appSettingsDaoHash() => r'14ddadbc5741fe493fb1eb57bd5f3931224000ac';

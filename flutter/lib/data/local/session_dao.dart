@@ -9,6 +9,14 @@ import 'board_games.dart';
 
 part 'session_dao.g.dart';
 
+typedef BggScoreImport = ({String name, int score, int rank});
+typedef BggSessionImport = ({
+  int bggId,
+  int bggPlayId,
+  DateTime playedAt,
+  List<BggScoreImport> scores,
+});
+
 @DriftAccessor(tables: [Sessions, Players, PlayerScores, BoardGames])
 class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
   SessionDao(super.db);
@@ -52,6 +60,48 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
       }
 
       return sessionId;
+    });
+  }
+
+  Future<void> replaceBggSyncedSessions(List<BggSessionImport> imports) async {
+    await transaction(() async {
+      final syncedSessionIds = await (select(
+        sessions,
+      )..where((t) => t.bggPlayId.isNotNull())).map((row) => row.id).get();
+      if (syncedSessionIds.isNotEmpty) {
+        await (delete(
+          sessions,
+        )..where((t) => t.id.isIn(syncedSessionIds))).go();
+      }
+
+      for (final item in imports) {
+        final sessionId = await insertSession(
+          SessionsCompanion(
+            bggId: Value(item.bggId),
+            bggPlayId: Value(item.bggPlayId),
+            createdAt: Value(item.playedAt),
+          ),
+        );
+
+        for (final score in item.scores) {
+          final playerName = score.name.trim();
+          if (playerName.isEmpty) continue;
+
+          await insertPlayerIfNotExists(
+            PlayersCompanion(name: Value(playerName)),
+          );
+          final playerId = (await getPlayerByName(playerName)).id;
+
+          await insertPlayerScore(
+            PlayerScoresCompanion(
+              sessionId: Value(sessionId),
+              playerId: Value(playerId),
+              score: Value(score.score),
+              rank: Value(score.rank),
+            ),
+          );
+        }
+      }
     });
   }
 
@@ -148,7 +198,7 @@ class SessionDao extends DatabaseAccessor<AppDatabase> with _$SessionDaoMixin {
               player: player,
               id: playerScore.id,
               sessionId: session.id,
-              rank: playerScore.rank
+              rank: playerScore.rank,
             ),
           );
         }

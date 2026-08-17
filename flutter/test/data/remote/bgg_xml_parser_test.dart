@@ -17,7 +17,10 @@ void main() {
       expect(results[0].bggId, 174430);
       expect(results[0].name, 'Gloomhaven');
       expect(results[0].yearPublished, 2017);
-      expect(results[0].thumbnail, 'https://cf.geekdo-images.com/gloomhaven.jpg');
+      expect(
+        results[0].thumbnail,
+        'https://cf.geekdo-images.com/gloomhaven.jpg',
+      );
       expect(results[0].minPlayers, 1);
       expect(results[0].maxPlayers, 4);
       expect(results[0].playingTime, 120);
@@ -84,6 +87,23 @@ void main() {
     </items>
   ''';
       expect(BggXmlParser.parseSearchResults(xml), isEmpty);
+    });
+
+    test('alternate 이름이 먼저 와도 primary 이름을 사용한다', () {
+      const xml = '''
+    <?xml version="1.0" encoding="utf-8"?>
+    <items total="1">
+      <item type="boardgame" id="123">
+        <name type="alternate" value="비뉴스 딜럭스 에디션"/>
+        <name type="primary" value="Venus: Deluxe Edition"/>
+        <yearpublished value="2025"/>
+      </item>
+    </items>
+  ''';
+
+      final results = BggXmlParser.parseSearchResults(xml);
+
+      expect(results.single.name, 'Venus: Deluxe Edition');
     });
   });
 }

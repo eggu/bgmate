@@ -9,7 +9,9 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RuleJudgeScreen extends ConsumerStatefulWidget {
-  const RuleJudgeScreen({super.key});
+  final String? initialGameName;
+
+  const RuleJudgeScreen({super.key, this.initialGameName});
 
   @override
   ConsumerState<RuleJudgeScreen> createState() => _RuleJudgeScreenState();
@@ -23,12 +25,30 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
   @override
   void initState() {
     super.initState();
+    _applyInitialGameName();
     _gameNameController.addListener(_onInputChanged);
     _disputeController.addListener(_onInputChanged);
     _loadGames();
   }
 
+  @override
+  void didUpdateWidget(covariant RuleJudgeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialGameName == oldWidget.initialGameName) return;
+
+    _gameNameController.removeListener(_onInputChanged);
+    _applyInitialGameName();
+    _gameNameController.addListener(_onInputChanged);
+  }
+
   void _onInputChanged() => setState(() {});
+
+  void _applyInitialGameName() {
+    final initialGameName = widget.initialGameName?.trim();
+    if (initialGameName == null || initialGameName.isEmpty) return;
+    if (_gameNameController.text == initialGameName) return;
+    _gameNameController.text = initialGameName;
+  }
 
   Future<void> _loadGames() async {
     final games = await ref.read(gameRepositoryProvider).getCollection();
@@ -56,10 +76,7 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '내 컬렉션에서 선택',
-                    style: Theme.of(ctx).textTheme.titleLarge,
-                  ),
+                  Text('내 컬렉션에서 선택', style: Theme.of(ctx).textTheme.titleLarge),
                   const SizedBox(height: 4),
                   Text(
                     '판정을 받을 게임을 골라 주세요.',
@@ -80,8 +97,7 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Card(
-                      color:
-                          Theme.of(ctx).colorScheme.surfaceContainerHighest,
+                      color: Theme.of(ctx).colorScheme.surfaceContainerHighest,
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
                         onTap: () {
@@ -135,8 +151,9 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
               const SizedBox(height: 4),
               MarkdownBody(
                 data: item.answer,
-                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(ctx))
-                    .copyWith(p: Theme.of(ctx).textTheme.bodyMedium),
+                styleSheet: MarkdownStyleSheet.fromTheme(
+                  Theme.of(ctx),
+                ).copyWith(p: Theme.of(ctx).textTheme.bodyMedium),
               ),
             ],
           ),
@@ -168,136 +185,130 @@ class _RuleJudgeScreenState extends ConsumerState<RuleJudgeScreen> {
         _disputeController.text.trim().isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'AI 규칙 판정관',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-      ),
+      appBar: AppBar(title: const Text('판정')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  '게임 이름을 직접 입력하거나, 내 컬렉션에서 선택해서 바로 규칙 판정을 요청할 수 있어요.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _gameNameController,
-                  decoration: const InputDecoration(
-                    labelText: '게임 이름',
-                    hintText: '예: 카탄, 아그리콜라',
-                    helperText: '직접 입력하거나 아래 버튼에서 내 컬렉션 게임을 선택하세요.',
-                    border: OutlineInputBorder(),
-                  ),
-                  textInputAction: TextInputAction.next,
-                  enabled: !isLoading,
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed:
-                      !isLoading && _games.isNotEmpty ? _showGamePicker : null,
-                  child: Text(
-                    _games.isEmpty ? '내 컬렉션에 게임이 없습니다' : '내 컬렉션에서 선택',
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _disputeController,
-                  decoration: const InputDecoration(
-                    labelText: '분쟁 상황',
-                    hintText: '어떤 상황인지 구체적으로 입력하세요.',
-                    border: OutlineInputBorder(),
-                  ),
-                  minLines: 4,
-                  maxLines: 6,
-                  enabled: !isLoading,
-                ),
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: canJudge
-                      ? () => ref
-                            .read(ruleJudgeProvider.notifier)
-                            .judge(
-                              _gameNameController.text.trim(),
-                              _disputeController.text.trim(),
-                            )
-                      : null,
-                  child: isLoading
-                      ? const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                            SizedBox(width: 8),
-                            Text('판정 중...'),
-                          ],
-                        )
-                      : const Text('판정 요청'),
-                ),
-                if (streamingText.isNotEmpty) ...[
-                  const SizedBox(height: 12),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          MarkdownBody(
-                            data: streamingText,
-                            styleSheet: MarkdownStyleSheet.fromTheme(
-                              Theme.of(context),
-                            ).copyWith(
-                              p: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ),
-                          if (isComplete) ...[
-                            const SizedBox(height: 12),
-                            OutlinedButton(
-                              onPressed: () =>
-                                  ref.read(ruleJudgeProvider.notifier).reset(),
-                              child: const Text('다시 질문하기'),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-                if (errorMessage != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    errorMessage,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                ],
-                if (history.isNotEmpty) ...[
-                  const SizedBox(height: 24),
-                  Text(
-                    '이전 판정 기록',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  ...history.map((item) => _HistoryCard(
-                    item: item,
-                    onTap: () => _showHistoryDetail(context, item),
-                  )),
-                ],
-                const SizedBox(height: 24),
-              ],
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '게임 이름을 직접 입력하거나, 내 컬렉션에서 선택해서 바로 규칙 판정을 요청할 수 있어요.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
-          ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _gameNameController,
+              decoration: const InputDecoration(
+                labelText: '게임 이름',
+                hintText: '예: 카탄, 아그리콜라',
+                helperText: '직접 입력하거나 아래 버튼에서 내 컬렉션 게임을 선택하세요.',
+                border: OutlineInputBorder(),
+              ),
+              textInputAction: TextInputAction.next,
+              enabled: !isLoading,
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: !isLoading && _games.isNotEmpty
+                  ? _showGamePicker
+                  : null,
+              child: Text(_games.isEmpty ? '내 컬렉션에 게임이 없습니다' : '내 컬렉션에서 선택'),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _disputeController,
+              decoration: const InputDecoration(
+                labelText: '분쟁 상황',
+                hintText: '어떤 상황인지 구체적으로 입력하세요.',
+                border: OutlineInputBorder(),
+              ),
+              minLines: 4,
+              maxLines: 6,
+              enabled: !isLoading,
+            ),
+            const SizedBox(height: 12),
+            FilledButton(
+              onPressed: canJudge
+                  ? () => ref
+                        .read(ruleJudgeProvider.notifier)
+                        .judge(
+                          _gameNameController.text.trim(),
+                          _disputeController.text.trim(),
+                        )
+                  : null,
+              child: isLoading
+                  ? const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        SizedBox(width: 8),
+                        Text('판정 중...'),
+                      ],
+                    )
+                  : const Text('판정 요청'),
+            ),
+            if (streamingText.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      MarkdownBody(
+                        data: streamingText,
+                        styleSheet: MarkdownStyleSheet.fromTheme(
+                          Theme.of(context),
+                        ).copyWith(p: Theme.of(context).textTheme.bodyMedium),
+                      ),
+                      if (isComplete) ...[
+                        const SizedBox(height: 12),
+                        OutlinedButton(
+                          onPressed: () =>
+                              ref.read(ruleJudgeProvider.notifier).reset(),
+                          child: const Text('다시 질문하기'),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+            if (errorMessage != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                errorMessage,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ],
+            if (history.isNotEmpty) ...[
+              const SizedBox(height: 24),
+              Text(
+                '이전 판정 기록',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...history.map(
+                (item) => _HistoryCard(
+                  item: item,
+                  onTap: () => _showHistoryDetail(context, item),
+                ),
+              ),
+            ],
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
     );
   }
 

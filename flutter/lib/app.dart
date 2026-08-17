@@ -1,10 +1,13 @@
-import 'package:bgmate_flutter/presentation/account/account_screen.dart';
 import 'package:bgmate_flutter/presentation/collection/game_detail_screen.dart';
 import 'package:bgmate_flutter/presentation/collection/game_list_screen.dart';
 import 'package:bgmate_flutter/presentation/collection/game_search_screen.dart';
+import 'package:bgmate_flutter/presentation/home/home_screen.dart';
 import 'package:bgmate_flutter/presentation/recommend/recommend_screen.dart';
 import 'package:bgmate_flutter/presentation/rule_judge/rule_judge_screen.dart';
+import 'package:bgmate_flutter/presentation/sale/sale_recommend_screen.dart';
 import 'package:bgmate_flutter/presentation/score/create_session_screen.dart';
+import 'package:bgmate_flutter/presentation/settings/settings_screen.dart';
+import 'package:bgmate_flutter/presentation/settings/bgg_sync_service.dart';
 import 'package:bgmate_flutter/presentation/session_tracker/session_tracker_screen.dart';
 import 'package:bgmate_flutter/presentation/session_history/session_history_detail_screen.dart';
 import 'package:bgmate_flutter/presentation/session_history/session_history_screen.dart';
@@ -18,21 +21,25 @@ import 'package:go_router/go_router.dart';
 final collectionNavigatorKey = GlobalKey<NavigatorState>();
 
 final _router = GoRouter(
-  initialLocation: AppRoutes.collection,
+  initialLocation: AppRoutes.home,
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, shell) => AppShell(shell: shell),
       branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.home,
+              builder: (_, _) => const HomeScreen(),
+            ),
+          ],
+        ),
         StatefulShellBranch(
           navigatorKey: collectionNavigatorKey,
           routes: [
             GoRoute(
               path: AppRoutes.collection,
               builder: (_, _) => const GameListScreen(),
-            ),
-            GoRoute(
-              path: AppRoutes.accountSettings,
-              builder: (_, _) => const AccountScreen(),
             ),
             GoRoute(
               path: AppRoutes.gameSearch,
@@ -74,8 +81,19 @@ final _router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              path: AppRoutes.saleRecommend,
+              builder: (_, _) => const SaleRecommendScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
               path: AppRoutes.ruleJudge,
-              builder: (_, _) => const RuleJudgeScreen(),
+              builder: (_, state) => RuleJudgeScreen(
+                initialGameName:
+                    state.uri.queryParameters[AppRoutes.gameNameQueryParam],
+              ),
             ),
           ],
         ),
@@ -102,7 +120,24 @@ final _router = GoRouter(
                     return SessionHistoryDetailScreen(sessionId: sessionId);
                   },
                 ),
+                GoRoute(
+                  path: AppRoutes.bggPlayStatsDetailPath,
+                  builder: (context, state) {
+                    final bggId = int.parse(
+                      state.pathParameters[AppRoutes.bggIdParam]!,
+                    );
+                    return BggPlayStatsDetailScreen(bggId: bggId);
+                  },
+                ),
               ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.settings,
+              builder: (_, _) => const SettingsScreen(),
             ),
           ],
         ),
@@ -116,6 +151,8 @@ class BgMateApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(bggStartupSyncProvider);
+
     return MaterialApp.router(
       title: 'BGMate',
       theme: AppTheme.light(),

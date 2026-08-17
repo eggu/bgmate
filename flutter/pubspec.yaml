@@ -55,7 +55,6 @@ dependencies:
   # Firebase (향후 사용 예정 — flutterfire configure로 web/macOS 추가 필요)
   firebase_core: ^3.14.0
 
-  shared_preferences: ^2.5.3
   path: ^1.9.1
   drift: 2.31.0
   path_provider: ^2.1.5
@@ -72,6 +71,7 @@ dependencies:
   # AI API (SSE 스트리밍)
   http: ^1.2.1
   flutter_markdown_plus: ^1.0.7
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

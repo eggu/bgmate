@@ -57,7 +57,7 @@ class _RecommendScreenState extends ConsumerState<RecommendScreen> {
     final errorMessage = _buildErrorMessage(asyncState.error);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('AI 게임 추천')),
+      appBar: AppBar(title: const Text('추천')),
       body: SingleChildScrollView(
         controller: _scrollController,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -182,34 +182,26 @@ class _HeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(16),
+    return DecoratedBox(
       decoration: BoxDecoration(
-        color: cs.primaryContainer.withValues(alpha: 0.45),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: cs.primary.withValues(alpha: 0.2),
-        ),
+        color: cs.primaryContainer,
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: cs.primaryContainer,
-              borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.auto_awesome, size: 22, color: cs.onPrimaryContainer),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                '인원, 시간, 분위기를 고르면 오늘 맞는 게임을 골라드릴게요.',
+                style: tt.bodyMedium?.copyWith(color: cs.onPrimaryContainer),
+              ),
             ),
-            child: Icon(Icons.auto_awesome, size: 18, color: cs.onPrimaryContainer),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              '함께할 인원, 원하는 플레이 시간, 분위기를 고르면 조건에 맞는 보드게임을 추천해드릴게요.',
-              style: tt.bodyMedium?.copyWith(color: cs.onSurface),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

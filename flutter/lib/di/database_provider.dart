@@ -1,5 +1,7 @@
 import 'package:bgmate_flutter/data/local/app_database.dart';
+import 'package:bgmate_flutter/data/local/app_settings_dao.dart';
 import 'package:bgmate_flutter/data/local/game_dao.dart';
+import 'package:bgmate_flutter/data/local/game_play_stats_dao.dart';
 import 'package:bgmate_flutter/data/local/judge_history_dao.dart';
 import 'package:bgmate_flutter/data/local/session_dao.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,3 +20,11 @@ SessionDao sessionDao(Ref ref) => ref.watch(appDatabaseProvider).sessionDao;
 @Riverpod(keepAlive: true)
 JudgeHistoryDao judgeHistoryDao(Ref ref) =>
     ref.watch(appDatabaseProvider).judgeHistoryDao;
+
+@Riverpod(keepAlive: true)
+GamePlayStatsDao gamePlayStatsDao(Ref ref) =>
+    ref.watch(appDatabaseProvider).gamePlayStatsDao;
+
+@Riverpod(keepAlive: true)
+AppSettingsDao appSettingsDao(Ref ref) =>
+    ref.watch(appDatabaseProvider).appSettingsDao;

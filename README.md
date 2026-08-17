@@ -1,40 +1,39 @@
 # BGMate — 보드게임 동반자 앱
 
-> **Android (Jetpack Compose) + Flutter 크로스플랫폼**  
-> AI 규칙 판정 · AI 게임 추천 · 점수 트래커 · 게임 컬렉션 관리
-
-<!-- [![Android](https://img.shields.io/badge/Android-Kotlin-green?logo=android)](https://play.google.com/store/apps/details?id=com.kurt.bgmate) -->
-<!-- [![Flutter](https://img.shields.io/badge/Flutter-Dart-blue?logo=flutter)](https://flutter.dev) -->
-<!-- [![Play Store](https://img.shields.io/badge/Play%20Store-배포완료-brightgreen)](https://play.google.com/store/apps/details?id=com.kurt.bgmate) -->
-
----
+> Android (Jetpack Compose) + Flutter 크로스플랫폼
+> AI 규칙 판정 · AI 게임 추천 · 컬렉션 관리 · 플레이 기록 · 판매 추천
 
 ## 스크린샷
 
-### Flutter
-
-|                                       게임 컬렉션                                        |                                        AI 규칙 판정관                                        |                                         점수 트래커                                          |                                         AI 게임 추천                                          |
-|:-----------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|
-| <img alt="컬렉션 화면" src="./docs/screenshots/flutter/01.png" title="컬렉션" width="250"/> | <img alt="규칙 판정 화면" src="./docs/screenshots/flutter/02.png" title="규칙 판정" width="250"/> | <img alt="전적 관리 화면" src="./docs/screenshots/flutter/04.png" title="전적 관리" width="250"/> | <img alt="게임 추전 화면" src="./docs/screenshots/flutter/03-1.png" title="게임 추천" width="250"/> |
-
----
+| 오늘 플레이 | 게임 컬렉션 | AI 규칙 판정관 | 판매 추천 |
+|:---:|:---:|:---:|:---:|
+| <img alt="오늘 플레이" src="./docs/screenshots/flutter/03-2.png" width="220"> | <img alt="게임 컬렉션" src="./docs/screenshots/flutter/01.png" width="220"> | <img alt="규칙 판정" src="./docs/screenshots/flutter/02.png" width="220"> | <img alt="판매 추천" src="./docs/screenshots/flutter/03-1.png" width="220"> |
 
 ## 핵심 기능
 
 | 기능 | 설명 |
 |---|---|
-| 🤖 **AI 규칙 판정관** | 게임 규칙 분쟁 상황을 입력하면 AI가 해당 게임 규칙 기반으로 판정. SSE 스트리밍으로 실시간 응답 |
-| 🎯 **AI 게임 추천** | 인원수 · 시간 · 분위기 입력 시 보유 컬렉션 또는 전체 게임 중 AI 추천 |
-| 📊 **점수 트래커** | 게임별 커스텀 점수판, 순위 배지, 세션 자동 저장 |
-| 📚 **게임 컬렉션** | BGG XML API 연동 게임 검색, 컬렉션 등록 · 관리, 상세 정보 enrichment |
+| 🏠 **오늘 플레이 홈** | 최근 플레이 게임과 바로 시작할 기능을 한 화면에서 제공 |
+| 📚 **게임 컬렉션** | BGG XML API 검색, 게임 상세 enrichment, 컬렉션 등록·관리 |
+| 🤖 **AI 규칙 판정관** | 게임 규칙 분쟁을 Gemini SSE 스트리밍으로 판정하고 이력 저장 |
+| 🎯 **AI 게임 추천** | 인원수·시간·분위기와 보유 컬렉션을 기준으로 게임 추천 |
+| 📊 **점수 트래커** | 플레이어별 점수·순위 입력과 세션 자동 저장 |
+| 🔄 **BGG 동기화** | BGG 컬렉션과 플레이 기록을 가져와 플레이 통계에 반영 |
+| 💰 **판매 추천** | 플레이 빈도·미플레이 기간·본판/확장 필터와 중고 시세 조회 |
 
----
+## 최신 변경사항
+
+- 홈을 기본 진입점인 `오늘 플레이`로 변경하고 최근 게임·최근 전적·판매 후보를 통합했습니다.
+- 컬렉션, 판매 추천, 판정, 추천, 전적, 설정을 반응형 NavigationBar/NavigationRail로 제공합니다.
+- BGG username을 설정에서 연결하면 컬렉션과 플레이 기록을 동기화하고, 불완전한 기록은 통계에서 제외합니다.
+- 판매 추천에 본판/확장 필터, 최소 플레이 횟수, 미플레이 기간, 후보 수 필터와 중고가 조회를 추가했습니다.
+- 컬렉션 상세·게임 검색·플레이 시작·판정 화면 사이의 라우팅과 화면 상태 보존을 정리했습니다.
+- 중고가는 Flutter에서 Boardlife를 직접 조회하지 않고 `bgcut`의 읽기 전용 wrapper API를 사용합니다.
+- 홈·컬렉션·판정·추천·판매 추천과 BGG/중고가 데이터 경계에 대한 단위 및 위젯 테스트를 확장했습니다.
 
 ## 아키텍처
 
-![BGMate Architecture](docs/bgmate_architecture.svg)
-
-Android와 Flutter 모두 **Clean Architecture** 3계층 구조를 따릅니다. 의존성은 단방향으로 흐릅니다.
+Android와 Flutter 모두 Clean Architecture 3계층 구조를 따릅니다.
 
 ```
 Presentation → Domain → Data
@@ -44,190 +43,95 @@ Presentation → Domain → Data
 
 | 레이어 | 기술 |
 |---|---|
-| Presentation | Jetpack Compose · MVVM · StateFlow · collectAsStateWithLifecycle |
-| Domain | 순수 Kotlin data class · Repository interface |
-| Data | Room (로컬) · Retrofit + OkHttp (BGG API) · LlmClient 추상화 |
+| Presentation | Jetpack Compose · MVVM · StateFlow |
+| Domain | Kotlin data class · Repository interface |
+| Data | Room · Retrofit · OkHttp · LlmClient |
 | DI | Hilt |
 
 ### Flutter
 
 | 레이어 | 기술 |
 |---|---|
-| Presentation | Widget · AsyncNotifier · Riverpod 3 · go_router |
-| Domain | freezed sealed class · Repository interface |
-| Data | drift (로컬) · Dio (BGG API) · LlmClient 추상화 |
+| Presentation | Flutter Widget · Riverpod 3 · go_router |
+| Domain | Freezed sealed class · Repository interface |
+| Data | Drift/SQLite · Dio · BGG XML API · Gemini SSE |
 | DI | Riverpod Provider |
 
----
+## Flutter 프로젝트 구조
+
+```
+flutter/
+├── lib/
+│   ├── data/
+│   │   ├── local/          # Drift DB, DAO, 설정, 플레이 통계
+│   │   ├── remote/         # BGG 검색·동기화·플레이, 중고가, Gemini
+│   │   └── repository/     # Domain repository 구현체
+│   ├── domain/             # BoardGame, Session, BGG 통계 등 Freezed 모델
+│   ├── di/                 # DB·원격·repository Provider
+│   ├── routing/            # AppRoutes와 화면 위치 생성기
+│   └── presentation/
+│       ├── home/           # 오늘 플레이 홈
+│       ├── collection/     # 컬렉션·검색·상세·중고가
+│       ├── sale/           # 판매 후보 필터·추천
+│       ├── rule_judge/     # AI 규칙 판정
+│       ├── recommend/      # AI 게임 추천
+│       ├── session_tracker/ # 점수 입력
+│       ├── session_history/ # 앱 전적·BGG 플레이 통계
+│       └── settings/       # BGG 계정 연결·동기화
+├── assets/prompts/         # AI 시스템 프롬프트
+└── test/                   # 데이터·provider·화면 테스트
+```
+
+Drift schema version은 6이며 플레이 통계, 앱 설정, BGG play ID 마이그레이션을 포함합니다.
 
 ## 기술 스택
 
-### Android
-
 ```
-Kotlin · Jetpack Compose · Material3
-MVVM · Clean Architecture · Hilt
-Room · Retrofit2 · OkHttp · Coil3
-Coroutines · Flow · StateFlow
-Gemini API (SSE 스트리밍, Claude 롤백 가능)
-BGG XML API v2
+Dart · Flutter 3.x · Material 3
+Riverpod 3 · go_router · freezed · drift
+Dio · cached_network_image · url_launcher
+Gemini 2.5 Flash (SSE 스트리밍) · BGG XML API v2
 ```
-
-### Flutter
-
-```
-Dart · Flutter 3.x · Material3
-Riverpod 3 · go_router · freezed
-drift (SQLite) · Dio · cached_network_image
-Gemini API (SSE 스트리밍)
-BGG XML API v2
-```
-
----
-
-## 주요 설계 결정
-
-### LlmClient 인터페이스 추상화
-
-AI 제공자를 인터페이스로 격리해 코드 변경 없이 교체 가능한 구조를 설계했습니다.
-
-- Android: `LlmClient` (Gemini SSE 스트리밍 기본 활성 · Claude 롤백 가능)
-- Flutter: `LlmClient` (Gemini 2.5 Flash SSE 스트리밍 · 503/429 지수 백오프 재시도)
-
-### 시스템 프롬프트 assets 분리
-
-AI 프롬프트를 코드가 아닌 assets 파일로 관리합니다. 코드 수정 없이 프롬프트만 교체 가능한 구조입니다.
-
-```
-Android: assets/
-├── rule_judge_prompt.txt
-├── recommend_prompt_owned.txt
-└── recommend_prompt_all.txt
-
-Flutter: assets/prompts/
-├── rule_judge_prompt.txt
-├── recommend_prompt_owned.txt
-└── recommend_prompt_all.txt
-```
-
-### PlayerEntity 신원 테이블 분리
-
-점수 기록에서 플레이어 이름 중복을 DB 레벨에서 관리합니다. 이름 변경 시 과거 전적까지 일관성 있게 유지됩니다.
-
----
-
-## 테스트
-
-### Android
-
-```
-src/test/
-├── fake/           # FakeGameRepository · FakeRuleJudgeRepository 등
-├── data/local/     # toDomain / toEntity 매핑 검증
-└── presentation/   # ViewModel 단위 테스트 (GameList · RuleJudge · Recommend · ScoreTracker)
-
-src/androidTest/
-└── BggDataSourcesInstrumentedTest   # 실제 BGG API 통합 테스트
-```
-
-### Flutter
-
-```
-test/
-├── search_notifier_test.dart        # 엣지 케이스 포함 (generation 가드 · 배치 경계 · 공백 입력)
-├── game_list_notifier_test.dart     # stale 판정 · 배치 분할 · dispose 후 이벤트 차단
-├── rule_judge_notifier_test.dart    # R1~R10 (스트리밍 · 이력 저장 · 에러 격리)
-├── judge_history_notifier_test.dart # H1~H6
-└── recommend_notifier_test.dart     # 프롬프트 타이밍 이슈 · 503 처리
-```
-
-**테스트 전략**: `ProviderContainer` + `FakeRepository` 기반으로 외부 의존성을 완전히 격리합니다. Riverpod의 `retry: (_, _) => null`로 자동 재시도를 비활성화해 `AsyncError` 상태를 명확히 검증합니다.
-
----
-
-## 프로젝트 구조
-
-<details>
-<summary>Android 패키지 구조 펼치기</summary>
-
-```
-com.kurt.bgmate
-├── domain/
-│   ├── model/          # BoardGame · JudgeResult · PlayerScore · RecommendCondition · ScoreSession
-│   └── repository/     # GameRepository · RecommendRepository · RuleJudgeRepository
-├── data/
-│   ├── local/          # Room DB · DAO · Entity · SessionWithDetails
-│   ├── remote/         # BggApiService · BggXmlParser · BggRemoteDataSource
-│   └── repository/     # Repository 구현체
-├── presentation/
-│   ├── common/         # BaseViewModel · UiEvent · LoadingOverlay
-│   ├── recommend/      # RecommendScreen · RecommendViewModel
-│   ├── rulejudge/      # RuleJudgeScreen · RuleJudgeViewModel
-│   ├── scoretracker/   # ScoreTrackerScreen · ScoreTrackerViewModel
-│   └── history/        # SessionHistoryScreen · SessionDetailScreen
-└── di/
-    └── AppModule.kt
-```
-</details>
-
-<details>
-<summary>Flutter 패키지 구조 펼치기</summary>
-
-```
-lib/
-├── domain/
-│   ├── model/          # @freezed BoardGame · PlayerScore · SessionHistory · JudgeHistory
-│   └── repository/     # GameRepository · SessionRepository · RuleJudgeRepository · RecommendRepository
-├── data/
-│   ├── local/          # AppDatabase (drift) · DAO · Mapper
-│   ├── remote/         # BggApiService · LlmClient · GeminiLlmClient
-│   └── repository/     # Repository 구현체
-├── di/                 # database_provider · remote_provider · repository_provider
-├── routing/            # AppRoutes 상수
-└── presentation/
-    ├── collection/     # GameListScreen · GameDetailScreen · GameSearchScreen
-    ├── score/          # CreateSessionScreen
-    ├── session_tracker/ # SessionTrackerScreen
-    ├── session_history/ # SessionHistoryScreen · SessionHistoryDetailScreen
-    ├── rule_judge/     # RuleJudgeScreen · RuleJudgeNotifier
-    └── recommend/      # RecommendScreen · RecommendNotifier
-```
-</details>
-
----
 
 ## 실행 방법
 
-### Android
-
 ```bash
-# API 키는 local.properties 또는 환경변수로 관리
-./gradlew assembleDebug
+cd flutter
+cp dart_define.json.example dart_define.json
 ```
 
-### Flutter
+`dart_define.json`은 Git에서 제외되며 다음 값을 필요에 따라 입력합니다.
 
-```bash
-# 코드 생성 (Riverpod · Freezed · Drift)
-dart run build_runner build --delete-conflicting-outputs
-
-# 앱 실행
-flutter run --dart-define-file=dart_define.json
+```json
+{
+  "BGG_API_TOKEN": "your_token_here",
+  "GEMINI_API_KEY": "your_key_here",
+  "BGMATE_USED_PRICE_API_BASE_URL": "https://your-bgcut-domain.example"
+}
 ```
 
----
+```bash
+# 코드 생성
+./tool/flutter_with_env.sh pub run build_runner build --delete-conflicting-outputs
 
-## 개발 기간 및 배경
+# 실행·분석·테스트
+./tool/flutter_with_env.sh run
+./tool/flutter_with_env.sh analyze
+./tool/flutter_with_env.sh test
+```
 
-1년간의 공백 이후 **4주** 만에 Android + Flutter 양 플랫폼 완성.
+`BGMATE_USED_PRICE_API_BASE_URL`은 `GET /api/bgmate/used-price`를 제공하는 bgcut wrapper 주소입니다. 설정하지 않으면 중고가 조회만 비활성화됩니다.
 
-- Android 10년 경력 기반으로 Jetpack Compose · Kotlin 최신 스택 회복
-- Flutter를 처음 적용한 날에 Clean Architecture 골격 완성 (Android 설계 사고를 Dart 환경으로 이식)
-- Claude Code · Cursor 등 AI 도구를 프로덕션 코드 · 테스트 · 문서화 전 영역에 적용
-- AI 출력 적용 전 공식 문서 대조 루틴으로 버전 불일치 사전 차단
+## 테스트
 
----
+Flutter 테스트는 `ProviderContainer`와 fake/mock repository를 사용해 외부 API와 DB를 격리합니다. 주요 검증 범위는 다음과 같습니다.
 
-## License
+- BGG XML 검색·컬렉션·플레이 응답 파싱 및 오류 처리
+- Drift 매핑·마이그레이션·플레이 통계
+- 중고가 wrapper URI와 컬렉션 상세/판매 추천 provider
+- 홈·컬렉션·판정·추천·판매 추천·설정 화면 상태
+- 추천/판정 Gemini 503·429 재시도와 오류 상태
+
+## 라이선스
 
 MIT

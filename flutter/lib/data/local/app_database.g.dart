@@ -98,49 +98,6 @@ class $BoardGamesTable extends BoardGames
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
-  static const VerificationMeta _statusesMeta = const VerificationMeta(
-    'statuses',
-  );
-  @override
-  late final GeneratedColumn<String> statuses = GeneratedColumn<String>(
-    'statuses',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('owned'),
-  );
-  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
-  @override
-  late final GeneratedColumn<String> source = GeneratedColumn<String>(
-    'source',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('manualSearch'),
-  );
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-    'notes',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _userRatingMeta = const VerificationMeta(
-    'userRating',
-  );
-  @override
-  late final GeneratedColumn<int> userRating = GeneratedColumn<int>(
-    'user_rating',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -163,10 +120,6 @@ class $BoardGamesTable extends BoardGames
     maxPlayers,
     playingTime,
     description,
-    statuses,
-    source,
-    notes,
-    userRating,
     createdAt,
   ];
   @override
@@ -242,30 +195,6 @@ class $BoardGamesTable extends BoardGames
         ),
       );
     }
-    if (data.containsKey('statuses')) {
-      context.handle(
-        _statusesMeta,
-        statuses.isAcceptableOrUnknown(data['statuses']!, _statusesMeta),
-      );
-    }
-    if (data.containsKey('source')) {
-      context.handle(
-        _sourceMeta,
-        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
-      );
-    }
-    if (data.containsKey('notes')) {
-      context.handle(
-        _notesMeta,
-        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
-      );
-    }
-    if (data.containsKey('user_rating')) {
-      context.handle(
-        _userRatingMeta,
-        userRating.isAcceptableOrUnknown(data['user_rating']!, _userRatingMeta),
-      );
-    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -313,22 +242,6 @@ class $BoardGamesTable extends BoardGames
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       )!,
-      statuses: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}statuses'],
-      )!,
-      source: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}source'],
-      )!,
-      notes: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notes'],
-      )!,
-      userRating: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}user_rating'],
-      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -351,10 +264,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
   final int maxPlayers;
   final int playingTime;
   final String description;
-  final String statuses;
-  final String source;
-  final String notes;
-  final int? userRating;
   final DateTime? createdAt;
   const BoardGameRecord({
     required this.bggId,
@@ -365,10 +274,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
     required this.maxPlayers,
     required this.playingTime,
     required this.description,
-    required this.statuses,
-    required this.source,
-    required this.notes,
-    this.userRating,
     this.createdAt,
   });
   @override
@@ -382,12 +287,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
     map['max_players'] = Variable<int>(maxPlayers);
     map['playing_time'] = Variable<int>(playingTime);
     map['description'] = Variable<String>(description);
-    map['statuses'] = Variable<String>(statuses);
-    map['source'] = Variable<String>(source);
-    map['notes'] = Variable<String>(notes);
-    if (!nullToAbsent || userRating != null) {
-      map['user_rating'] = Variable<int>(userRating);
-    }
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<DateTime>(createdAt);
     }
@@ -404,12 +303,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
       maxPlayers: Value(maxPlayers),
       playingTime: Value(playingTime),
       description: Value(description),
-      statuses: Value(statuses),
-      source: Value(source),
-      notes: Value(notes),
-      userRating: userRating == null && nullToAbsent
-          ? const Value.absent()
-          : Value(userRating),
       createdAt: createdAt == null && nullToAbsent
           ? const Value.absent()
           : Value(createdAt),
@@ -430,10 +323,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
       maxPlayers: serializer.fromJson<int>(json['maxPlayers']),
       playingTime: serializer.fromJson<int>(json['playingTime']),
       description: serializer.fromJson<String>(json['description']),
-      statuses: serializer.fromJson<String>(json['statuses']),
-      source: serializer.fromJson<String>(json['source']),
-      notes: serializer.fromJson<String>(json['notes']),
-      userRating: serializer.fromJson<int?>(json['userRating']),
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
     );
   }
@@ -449,10 +338,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
       'maxPlayers': serializer.toJson<int>(maxPlayers),
       'playingTime': serializer.toJson<int>(playingTime),
       'description': serializer.toJson<String>(description),
-      'statuses': serializer.toJson<String>(statuses),
-      'source': serializer.toJson<String>(source),
-      'notes': serializer.toJson<String>(notes),
-      'userRating': serializer.toJson<int?>(userRating),
       'createdAt': serializer.toJson<DateTime?>(createdAt),
     };
   }
@@ -466,10 +351,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
     int? maxPlayers,
     int? playingTime,
     String? description,
-    String? statuses,
-    String? source,
-    String? notes,
-    Value<int?> userRating = const Value.absent(),
     Value<DateTime?> createdAt = const Value.absent(),
   }) => BoardGameRecord(
     bggId: bggId ?? this.bggId,
@@ -480,10 +361,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
     maxPlayers: maxPlayers ?? this.maxPlayers,
     playingTime: playingTime ?? this.playingTime,
     description: description ?? this.description,
-    statuses: statuses ?? this.statuses,
-    source: source ?? this.source,
-    notes: notes ?? this.notes,
-    userRating: userRating.present ? userRating.value : this.userRating,
     createdAt: createdAt.present ? createdAt.value : this.createdAt,
   );
   BoardGameRecord copyWithCompanion(BoardGamesCompanion data) {
@@ -506,12 +383,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
       description: data.description.present
           ? data.description.value
           : this.description,
-      statuses: data.statuses.present ? data.statuses.value : this.statuses,
-      source: data.source.present ? data.source.value : this.source,
-      notes: data.notes.present ? data.notes.value : this.notes,
-      userRating: data.userRating.present
-          ? data.userRating.value
-          : this.userRating,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -527,10 +398,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
           ..write('maxPlayers: $maxPlayers, ')
           ..write('playingTime: $playingTime, ')
           ..write('description: $description, ')
-          ..write('statuses: $statuses, ')
-          ..write('source: $source, ')
-          ..write('notes: $notes, ')
-          ..write('userRating: $userRating, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -546,10 +413,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
     maxPlayers,
     playingTime,
     description,
-    statuses,
-    source,
-    notes,
-    userRating,
     createdAt,
   );
   @override
@@ -564,10 +427,6 @@ class BoardGameRecord extends DataClass implements Insertable<BoardGameRecord> {
           other.maxPlayers == this.maxPlayers &&
           other.playingTime == this.playingTime &&
           other.description == this.description &&
-          other.statuses == this.statuses &&
-          other.source == this.source &&
-          other.notes == this.notes &&
-          other.userRating == this.userRating &&
           other.createdAt == this.createdAt);
 }
 
@@ -580,10 +439,6 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
   final Value<int> maxPlayers;
   final Value<int> playingTime;
   final Value<String> description;
-  final Value<String> statuses;
-  final Value<String> source;
-  final Value<String> notes;
-  final Value<int?> userRating;
   final Value<DateTime?> createdAt;
   const BoardGamesCompanion({
     this.bggId = const Value.absent(),
@@ -594,10 +449,6 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
     this.maxPlayers = const Value.absent(),
     this.playingTime = const Value.absent(),
     this.description = const Value.absent(),
-    this.statuses = const Value.absent(),
-    this.source = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.userRating = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   BoardGamesCompanion.insert({
@@ -609,10 +460,6 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
     this.maxPlayers = const Value.absent(),
     this.playingTime = const Value.absent(),
     this.description = const Value.absent(),
-    this.statuses = const Value.absent(),
-    this.source = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.userRating = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : name = Value(name),
        yearPublished = Value(yearPublished);
@@ -625,10 +472,6 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
     Expression<int>? maxPlayers,
     Expression<int>? playingTime,
     Expression<String>? description,
-    Expression<String>? statuses,
-    Expression<String>? source,
-    Expression<String>? notes,
-    Expression<int>? userRating,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
@@ -640,10 +483,6 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
       if (maxPlayers != null) 'max_players': maxPlayers,
       if (playingTime != null) 'playing_time': playingTime,
       if (description != null) 'description': description,
-      if (statuses != null) 'statuses': statuses,
-      if (source != null) 'source': source,
-      if (notes != null) 'notes': notes,
-      if (userRating != null) 'user_rating': userRating,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -657,10 +496,6 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
     Value<int>? maxPlayers,
     Value<int>? playingTime,
     Value<String>? description,
-    Value<String>? statuses,
-    Value<String>? source,
-    Value<String>? notes,
-    Value<int?>? userRating,
     Value<DateTime?>? createdAt,
   }) {
     return BoardGamesCompanion(
@@ -672,10 +507,6 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
       maxPlayers: maxPlayers ?? this.maxPlayers,
       playingTime: playingTime ?? this.playingTime,
       description: description ?? this.description,
-      statuses: statuses ?? this.statuses,
-      source: source ?? this.source,
-      notes: notes ?? this.notes,
-      userRating: userRating ?? this.userRating,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -707,18 +538,6 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
-    if (statuses.present) {
-      map['statuses'] = Variable<String>(statuses.value);
-    }
-    if (source.present) {
-      map['source'] = Variable<String>(source.value);
-    }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
-    if (userRating.present) {
-      map['user_rating'] = Variable<int>(userRating.value);
-    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -736,10 +555,6 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGameRecord> {
           ..write('maxPlayers: $maxPlayers, ')
           ..write('playingTime: $playingTime, ')
           ..write('description: $description, ')
-          ..write('statuses: $statuses, ')
-          ..write('source: $source, ')
-          ..write('notes: $notes, ')
-          ..write('userRating: $userRating, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -1026,6 +841,17 @@ class $SessionsTable extends Sessions
     requiredDuringInsert: true,
     $customConstraints: 'REFERENCES game_table(bgg_id) ON DELETE CASCADE',
   );
+  static const VerificationMeta _bggPlayIdMeta = const VerificationMeta(
+    'bggPlayId',
+  );
+  @override
+  late final GeneratedColumn<int> bggPlayId = GeneratedColumn<int>(
+    'bgg_play_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -1039,7 +865,7 @@ class $SessionsTable extends Sessions
     clientDefault: () => DateTime.now(),
   );
   @override
-  List<GeneratedColumn> get $columns => [id, bggId, createdAt];
+  List<GeneratedColumn> get $columns => [id, bggId, bggPlayId, createdAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1062,6 +888,12 @@ class $SessionsTable extends Sessions
       );
     } else if (isInserting) {
       context.missing(_bggIdMeta);
+    }
+    if (data.containsKey('bgg_play_id')) {
+      context.handle(
+        _bggPlayIdMeta,
+        bggPlayId.isAcceptableOrUnknown(data['bgg_play_id']!, _bggPlayIdMeta),
+      );
     }
     if (data.containsKey('created_at')) {
       context.handle(
@@ -1086,6 +918,10 @@ class $SessionsTable extends Sessions
         DriftSqlType.int,
         data['${effectivePrefix}bgg_id'],
       )!,
+      bggPlayId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}bgg_play_id'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -1102,10 +938,12 @@ class $SessionsTable extends Sessions
 class SessionRecord extends DataClass implements Insertable<SessionRecord> {
   final int id;
   final int bggId;
+  final int? bggPlayId;
   final DateTime createdAt;
   const SessionRecord({
     required this.id,
     required this.bggId,
+    this.bggPlayId,
     required this.createdAt,
   });
   @override
@@ -1113,6 +951,9 @@ class SessionRecord extends DataClass implements Insertable<SessionRecord> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['bgg_id'] = Variable<int>(bggId);
+    if (!nullToAbsent || bggPlayId != null) {
+      map['bgg_play_id'] = Variable<int>(bggPlayId);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
@@ -1121,6 +962,9 @@ class SessionRecord extends DataClass implements Insertable<SessionRecord> {
     return SessionsCompanion(
       id: Value(id),
       bggId: Value(bggId),
+      bggPlayId: bggPlayId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bggPlayId),
       createdAt: Value(createdAt),
     );
   }
@@ -1133,6 +977,7 @@ class SessionRecord extends DataClass implements Insertable<SessionRecord> {
     return SessionRecord(
       id: serializer.fromJson<int>(json['id']),
       bggId: serializer.fromJson<int>(json['bggId']),
+      bggPlayId: serializer.fromJson<int?>(json['bggPlayId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -1142,20 +987,27 @@ class SessionRecord extends DataClass implements Insertable<SessionRecord> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'bggId': serializer.toJson<int>(bggId),
+      'bggPlayId': serializer.toJson<int?>(bggPlayId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
 
-  SessionRecord copyWith({int? id, int? bggId, DateTime? createdAt}) =>
-      SessionRecord(
-        id: id ?? this.id,
-        bggId: bggId ?? this.bggId,
-        createdAt: createdAt ?? this.createdAt,
-      );
+  SessionRecord copyWith({
+    int? id,
+    int? bggId,
+    Value<int?> bggPlayId = const Value.absent(),
+    DateTime? createdAt,
+  }) => SessionRecord(
+    id: id ?? this.id,
+    bggId: bggId ?? this.bggId,
+    bggPlayId: bggPlayId.present ? bggPlayId.value : this.bggPlayId,
+    createdAt: createdAt ?? this.createdAt,
+  );
   SessionRecord copyWithCompanion(SessionsCompanion data) {
     return SessionRecord(
       id: data.id.present ? data.id.value : this.id,
       bggId: data.bggId.present ? data.bggId.value : this.bggId,
+      bggPlayId: data.bggPlayId.present ? data.bggPlayId.value : this.bggPlayId,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -1165,44 +1017,51 @@ class SessionRecord extends DataClass implements Insertable<SessionRecord> {
     return (StringBuffer('SessionRecord(')
           ..write('id: $id, ')
           ..write('bggId: $bggId, ')
+          ..write('bggPlayId: $bggPlayId, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, bggId, createdAt);
+  int get hashCode => Object.hash(id, bggId, bggPlayId, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is SessionRecord &&
           other.id == this.id &&
           other.bggId == this.bggId &&
+          other.bggPlayId == this.bggPlayId &&
           other.createdAt == this.createdAt);
 }
 
 class SessionsCompanion extends UpdateCompanion<SessionRecord> {
   final Value<int> id;
   final Value<int> bggId;
+  final Value<int?> bggPlayId;
   final Value<DateTime> createdAt;
   const SessionsCompanion({
     this.id = const Value.absent(),
     this.bggId = const Value.absent(),
+    this.bggPlayId = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   SessionsCompanion.insert({
     this.id = const Value.absent(),
     required int bggId,
+    this.bggPlayId = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : bggId = Value(bggId);
   static Insertable<SessionRecord> custom({
     Expression<int>? id,
     Expression<int>? bggId,
+    Expression<int>? bggPlayId,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (bggId != null) 'bgg_id': bggId,
+      if (bggPlayId != null) 'bgg_play_id': bggPlayId,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -1210,11 +1069,13 @@ class SessionsCompanion extends UpdateCompanion<SessionRecord> {
   SessionsCompanion copyWith({
     Value<int>? id,
     Value<int>? bggId,
+    Value<int?>? bggPlayId,
     Value<DateTime>? createdAt,
   }) {
     return SessionsCompanion(
       id: id ?? this.id,
       bggId: bggId ?? this.bggId,
+      bggPlayId: bggPlayId ?? this.bggPlayId,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -1228,6 +1089,9 @@ class SessionsCompanion extends UpdateCompanion<SessionRecord> {
     if (bggId.present) {
       map['bgg_id'] = Variable<int>(bggId.value);
     }
+    if (bggPlayId.present) {
+      map['bgg_play_id'] = Variable<int>(bggPlayId.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -1239,6 +1103,7 @@ class SessionsCompanion extends UpdateCompanion<SessionRecord> {
     return (StringBuffer('SessionsCompanion(')
           ..write('id: $id, ')
           ..write('bggId: $bggId, ')
+          ..write('bggPlayId: $bggPlayId, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -1937,6 +1802,699 @@ class JudgeHistoriesCompanion extends UpdateCompanion<JudgeHistoryRecord> {
   }
 }
 
+class $GamePlayStatsTableTable extends GamePlayStatsTable
+    with TableInfo<$GamePlayStatsTableTable, GamePlayStatsRecord> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GamePlayStatsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _bggIdMeta = const VerificationMeta('bggId');
+  @override
+  late final GeneratedColumn<int> bggId = GeneratedColumn<int>(
+    'bgg_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints:
+        'NOT NULL REFERENCES game_table(bgg_id) ON DELETE CASCADE',
+  );
+  static const VerificationMeta _bggPlayCountMeta = const VerificationMeta(
+    'bggPlayCount',
+  );
+  @override
+  late final GeneratedColumn<int> bggPlayCount = GeneratedColumn<int>(
+    'bgg_play_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _bggLastPlayedAtMeta = const VerificationMeta(
+    'bggLastPlayedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> bggLastPlayedAt =
+      GeneratedColumn<DateTime>(
+        'bgg_last_played_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _bggRatingMeta = const VerificationMeta(
+    'bggRating',
+  );
+  @override
+  late final GeneratedColumn<double> bggRating = GeneratedColumn<double>(
+    'bgg_rating',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _bggIsExpansionMeta = const VerificationMeta(
+    'bggIsExpansion',
+  );
+  @override
+  late final GeneratedColumn<bool> bggIsExpansion = GeneratedColumn<bool>(
+    'bgg_is_expansion',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("bgg_is_expansion" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    bggId,
+    bggPlayCount,
+    bggLastPlayedAt,
+    bggRating,
+    bggIsExpansion,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'game_play_stats';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<GamePlayStatsRecord> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('bgg_id')) {
+      context.handle(
+        _bggIdMeta,
+        bggId.isAcceptableOrUnknown(data['bgg_id']!, _bggIdMeta),
+      );
+    }
+    if (data.containsKey('bgg_play_count')) {
+      context.handle(
+        _bggPlayCountMeta,
+        bggPlayCount.isAcceptableOrUnknown(
+          data['bgg_play_count']!,
+          _bggPlayCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('bgg_last_played_at')) {
+      context.handle(
+        _bggLastPlayedAtMeta,
+        bggLastPlayedAt.isAcceptableOrUnknown(
+          data['bgg_last_played_at']!,
+          _bggLastPlayedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('bgg_rating')) {
+      context.handle(
+        _bggRatingMeta,
+        bggRating.isAcceptableOrUnknown(data['bgg_rating']!, _bggRatingMeta),
+      );
+    }
+    if (data.containsKey('bgg_is_expansion')) {
+      context.handle(
+        _bggIsExpansionMeta,
+        bggIsExpansion.isAcceptableOrUnknown(
+          data['bgg_is_expansion']!,
+          _bggIsExpansionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_syncedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {bggId};
+  @override
+  GamePlayStatsRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return GamePlayStatsRecord(
+      bggId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}bgg_id'],
+      )!,
+      bggPlayCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}bgg_play_count'],
+      )!,
+      bggLastPlayedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}bgg_last_played_at'],
+      ),
+      bggRating: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}bgg_rating'],
+      ),
+      bggIsExpansion: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}bgg_is_expansion'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      )!,
+    );
+  }
+
+  @override
+  $GamePlayStatsTableTable createAlias(String alias) {
+    return $GamePlayStatsTableTable(attachedDatabase, alias);
+  }
+}
+
+class GamePlayStatsRecord extends DataClass
+    implements Insertable<GamePlayStatsRecord> {
+  final int bggId;
+  final int bggPlayCount;
+  final DateTime? bggLastPlayedAt;
+  final double? bggRating;
+  final bool bggIsExpansion;
+  final DateTime syncedAt;
+  const GamePlayStatsRecord({
+    required this.bggId,
+    required this.bggPlayCount,
+    this.bggLastPlayedAt,
+    this.bggRating,
+    required this.bggIsExpansion,
+    required this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['bgg_id'] = Variable<int>(bggId);
+    map['bgg_play_count'] = Variable<int>(bggPlayCount);
+    if (!nullToAbsent || bggLastPlayedAt != null) {
+      map['bgg_last_played_at'] = Variable<DateTime>(bggLastPlayedAt);
+    }
+    if (!nullToAbsent || bggRating != null) {
+      map['bgg_rating'] = Variable<double>(bggRating);
+    }
+    map['bgg_is_expansion'] = Variable<bool>(bggIsExpansion);
+    map['synced_at'] = Variable<DateTime>(syncedAt);
+    return map;
+  }
+
+  GamePlayStatsTableCompanion toCompanion(bool nullToAbsent) {
+    return GamePlayStatsTableCompanion(
+      bggId: Value(bggId),
+      bggPlayCount: Value(bggPlayCount),
+      bggLastPlayedAt: bggLastPlayedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bggLastPlayedAt),
+      bggRating: bggRating == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bggRating),
+      bggIsExpansion: Value(bggIsExpansion),
+      syncedAt: Value(syncedAt),
+    );
+  }
+
+  factory GamePlayStatsRecord.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return GamePlayStatsRecord(
+      bggId: serializer.fromJson<int>(json['bggId']),
+      bggPlayCount: serializer.fromJson<int>(json['bggPlayCount']),
+      bggLastPlayedAt: serializer.fromJson<DateTime?>(json['bggLastPlayedAt']),
+      bggRating: serializer.fromJson<double?>(json['bggRating']),
+      bggIsExpansion: serializer.fromJson<bool>(json['bggIsExpansion']),
+      syncedAt: serializer.fromJson<DateTime>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'bggId': serializer.toJson<int>(bggId),
+      'bggPlayCount': serializer.toJson<int>(bggPlayCount),
+      'bggLastPlayedAt': serializer.toJson<DateTime?>(bggLastPlayedAt),
+      'bggRating': serializer.toJson<double?>(bggRating),
+      'bggIsExpansion': serializer.toJson<bool>(bggIsExpansion),
+      'syncedAt': serializer.toJson<DateTime>(syncedAt),
+    };
+  }
+
+  GamePlayStatsRecord copyWith({
+    int? bggId,
+    int? bggPlayCount,
+    Value<DateTime?> bggLastPlayedAt = const Value.absent(),
+    Value<double?> bggRating = const Value.absent(),
+    bool? bggIsExpansion,
+    DateTime? syncedAt,
+  }) => GamePlayStatsRecord(
+    bggId: bggId ?? this.bggId,
+    bggPlayCount: bggPlayCount ?? this.bggPlayCount,
+    bggLastPlayedAt: bggLastPlayedAt.present
+        ? bggLastPlayedAt.value
+        : this.bggLastPlayedAt,
+    bggRating: bggRating.present ? bggRating.value : this.bggRating,
+    bggIsExpansion: bggIsExpansion ?? this.bggIsExpansion,
+    syncedAt: syncedAt ?? this.syncedAt,
+  );
+  GamePlayStatsRecord copyWithCompanion(GamePlayStatsTableCompanion data) {
+    return GamePlayStatsRecord(
+      bggId: data.bggId.present ? data.bggId.value : this.bggId,
+      bggPlayCount: data.bggPlayCount.present
+          ? data.bggPlayCount.value
+          : this.bggPlayCount,
+      bggLastPlayedAt: data.bggLastPlayedAt.present
+          ? data.bggLastPlayedAt.value
+          : this.bggLastPlayedAt,
+      bggRating: data.bggRating.present ? data.bggRating.value : this.bggRating,
+      bggIsExpansion: data.bggIsExpansion.present
+          ? data.bggIsExpansion.value
+          : this.bggIsExpansion,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GamePlayStatsRecord(')
+          ..write('bggId: $bggId, ')
+          ..write('bggPlayCount: $bggPlayCount, ')
+          ..write('bggLastPlayedAt: $bggLastPlayedAt, ')
+          ..write('bggRating: $bggRating, ')
+          ..write('bggIsExpansion: $bggIsExpansion, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    bggId,
+    bggPlayCount,
+    bggLastPlayedAt,
+    bggRating,
+    bggIsExpansion,
+    syncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GamePlayStatsRecord &&
+          other.bggId == this.bggId &&
+          other.bggPlayCount == this.bggPlayCount &&
+          other.bggLastPlayedAt == this.bggLastPlayedAt &&
+          other.bggRating == this.bggRating &&
+          other.bggIsExpansion == this.bggIsExpansion &&
+          other.syncedAt == this.syncedAt);
+}
+
+class GamePlayStatsTableCompanion extends UpdateCompanion<GamePlayStatsRecord> {
+  final Value<int> bggId;
+  final Value<int> bggPlayCount;
+  final Value<DateTime?> bggLastPlayedAt;
+  final Value<double?> bggRating;
+  final Value<bool> bggIsExpansion;
+  final Value<DateTime> syncedAt;
+  const GamePlayStatsTableCompanion({
+    this.bggId = const Value.absent(),
+    this.bggPlayCount = const Value.absent(),
+    this.bggLastPlayedAt = const Value.absent(),
+    this.bggRating = const Value.absent(),
+    this.bggIsExpansion = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+  });
+  GamePlayStatsTableCompanion.insert({
+    this.bggId = const Value.absent(),
+    this.bggPlayCount = const Value.absent(),
+    this.bggLastPlayedAt = const Value.absent(),
+    this.bggRating = const Value.absent(),
+    this.bggIsExpansion = const Value.absent(),
+    required DateTime syncedAt,
+  }) : syncedAt = Value(syncedAt);
+  static Insertable<GamePlayStatsRecord> custom({
+    Expression<int>? bggId,
+    Expression<int>? bggPlayCount,
+    Expression<DateTime>? bggLastPlayedAt,
+    Expression<double>? bggRating,
+    Expression<bool>? bggIsExpansion,
+    Expression<DateTime>? syncedAt,
+  }) {
+    return RawValuesInsertable({
+      if (bggId != null) 'bgg_id': bggId,
+      if (bggPlayCount != null) 'bgg_play_count': bggPlayCount,
+      if (bggLastPlayedAt != null) 'bgg_last_played_at': bggLastPlayedAt,
+      if (bggRating != null) 'bgg_rating': bggRating,
+      if (bggIsExpansion != null) 'bgg_is_expansion': bggIsExpansion,
+      if (syncedAt != null) 'synced_at': syncedAt,
+    });
+  }
+
+  GamePlayStatsTableCompanion copyWith({
+    Value<int>? bggId,
+    Value<int>? bggPlayCount,
+    Value<DateTime?>? bggLastPlayedAt,
+    Value<double?>? bggRating,
+    Value<bool>? bggIsExpansion,
+    Value<DateTime>? syncedAt,
+  }) {
+    return GamePlayStatsTableCompanion(
+      bggId: bggId ?? this.bggId,
+      bggPlayCount: bggPlayCount ?? this.bggPlayCount,
+      bggLastPlayedAt: bggLastPlayedAt ?? this.bggLastPlayedAt,
+      bggRating: bggRating ?? this.bggRating,
+      bggIsExpansion: bggIsExpansion ?? this.bggIsExpansion,
+      syncedAt: syncedAt ?? this.syncedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (bggId.present) {
+      map['bgg_id'] = Variable<int>(bggId.value);
+    }
+    if (bggPlayCount.present) {
+      map['bgg_play_count'] = Variable<int>(bggPlayCount.value);
+    }
+    if (bggLastPlayedAt.present) {
+      map['bgg_last_played_at'] = Variable<DateTime>(bggLastPlayedAt.value);
+    }
+    if (bggRating.present) {
+      map['bgg_rating'] = Variable<double>(bggRating.value);
+    }
+    if (bggIsExpansion.present) {
+      map['bgg_is_expansion'] = Variable<bool>(bggIsExpansion.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GamePlayStatsTableCompanion(')
+          ..write('bggId: $bggId, ')
+          ..write('bggPlayCount: $bggPlayCount, ')
+          ..write('bggLastPlayedAt: $bggLastPlayedAt, ')
+          ..write('bggRating: $bggRating, ')
+          ..write('bggIsExpansion: $bggIsExpansion, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AppSettingsTable extends AppSettings
+    with TableInfo<$AppSettingsTable, AppSettingRecord> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AppSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _keyMeta = const VerificationMeta('key');
+  @override
+  late final GeneratedColumn<String> key = GeneratedColumn<String>(
+    'key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
+  @override
+  late final GeneratedColumn<String> value = GeneratedColumn<String>(
+    'value',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [key, value, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'app_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AppSettingRecord> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('key')) {
+      context.handle(
+        _keyMeta,
+        key.isAcceptableOrUnknown(data['key']!, _keyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_keyMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+        _valueMeta,
+        value.isAcceptableOrUnknown(data['value']!, _valueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_valueMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {key};
+  @override
+  AppSettingRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AppSettingRecord(
+      key: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key'],
+      )!,
+      value: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}value'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $AppSettingsTable createAlias(String alias) {
+    return $AppSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class AppSettingRecord extends DataClass
+    implements Insertable<AppSettingRecord> {
+  final String key;
+  final String value;
+  final DateTime updatedAt;
+  const AppSettingRecord({
+    required this.key,
+    required this.value,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['key'] = Variable<String>(key);
+    map['value'] = Variable<String>(value);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  AppSettingsCompanion toCompanion(bool nullToAbsent) {
+    return AppSettingsCompanion(
+      key: Value(key),
+      value: Value(value),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory AppSettingRecord.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AppSettingRecord(
+      key: serializer.fromJson<String>(json['key']),
+      value: serializer.fromJson<String>(json['value']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'key': serializer.toJson<String>(key),
+      'value': serializer.toJson<String>(value),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  AppSettingRecord copyWith({
+    String? key,
+    String? value,
+    DateTime? updatedAt,
+  }) => AppSettingRecord(
+    key: key ?? this.key,
+    value: value ?? this.value,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  AppSettingRecord copyWithCompanion(AppSettingsCompanion data) {
+    return AppSettingRecord(
+      key: data.key.present ? data.key.value : this.key,
+      value: data.value.present ? data.value.value : this.value,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppSettingRecord(')
+          ..write('key: $key, ')
+          ..write('value: $value, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(key, value, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AppSettingRecord &&
+          other.key == this.key &&
+          other.value == this.value &&
+          other.updatedAt == this.updatedAt);
+}
+
+class AppSettingsCompanion extends UpdateCompanion<AppSettingRecord> {
+  final Value<String> key;
+  final Value<String> value;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const AppSettingsCompanion({
+    this.key = const Value.absent(),
+    this.value = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AppSettingsCompanion.insert({
+    required String key,
+    required String value,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : key = Value(key),
+       value = Value(value),
+       updatedAt = Value(updatedAt);
+  static Insertable<AppSettingRecord> custom({
+    Expression<String>? key,
+    Expression<String>? value,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (key != null) 'key': key,
+      if (value != null) 'value': value,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AppSettingsCompanion copyWith({
+    Value<String>? key,
+    Value<String>? value,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return AppSettingsCompanion(
+      key: key ?? this.key,
+      value: value ?? this.value,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<String>(value.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppSettingsCompanion(')
+          ..write('key: $key, ')
+          ..write('value: $value, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1945,9 +2503,18 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SessionsTable sessions = $SessionsTable(this);
   late final $PlayerScoresTable playerScores = $PlayerScoresTable(this);
   late final $JudgeHistoriesTable judgeHistories = $JudgeHistoriesTable(this);
+  late final $GamePlayStatsTableTable gamePlayStatsTable =
+      $GamePlayStatsTableTable(this);
+  late final $AppSettingsTable appSettings = $AppSettingsTable(this);
   late final GameDao gameDao = GameDao(this as AppDatabase);
   late final SessionDao sessionDao = SessionDao(this as AppDatabase);
   late final JudgeHistoryDao judgeHistoryDao = JudgeHistoryDao(
+    this as AppDatabase,
+  );
+  late final GamePlayStatsDao gamePlayStatsDao = GamePlayStatsDao(
+    this as AppDatabase,
+  );
+  late final AppSettingsDao appSettingsDao = AppSettingsDao(
     this as AppDatabase,
   );
   @override
@@ -1960,6 +2527,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     sessions,
     playerScores,
     judgeHistories,
+    gamePlayStatsTable,
+    appSettings,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -1984,6 +2553,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       ),
       result: [TableUpdate('player_scores', kind: UpdateKind.delete)],
     ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'game_table',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('game_play_stats', kind: UpdateKind.delete)],
+    ),
   ]);
 }
 
@@ -1997,10 +2573,6 @@ typedef $$BoardGamesTableCreateCompanionBuilder =
       Value<int> maxPlayers,
       Value<int> playingTime,
       Value<String> description,
-      Value<String> statuses,
-      Value<String> source,
-      Value<String> notes,
-      Value<int?> userRating,
       Value<DateTime?> createdAt,
     });
 typedef $$BoardGamesTableUpdateCompanionBuilder =
@@ -2013,10 +2585,6 @@ typedef $$BoardGamesTableUpdateCompanionBuilder =
       Value<int> maxPlayers,
       Value<int> playingTime,
       Value<String> description,
-      Value<String> statuses,
-      Value<String> source,
-      Value<String> notes,
-      Value<int?> userRating,
       Value<DateTime?> createdAt,
     });
 
@@ -2037,6 +2605,33 @@ final class $$BoardGamesTableReferences
     ).filter((f) => f.bggId.bggId.sqlEquals($_itemColumn<int>('bgg_id')!));
 
     final cache = $_typedResult.readTableOrNull(_sessionsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $GamePlayStatsTableTable,
+    List<GamePlayStatsRecord>
+  >
+  _gamePlayStatsTableRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.gamePlayStatsTable,
+        aliasName: $_aliasNameGenerator(
+          db.boardGames.bggId,
+          db.gamePlayStatsTable.bggId,
+        ),
+      );
+
+  $$GamePlayStatsTableTableProcessedTableManager get gamePlayStatsTableRefs {
+    final manager = $$GamePlayStatsTableTableTableManager(
+      $_db,
+      $_db.gamePlayStatsTable,
+    ).filter((f) => f.bggId.bggId.sqlEquals($_itemColumn<int>('bgg_id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _gamePlayStatsTableRefsTable($_db),
+    );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -2092,26 +2687,6 @@ class $$BoardGamesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get statuses => $composableBuilder(
-    column: $table.statuses,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get source => $composableBuilder(
-    column: $table.source,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get userRating => $composableBuilder(
-    column: $table.userRating,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -2133,6 +2708,31 @@ class $$BoardGamesTableFilterComposer
           }) => $$SessionsTableFilterComposer(
             $db: $db,
             $table: $db.sessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> gamePlayStatsTableRefs(
+    Expression<bool> Function($$GamePlayStatsTableTableFilterComposer f) f,
+  ) {
+    final $$GamePlayStatsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bggId,
+      referencedTable: $db.gamePlayStatsTable,
+      getReferencedColumn: (t) => t.bggId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GamePlayStatsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.gamePlayStatsTable,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2192,26 +2792,6 @@ class $$BoardGamesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get statuses => $composableBuilder(
-    column: $table.statuses,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get source => $composableBuilder(
-    column: $table.source,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get userRating => $composableBuilder(
-    column: $table.userRating,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -2261,20 +2841,6 @@ class $$BoardGamesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get statuses =>
-      $composableBuilder(column: $table.statuses, builder: (column) => column);
-
-  GeneratedColumn<String> get source =>
-      $composableBuilder(column: $table.source, builder: (column) => column);
-
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<int> get userRating => $composableBuilder(
-    column: $table.userRating,
-    builder: (column) => column,
-  );
-
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
@@ -2302,6 +2868,32 @@ class $$BoardGamesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> gamePlayStatsTableRefs<T extends Object>(
+    Expression<T> Function($$GamePlayStatsTableTableAnnotationComposer a) f,
+  ) {
+    final $$GamePlayStatsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.bggId,
+          referencedTable: $db.gamePlayStatsTable,
+          getReferencedColumn: (t) => t.bggId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$GamePlayStatsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.gamePlayStatsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$BoardGamesTableTableManager
@@ -2317,7 +2909,10 @@ class $$BoardGamesTableTableManager
           $$BoardGamesTableUpdateCompanionBuilder,
           (BoardGameRecord, $$BoardGamesTableReferences),
           BoardGameRecord,
-          PrefetchHooks Function({bool sessionsRefs})
+          PrefetchHooks Function({
+            bool sessionsRefs,
+            bool gamePlayStatsTableRefs,
+          })
         > {
   $$BoardGamesTableTableManager(_$AppDatabase db, $BoardGamesTable table)
     : super(
@@ -2340,10 +2935,6 @@ class $$BoardGamesTableTableManager
                 Value<int> maxPlayers = const Value.absent(),
                 Value<int> playingTime = const Value.absent(),
                 Value<String> description = const Value.absent(),
-                Value<String> statuses = const Value.absent(),
-                Value<String> source = const Value.absent(),
-                Value<String> notes = const Value.absent(),
-                Value<int?> userRating = const Value.absent(),
                 Value<DateTime?> createdAt = const Value.absent(),
               }) => BoardGamesCompanion(
                 bggId: bggId,
@@ -2354,10 +2945,6 @@ class $$BoardGamesTableTableManager
                 maxPlayers: maxPlayers,
                 playingTime: playingTime,
                 description: description,
-                statuses: statuses,
-                source: source,
-                notes: notes,
-                userRating: userRating,
                 createdAt: createdAt,
               ),
           createCompanionCallback:
@@ -2370,10 +2957,6 @@ class $$BoardGamesTableTableManager
                 Value<int> maxPlayers = const Value.absent(),
                 Value<int> playingTime = const Value.absent(),
                 Value<String> description = const Value.absent(),
-                Value<String> statuses = const Value.absent(),
-                Value<String> source = const Value.absent(),
-                Value<String> notes = const Value.absent(),
-                Value<int?> userRating = const Value.absent(),
                 Value<DateTime?> createdAt = const Value.absent(),
               }) => BoardGamesCompanion.insert(
                 bggId: bggId,
@@ -2384,10 +2967,6 @@ class $$BoardGamesTableTableManager
                 maxPlayers: maxPlayers,
                 playingTime: playingTime,
                 description: description,
-                statuses: statuses,
-                source: source,
-                notes: notes,
-                userRating: userRating,
                 createdAt: createdAt,
               ),
           withReferenceMapper: (p0) => p0
@@ -2398,36 +2977,63 @@ class $$BoardGamesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({sessionsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (sessionsRefs) db.sessions],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (sessionsRefs)
-                    await $_getPrefetchedData<
-                      BoardGameRecord,
-                      $BoardGamesTable,
-                      SessionRecord
-                    >(
-                      currentTable: table,
-                      referencedTable: $$BoardGamesTableReferences
-                          ._sessionsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$BoardGamesTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).sessionsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.bggId == item.bggId),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({sessionsRefs = false, gamePlayStatsTableRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (sessionsRefs) db.sessions,
+                    if (gamePlayStatsTableRefs) db.gamePlayStatsTable,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (sessionsRefs)
+                        await $_getPrefetchedData<
+                          BoardGameRecord,
+                          $BoardGamesTable,
+                          SessionRecord
+                        >(
+                          currentTable: table,
+                          referencedTable: $$BoardGamesTableReferences
+                              ._sessionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BoardGamesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).sessionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.bggId == item.bggId,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (gamePlayStatsTableRefs)
+                        await $_getPrefetchedData<
+                          BoardGameRecord,
+                          $BoardGamesTable,
+                          GamePlayStatsRecord
+                        >(
+                          currentTable: table,
+                          referencedTable: $$BoardGamesTableReferences
+                              ._gamePlayStatsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BoardGamesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).gamePlayStatsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.bggId == item.bggId,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -2444,7 +3050,7 @@ typedef $$BoardGamesTableProcessedTableManager =
       $$BoardGamesTableUpdateCompanionBuilder,
       (BoardGameRecord, $$BoardGamesTableReferences),
       BoardGameRecord,
-      PrefetchHooks Function({bool sessionsRefs})
+      PrefetchHooks Function({bool sessionsRefs, bool gamePlayStatsTableRefs})
     >;
 typedef $$PlayersTableCreateCompanionBuilder =
     PlayersCompanion Function({
@@ -2702,12 +3308,14 @@ typedef $$SessionsTableCreateCompanionBuilder =
     SessionsCompanion Function({
       Value<int> id,
       required int bggId,
+      Value<int?> bggPlayId,
       Value<DateTime> createdAt,
     });
 typedef $$SessionsTableUpdateCompanionBuilder =
     SessionsCompanion Function({
       Value<int> id,
       Value<int> bggId,
+      Value<int?> bggPlayId,
       Value<DateTime> createdAt,
     });
 
@@ -2764,6 +3372,11 @@ class $$SessionsTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get bggPlayId => $composableBuilder(
+    column: $table.bggPlayId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2835,6 +3448,11 @@ class $$SessionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get bggPlayId => $composableBuilder(
+    column: $table.bggPlayId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -2875,6 +3493,9 @@ class $$SessionsTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get bggPlayId =>
+      $composableBuilder(column: $table.bggPlayId, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -2958,17 +3579,24 @@ class $$SessionsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> bggId = const Value.absent(),
+                Value<int?> bggPlayId = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-              }) =>
-                  SessionsCompanion(id: id, bggId: bggId, createdAt: createdAt),
+              }) => SessionsCompanion(
+                id: id,
+                bggId: bggId,
+                bggPlayId: bggPlayId,
+                createdAt: createdAt,
+              ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required int bggId,
+                Value<int?> bggPlayId = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => SessionsCompanion.insert(
                 id: id,
                 bggId: bggId,
+                bggPlayId: bggPlayId,
                 createdAt: createdAt,
               ),
           withReferenceMapper: (p0) => p0
@@ -3659,6 +4287,522 @@ typedef $$JudgeHistoriesTableProcessedTableManager =
       JudgeHistoryRecord,
       PrefetchHooks Function()
     >;
+typedef $$GamePlayStatsTableTableCreateCompanionBuilder =
+    GamePlayStatsTableCompanion Function({
+      Value<int> bggId,
+      Value<int> bggPlayCount,
+      Value<DateTime?> bggLastPlayedAt,
+      Value<double?> bggRating,
+      Value<bool> bggIsExpansion,
+      required DateTime syncedAt,
+    });
+typedef $$GamePlayStatsTableTableUpdateCompanionBuilder =
+    GamePlayStatsTableCompanion Function({
+      Value<int> bggId,
+      Value<int> bggPlayCount,
+      Value<DateTime?> bggLastPlayedAt,
+      Value<double?> bggRating,
+      Value<bool> bggIsExpansion,
+      Value<DateTime> syncedAt,
+    });
+
+final class $$GamePlayStatsTableTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $GamePlayStatsTableTable,
+          GamePlayStatsRecord
+        > {
+  $$GamePlayStatsTableTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $BoardGamesTable _bggIdTable(_$AppDatabase db) =>
+      db.boardGames.createAlias(
+        $_aliasNameGenerator(db.gamePlayStatsTable.bggId, db.boardGames.bggId),
+      );
+
+  $$BoardGamesTableProcessedTableManager get bggId {
+    final $_column = $_itemColumn<int>('bgg_id')!;
+
+    final manager = $$BoardGamesTableTableManager(
+      $_db,
+      $_db.boardGames,
+    ).filter((f) => f.bggId.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_bggIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$GamePlayStatsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $GamePlayStatsTableTable> {
+  $$GamePlayStatsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get bggPlayCount => $composableBuilder(
+    column: $table.bggPlayCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get bggLastPlayedAt => $composableBuilder(
+    column: $table.bggLastPlayedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get bggRating => $composableBuilder(
+    column: $table.bggRating,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get bggIsExpansion => $composableBuilder(
+    column: $table.bggIsExpansion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$BoardGamesTableFilterComposer get bggId {
+    final $$BoardGamesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bggId,
+      referencedTable: $db.boardGames,
+      getReferencedColumn: (t) => t.bggId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BoardGamesTableFilterComposer(
+            $db: $db,
+            $table: $db.boardGames,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GamePlayStatsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $GamePlayStatsTableTable> {
+  $$GamePlayStatsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get bggPlayCount => $composableBuilder(
+    column: $table.bggPlayCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get bggLastPlayedAt => $composableBuilder(
+    column: $table.bggLastPlayedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get bggRating => $composableBuilder(
+    column: $table.bggRating,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get bggIsExpansion => $composableBuilder(
+    column: $table.bggIsExpansion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$BoardGamesTableOrderingComposer get bggId {
+    final $$BoardGamesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bggId,
+      referencedTable: $db.boardGames,
+      getReferencedColumn: (t) => t.bggId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BoardGamesTableOrderingComposer(
+            $db: $db,
+            $table: $db.boardGames,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GamePlayStatsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GamePlayStatsTableTable> {
+  $$GamePlayStatsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get bggPlayCount => $composableBuilder(
+    column: $table.bggPlayCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get bggLastPlayedAt => $composableBuilder(
+    column: $table.bggLastPlayedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get bggRating =>
+      $composableBuilder(column: $table.bggRating, builder: (column) => column);
+
+  GeneratedColumn<bool> get bggIsExpansion => $composableBuilder(
+    column: $table.bggIsExpansion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  $$BoardGamesTableAnnotationComposer get bggId {
+    final $$BoardGamesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bggId,
+      referencedTable: $db.boardGames,
+      getReferencedColumn: (t) => t.bggId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BoardGamesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.boardGames,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GamePlayStatsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GamePlayStatsTableTable,
+          GamePlayStatsRecord,
+          $$GamePlayStatsTableTableFilterComposer,
+          $$GamePlayStatsTableTableOrderingComposer,
+          $$GamePlayStatsTableTableAnnotationComposer,
+          $$GamePlayStatsTableTableCreateCompanionBuilder,
+          $$GamePlayStatsTableTableUpdateCompanionBuilder,
+          (GamePlayStatsRecord, $$GamePlayStatsTableTableReferences),
+          GamePlayStatsRecord,
+          PrefetchHooks Function({bool bggId})
+        > {
+  $$GamePlayStatsTableTableTableManager(
+    _$AppDatabase db,
+    $GamePlayStatsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GamePlayStatsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GamePlayStatsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GamePlayStatsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> bggId = const Value.absent(),
+                Value<int> bggPlayCount = const Value.absent(),
+                Value<DateTime?> bggLastPlayedAt = const Value.absent(),
+                Value<double?> bggRating = const Value.absent(),
+                Value<bool> bggIsExpansion = const Value.absent(),
+                Value<DateTime> syncedAt = const Value.absent(),
+              }) => GamePlayStatsTableCompanion(
+                bggId: bggId,
+                bggPlayCount: bggPlayCount,
+                bggLastPlayedAt: bggLastPlayedAt,
+                bggRating: bggRating,
+                bggIsExpansion: bggIsExpansion,
+                syncedAt: syncedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> bggId = const Value.absent(),
+                Value<int> bggPlayCount = const Value.absent(),
+                Value<DateTime?> bggLastPlayedAt = const Value.absent(),
+                Value<double?> bggRating = const Value.absent(),
+                Value<bool> bggIsExpansion = const Value.absent(),
+                required DateTime syncedAt,
+              }) => GamePlayStatsTableCompanion.insert(
+                bggId: bggId,
+                bggPlayCount: bggPlayCount,
+                bggLastPlayedAt: bggLastPlayedAt,
+                bggRating: bggRating,
+                bggIsExpansion: bggIsExpansion,
+                syncedAt: syncedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$GamePlayStatsTableTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({bggId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (bggId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.bggId,
+                                referencedTable:
+                                    $$GamePlayStatsTableTableReferences
+                                        ._bggIdTable(db),
+                                referencedColumn:
+                                    $$GamePlayStatsTableTableReferences
+                                        ._bggIdTable(db)
+                                        .bggId,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$GamePlayStatsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GamePlayStatsTableTable,
+      GamePlayStatsRecord,
+      $$GamePlayStatsTableTableFilterComposer,
+      $$GamePlayStatsTableTableOrderingComposer,
+      $$GamePlayStatsTableTableAnnotationComposer,
+      $$GamePlayStatsTableTableCreateCompanionBuilder,
+      $$GamePlayStatsTableTableUpdateCompanionBuilder,
+      (GamePlayStatsRecord, $$GamePlayStatsTableTableReferences),
+      GamePlayStatsRecord,
+      PrefetchHooks Function({bool bggId})
+    >;
+typedef $$AppSettingsTableCreateCompanionBuilder =
+    AppSettingsCompanion Function({
+      required String key,
+      required String value,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$AppSettingsTableUpdateCompanionBuilder =
+    AppSettingsCompanion Function({
+      Value<String> key,
+      Value<String> value,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$AppSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $AppSettingsTable> {
+  $$AppSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AppSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AppSettingsTable> {
+  $$AppSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AppSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AppSettingsTable> {
+  $$AppSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get key =>
+      $composableBuilder(column: $table.key, builder: (column) => column);
+
+  GeneratedColumn<String> get value =>
+      $composableBuilder(column: $table.value, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$AppSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AppSettingsTable,
+          AppSettingRecord,
+          $$AppSettingsTableFilterComposer,
+          $$AppSettingsTableOrderingComposer,
+          $$AppSettingsTableAnnotationComposer,
+          $$AppSettingsTableCreateCompanionBuilder,
+          $$AppSettingsTableUpdateCompanionBuilder,
+          (
+            AppSettingRecord,
+            BaseReferences<_$AppDatabase, $AppSettingsTable, AppSettingRecord>,
+          ),
+          AppSettingRecord,
+          PrefetchHooks Function()
+        > {
+  $$AppSettingsTableTableManager(_$AppDatabase db, $AppSettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AppSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AppSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AppSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> key = const Value.absent(),
+                Value<String> value = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AppSettingsCompanion(
+                key: key,
+                value: value,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String key,
+                required String value,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => AppSettingsCompanion.insert(
+                key: key,
+                value: value,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AppSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AppSettingsTable,
+      AppSettingRecord,
+      $$AppSettingsTableFilterComposer,
+      $$AppSettingsTableOrderingComposer,
+      $$AppSettingsTableAnnotationComposer,
+      $$AppSettingsTableCreateCompanionBuilder,
+      $$AppSettingsTableUpdateCompanionBuilder,
+      (
+        AppSettingRecord,
+        BaseReferences<_$AppDatabase, $AppSettingsTable, AppSettingRecord>,
+      ),
+      AppSettingRecord,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3673,4 +4817,8 @@ class $AppDatabaseManager {
       $$PlayerScoresTableTableManager(_db, _db.playerScores);
   $$JudgeHistoriesTableTableManager get judgeHistories =>
       $$JudgeHistoriesTableTableManager(_db, _db.judgeHistories);
+  $$GamePlayStatsTableTableTableManager get gamePlayStatsTable =>
+      $$GamePlayStatsTableTableTableManager(_db, _db.gamePlayStatsTable);
+  $$AppSettingsTableTableManager get appSettings =>
+      $$AppSettingsTableTableManager(_db, _db.appSettings);
 }
